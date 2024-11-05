@@ -1,0 +1,9 @@
+includes:
+	- ../vendor/phpstan/phpstan-doctrine/extension.neon
+parameters:
+	tmpDir: ../var/cache/phpstan
+	level: max
+	paths:
+		- ../src
+		- ../tests
+# @see https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type

@@ -53,6 +53,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends chromium chromi
 #	tar -zxf geckodriver-v$GECKODRIVER_VERSION-aarch64.tar.gz -C /usr/bin; \
 #	rm geckodriver-v$GECKODRIVER_VERSION-aarch64.tar.gz
 ###< symfony/panther ###
+###> doctrine/doctrine-bundle ###
+RUN install-php-extensions pdo_pgsql
+###< doctrine/doctrine-bundle ###
 ###< recipes ###
 
 COPY --link frankenphp/conf.d/10-app.ini $PHP_INI_DIR/app.conf.d/
