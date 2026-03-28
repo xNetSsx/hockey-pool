@@ -43,7 +43,6 @@ final class Version20260328190209 extends AbstractMigration
         $this->addSql('ALTER TABLE special_bet ADD CONSTRAINT FK_A40506CD744E0351 FOREIGN KEY (rule_id) REFERENCES special_bet_rule (id) ON DELETE CASCADE NOT DEFERRABLE INITIALLY IMMEDIATE');
         $this->addSql('CREATE INDEX idx_special_bet_rule ON special_bet (rule_id)');
         $this->addSql('CREATE UNIQUE INDEX uniq_special_bet_user_rule ON special_bet (user_id, rule_id)');
-        $this->addSql('ALTER TABLE "user" DROP is_admin');
     }
 
     public function down(Schema $schema): void
@@ -65,7 +64,6 @@ final class Version20260328190209 extends AbstractMigration
         $this->addSql('ALTER TABLE special_bet_rule DROP CONSTRAINT FK_E3B3146733D1A3E7');
         $this->addSql('ALTER TABLE special_bet_rule DROP CONSTRAINT FK_E3B3146770DD83D6');
         $this->addSql('DROP TABLE special_bet_rule');
-        $this->addSql('ALTER TABLE "user" ADD is_admin BOOLEAN DEFAULT false NOT NULL');
         $this->addSql('DROP INDEX idx_special_bet_rule');
         $this->addSql('DROP INDEX uniq_special_bet_user_rule');
         $this->addSql('ALTER TABLE special_bet ADD type VARCHAR(30) NOT NULL');
