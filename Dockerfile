@@ -45,6 +45,11 @@ RUN composer install --no-dev --optimize-autoloader --no-scripts --no-interactio
 # Copy app source
 COPY . .
 
+# Build-time env vars (Symfony needs these for cache warmup, not used at runtime)
+ENV APP_ENV=prod
+ENV APP_SECRET=build-time-placeholder
+ENV DATABASE_URL="postgresql://dummy:dummy@localhost:5432/dummy?serverVersion=16"
+
 # Run post-install scripts, build assets, warm cache
 RUN composer run-script post-install-cmd \
     && php bin/console tailwind:build --env=prod \
