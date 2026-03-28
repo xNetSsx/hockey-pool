@@ -134,12 +134,12 @@ fixture-factory:
 
 fixtures-load:
 	@echo "${GREEN}>>> load fixtures${EOL}"
-	@$(PHP_CONT) bin/console doctrine:fixtures:load --purger=internal_purger --purge-with-truncate
+	@$(PHP_CONT) bin/console doctrine:fixtures:load --no-interaction
 
 ## Load fixtures and dump DB to docker/seed.sql for production deploys
 seed-dump: fixtures-load
 	@echo "${GREEN}>>> dumping database to docker/seed.sql${EOL}"
-	@$(DOCKER_COMP) exec database pg_dump -U db_user --data-only --inserts --no-owner --no-privileges --rows-per-insert=1000 db_name > docker/seed.sql
+	@$(DOCKER_COMP) exec database pg_dump -U db_user --data-only --inserts --no-owner --no-privileges --exclude-table=doctrine_migration_versions db_name > docker/seed.sql
 	@echo "${GREEN}>>> done: docker/seed.sql${EOL}"
 
 ### TESTS
