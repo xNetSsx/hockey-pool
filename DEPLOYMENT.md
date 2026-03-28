@@ -1,53 +1,49 @@
-# Deployment na Koyeb (free tier)
+# Deployment na Railway
 
 ## Předpoklady
 
-- GitHub účet s tímto repozitářem
-- Koyeb účet (zdarma, bez kreditní karty) — [app.koyeb.com](https://app.koyeb.com)
+- GitHub účet s repozitářem [xNetSsx/hockey-pool](https://github.com/xNetSsx/hockey-pool)
+- Railway účet — [railway.app](https://railway.app) ($5 kredit na 30 dní zdarma, pak $1/měsíc)
 
-## 1. Vytvoř PostgreSQL databázi
+## 1. Vytvoř nový projekt na Railway
 
-1. V Koyeb dashboardu jdi na **Databases** → **Create Database**
-2. Vyber region **Frankfurt** (`fra`)
-3. Název: `hockey-pool` (nebo libovolný)
-4. Koyeb vytvoří databázi a ukáže connection string — zkopíruj ho
+1. Jdi na [railway.app](https://railway.app) → **New Project**
+2. Vyber **Deploy from GitHub repo** → připoj GitHub → vyber `xNetSsx/hockey-pool`
+3. Railway začne build — **zatím ho zruš**, nejdřív potřebuješ databázi
 
-> Free tier: DB se uspí po 5 minutách neaktivity. První request po probuzení trvá 2-3 sekundy.
+## 2. Přidej PostgreSQL databázi
 
-## 2. Vytvoř Web Service
+1. V projektu klikni **+ New** → **Database** → **PostgreSQL**
+2. Railway vytvoří databázi a automaticky nastaví `DATABASE_URL` jako shared variable
+3. Klikni na PostgreSQL service → **Variables** → zkopíruj `DATABASE_URL` (bude potřeba ověřit)
 
-1. V Koyeb dashboardu jdi na **Apps** → **Create App** → **Web Service**
-2. **Source**: GitHub → vyber tento repozitář
-3. **Builder**: Dockerfile
-4. **Dockerfile path**: `Dockerfile.koyeb`
-5. **Region**: Frankfurt (`fra`)
-6. **Instance type**: Free (512 MB RAM)
-7. **Port**: `8080`
+## 3. Nastav proměnné prostředí
 
-## 3. Nastav Environment Variables
-
-V záložce **Environment variables** přidej:
+Klikni na svůj web service (ne databázi) → **Variables** → přidej:
 
 | Variable | Value |
 |----------|-------|
 | `APP_ENV` | `prod` |
-| `APP_SECRET` | *(vygeneruj: `openssl rand -hex 16`)* |
-| `DATABASE_URL` | *(connection string z kroku 1)* |
+| `APP_SECRET` | *(spusť `openssl rand -hex 16` v terminálu)* |
+| `DATABASE_URL` | *(reference na PostgreSQL — Railway to nastaví automaticky pokud propojíš služby)* |
 | `TRUSTED_PROXIES` | `REMOTE_ADDR` |
 
-> `DATABASE_URL` formát: `postgresql://user:password@host:port/dbname?sslmode=require`
+## 4. Nastav Dockerfile
 
-## 4. Deploy
+V service settings → **Build**:
+- **Builder**: Dockerfile
+- **Dockerfile path**: `Dockerfile.railway`
 
-1. Klikni **Deploy** — Koyeb sestaví Docker image a spustí ho
-2. Build trvá cca 3-5 minut (stahuje PHP extensions, Composer dependencies, Tailwind binary)
-3. Po úspěšném deployi dostaneš URL typu `https://hockey-pool-xxx.koyeb.app`
+Railway automaticky nastaví `PORT` env var — Dockerfile to čte.
 
-## 5. Spusť migrace a fixtures
+## 5. Deploy
 
-Po prvním deployi je potřeba vytvořit databázové tabulky a naplnit data.
+Klikni **Deploy** nebo pushni do `main` branche — Railway automaticky nasadí.
+Build trvá cca 3-5 minut.
 
-V Koyeb dashboardu jdi na svou službu → **Console** (SSH) a spusť:
+## 6. Po prvním deployi — migrace a data
+
+V Railway dashboardu → tvůj web service → záložka **Shell**:
 
 ```bash
 php bin/console doctrine:migrations:migrate --no-interaction
@@ -55,28 +51,26 @@ php bin/console doctrine:fixtures:load --no-interaction
 php bin/console app:recalculate-points oh-2026
 ```
 
-## 6. Hotovo!
+## 7. Hotovo!
 
-Přihlas se na `https://tvoje-url.koyeb.app/login`:
+Railway ti dá URL typu `https://hockey-pool-production-xxxx.up.railway.app`.
+
+Přihlas se:
 - Uživatel: `Ondra` (admin), heslo: `heslo123`
 - Nebo kdokoliv z 10 hráčů
 
+## Vlastní doména (volitelné)
+
+V Railway → tvůj service → **Settings** → **Networking** → **Custom Domain**.
+Přidej svou doménu a nastav DNS CNAME.
+
 ## Aktualizace
 
-Při pushnutí do `main` branche Koyeb automaticky znovu nasadí.
-Migrace je potřeba spustit ručně přes Console po deploy pokud se změnilo DB schéma.
+Každý push do `main` automaticky spustí nový deploy.
+Po změně DB schématu spusť migrace přes Shell.
 
-## Troubleshooting
+## Cena
 
-**App nereaguje po deploy:**
-- Zkontroluj logy v Koyeb dashboardu → **Logs**
-- Ověř že `DATABASE_URL` je správně nastavená
-
-**Pomalý první request:**
-- Normální — free tier PostgreSQL se uspí po 5 min neaktivity
-- Probuzení trvá 2-3 sekundy
-
-**500 Internal Server Error:**
-- Zkontroluj `APP_SECRET` — nesmí být prázdný
-- Zkontroluj `APP_ENV=prod`
-- Spusť `php bin/console cache:clear --env=prod` přes Console
+- Trial: 30 dní, $5 kredit zdarma
+- Poté: $1/měsíc + usage (pro 10 hráčů kontrolujících skóre pár krát denně to bude minimální)
+- PostgreSQL je v ceně

@@ -25,14 +25,13 @@ RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-av
 # Allow .htaccess overrides
 RUN sed -ri -e 's!AllowOverride None!AllowOverride All!g' /etc/apache2/apache2.conf
 
-# Listen on port 8080 (Koyeb expects this)
-RUN sed -ri -e 's!Listen 80!Listen 8080!g' /etc/apache2/ports.conf \
-    && sed -ri -e 's!:80>!:8080>!g' /etc/apache2/sites-available/*.conf
-EXPOSE 8080
+# Railway sets PORT dynamically via env var
+RUN sed -ri -e 's!Listen 80!Listen ${PORT}!g' /etc/apache2/ports.conf \
+    && sed -ri -e 's!:80>!:${PORT}>!g' /etc/apache2/sites-available/*.conf
 
 # PHP production config
 RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
-COPY docker/php-koyeb.ini $PHP_INI_DIR/conf.d/app.ini
+COPY docker/php-prod.ini $PHP_INI_DIR/conf.d/app.ini
 
 # Composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
@@ -54,6 +53,7 @@ RUN composer run-script post-install-cmd \
     && php bin/console cache:warmup --env=prod \
     && chown -R www-data:www-data var/
 
-USER www-data
+ENV PORT=8080
+EXPOSE 8080
 
 CMD ["apache2-foreground"]
