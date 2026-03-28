@@ -44,7 +44,10 @@ RUN composer install --no-dev --optimize-autoloader --no-scripts --no-interactio
 # Copy app source
 COPY . .
 
-# Build assets and warm cache (all runs with APP_ENV=prod)
+# Compile .env for prod (bypasses dotenv, uses real env vars)
+RUN composer dump-env prod
+
+# Build assets and warm cache
 RUN composer run-script post-install-cmd \
     && php bin/console tailwind:build \
     && php bin/console asset-map:compile \
