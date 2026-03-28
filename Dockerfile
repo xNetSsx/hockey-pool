@@ -14,20 +14,14 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         zip \
     && rm -rf /var/lib/apt/lists/*
 
-# Apache config — ensure only one MPM is loaded
-RUN a2dismod mpm_event mpm_worker 2>/dev/null; a2enmod mpm_prefork rewrite
+# Apache config
+RUN a2enmod rewrite
 ENV APACHE_DOCUMENT_ROOT=/app/public
 RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf \
     && sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf \
     && sed -ri -e 's!<Directory /var/www/>!<Directory ${APACHE_DOCUMENT_ROOT}>!' /etc/apache2/apache2.conf \
+    && sed -ri -e 's!AllowOverride None!AllowOverride All!g' /etc/apache2/apache2.conf \
     && echo "ServerName localhost" >> /etc/apache2/apache2.conf
-
-# Allow .htaccess overrides
-RUN sed -ri -e 's!AllowOverride None!AllowOverride All!g' /etc/apache2/apache2.conf
-
-# Railway sets PORT dynamically via env var
-RUN sed -ri -e 's!Listen 80!Listen ${PORT}!g' /etc/apache2/ports.conf \
-    && sed -ri -e 's!:80>!:${PORT}>!g' /etc/apache2/sites-available/*.conf
 
 # PHP production config
 RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
@@ -38,19 +32,19 @@ COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
 WORKDIR /app
 
-# Install dependencies first (better layer caching)
+# Install dependencies (layer cache)
 COPY composer.json composer.lock symfony.lock ./
 RUN composer install --no-dev --optimize-autoloader --no-scripts --no-interaction
 
 # Copy app source
 COPY . .
 
-# Build-time env vars (Symfony needs these for cache warmup, not used at runtime)
+# Build-time env vars (Symfony needs these for cache warmup)
 ENV APP_ENV=prod
 ENV APP_SECRET=build-time-placeholder
 ENV DATABASE_URL="postgresql://dummy:dummy@localhost:5432/dummy?serverVersion=16"
 
-# Run post-install scripts, build assets, warm cache
+# Build assets and warm cache
 RUN composer run-script post-install-cmd \
     && php bin/console tailwind:build --env=prod \
     && php bin/console asset-map:compile --env=prod \
@@ -58,7 +52,10 @@ RUN composer run-script post-install-cmd \
     && php bin/console cache:warmup --env=prod \
     && chown -R www-data:www-data var/
 
-ENV PORT=8080
+# Entrypoint: set Apache port from Railway's PORT env var, then start
+COPY docker/entrypoint.sh /usr/local/bin/entrypoint.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh
+
 EXPOSE 8080
 
-CMD ["apache2-foreground"]
+CMD ["entrypoint.sh"]
