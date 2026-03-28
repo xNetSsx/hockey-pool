@@ -34,8 +34,6 @@ WORKDIR /app
 
 # Set prod env BEFORE anything Symfony-related
 ENV APP_ENV=prod
-ENV APP_SECRET=build-time-placeholder
-ENV DATABASE_URL="postgresql://dummy:dummy@localhost:5432/dummy?serverVersion=16"
 
 # Install dependencies (layer cache)
 COPY composer.json composer.lock symfony.lock ./
@@ -44,16 +42,8 @@ RUN composer install --no-dev --optimize-autoloader --no-scripts --no-interactio
 # Copy app source
 COPY . .
 
-# Compile .env for prod (bypasses dotenv, uses real env vars)
-RUN composer dump-env prod
-
-# Build assets and warm cache
-RUN composer run-script post-install-cmd \
-    && php bin/console tailwind:build \
-    && php bin/console asset-map:compile \
-    && php bin/console cache:clear \
-    && php bin/console cache:warmup \
-    && chown -R www-data:www-data var/
+# Chown var/ for cache writes at runtime
+RUN chown -R www-data:www-data var/
 
 # Entrypoint: set Apache port from Railway's PORT env var, then start
 COPY docker/entrypoint.sh /usr/local/bin/entrypoint.sh

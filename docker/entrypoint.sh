@@ -3,9 +3,6 @@ set -e
 
 PORT="${PORT:-8080}"
 
-# Remove build-time .env cache so runtime env vars (from Railway) take precedence
-rm -f /app/.env.local.php
-
 # Configure Apache to listen on Railway's PORT
 sed -i "s/Listen 80$/Listen ${PORT}/" /etc/apache2/ports.conf
 sed -i "s/:80>/:${PORT}>/" /etc/apache2/sites-available/*.conf
@@ -24,7 +21,11 @@ if [ "$USER_COUNT" = "0" ] || [ -z "$USER_COUNT" ]; then
     echo "==> Seed data imported!"
 fi
 
-# Warm cache
+# Build assets and warm cache (runs with real env vars from Railway)
+composer run-script post-install-cmd 2>&1 || true
+php bin/console tailwind:build 2>&1 || true
+php bin/console asset-map:compile 2>&1 || true
+php bin/console cache:clear 2>&1 || true
 php bin/console cache:warmup 2>&1 || true
 
 exec apache2-foreground
