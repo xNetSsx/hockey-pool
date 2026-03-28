@@ -142,6 +142,11 @@ seed-dump: fixtures-load
 	@$(DOCKER_COMP) exec database pg_dump -U db_user --data-only --inserts --no-owner --no-privileges --exclude-table=doctrine_migration_versions db_name > docker/seed.sql
 	@echo "${GREEN}>>> done: docker/seed.sql${EOL}"
 
+## Recalculate points for all tournaments
+recalculate:
+	@echo "${GREEN}>>> recalculating points for all tournaments${EOL}"
+	@$(PHP_CONT) bin/console app:recalculate-points --all
+
 ### TESTS
 ### Unit
 paratest: unit-tests e2e
