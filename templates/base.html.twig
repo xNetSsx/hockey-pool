@@ -37,7 +37,7 @@
                         {% endif %}
                         {% block nav_links %}{% endblock %}
                         {% if app.user %}
-                            <span class="text-sm text-gray-600">{{ app.user.username }}</span>
+                            <a href="{{ path('change_password') }}" class="text-sm text-gray-600 hover:text-gray-900">{{ app.user.username }}</a>
                             {% if is_granted('ROLE_ADMIN') %}
                                 <a href="{{ path('admin_dashboard') }}" class="rounded bg-red-100 px-2 py-0.5 text-xs font-medium text-red-700 hover:bg-red-200">Admin</a>
                             {% endif %}

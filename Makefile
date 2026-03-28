@@ -136,6 +136,12 @@ fixtures-load:
 	@echo "${GREEN}>>> load fixtures${EOL}"
 	@$(PHP_CONT) bin/console doctrine:fixtures:load --purger=internal_purger --purge-with-truncate
 
+## Load fixtures and dump DB to docker/seed.sql for production deploys
+seed-dump: fixtures-load
+	@echo "${GREEN}>>> dumping database to docker/seed.sql${EOL}"
+	@$(DOCKER_COMP) exec database pg_dump -U $${POSTGRES_USER:-app} --data-only --inserts --no-owner --no-privileges $${POSTGRES_DB:-app} > docker/seed.sql
+	@echo "${GREEN}>>> done: docker/seed.sql${EOL}"
+
 ### TESTS
 ### Unit
 paratest: unit-tests e2e
