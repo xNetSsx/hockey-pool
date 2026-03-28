@@ -139,7 +139,7 @@ fixtures-load:
 ## Load fixtures and dump DB to docker/seed.sql for production deploys
 seed-dump: fixtures-load
 	@echo "${GREEN}>>> dumping database to docker/seed.sql${EOL}"
-	@$(DOCKER_COMP) exec database pg_dump -U db_user --data-only --inserts --no-owner --no-privileges db_name > docker/seed.sql
+	@$(DOCKER_COMP) exec database pg_dump -U db_user --data-only --inserts --no-owner --no-privileges --rows-per-insert=1000 db_name > docker/seed.sql
 	@echo "${GREEN}>>> done: docker/seed.sql${EOL}"
 
 ### TESTS
