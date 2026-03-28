@@ -32,6 +32,11 @@ COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
 WORKDIR /app
 
+# Set prod env BEFORE anything Symfony-related
+ENV APP_ENV=prod
+ENV APP_SECRET=build-time-placeholder
+ENV DATABASE_URL="postgresql://dummy:dummy@localhost:5432/dummy?serverVersion=16"
+
 # Install dependencies (layer cache)
 COPY composer.json composer.lock symfony.lock ./
 RUN composer install --no-dev --optimize-autoloader --no-scripts --no-interaction
@@ -39,17 +44,12 @@ RUN composer install --no-dev --optimize-autoloader --no-scripts --no-interactio
 # Copy app source
 COPY . .
 
-# Build-time env vars (Symfony needs these for cache warmup)
-ENV APP_ENV=prod
-ENV APP_SECRET=build-time-placeholder
-ENV DATABASE_URL="postgresql://dummy:dummy@localhost:5432/dummy?serverVersion=16"
-
-# Build assets and warm cache
+# Build assets and warm cache (all runs with APP_ENV=prod)
 RUN composer run-script post-install-cmd \
-    && php bin/console tailwind:build --env=prod \
-    && php bin/console asset-map:compile --env=prod \
-    && php bin/console cache:clear --env=prod \
-    && php bin/console cache:warmup --env=prod \
+    && php bin/console tailwind:build \
+    && php bin/console asset-map:compile \
+    && php bin/console cache:clear \
+    && php bin/console cache:warmup \
     && chown -R www-data:www-data var/
 
 # Entrypoint: set Apache port from Railway's PORT env var, then start
