@@ -3,6 +3,15 @@ set -e
 
 PORT="${PORT:-8080}"
 
+# Write runtime env vars to .env.local so Symfony always picks them up
+echo "APP_ENV=prod" > /app/.env.local
+if [ -n "$DATABASE_URL" ]; then
+    echo "DATABASE_URL=${DATABASE_URL}" >> /app/.env.local
+fi
+if [ -n "$APP_SECRET" ]; then
+    echo "APP_SECRET=${APP_SECRET}" >> /app/.env.local
+fi
+
 # Configure Apache to listen on Railway's PORT
 sed -i "s/Listen 80$/Listen ${PORT}/" /etc/apache2/ports.conf
 sed -i "s/:80>/:${PORT}>/" /etc/apache2/sites-available/*.conf
