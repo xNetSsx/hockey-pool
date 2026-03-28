@@ -1,0 +1,73 @@
+{% extends 'admin/layout.html.twig' %}
+
+{% block title %}Turnaje — Admin{% endblock %}
+
+{% block admin_body %}
+    <div class="mb-4 flex items-center justify-between">
+        <h1 class="text-xl font-bold">Turnaje</h1>
+        <a href="{{ path('admin_tournament_new') }}" class="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700">+ Nový turnaj</a>
+    </div>
+
+    {% if active|length > 0 %}
+        <h2 class="mb-2 mt-6 text-sm font-semibold uppercase tracking-wider text-gray-500">Aktivní a nadcházející</h2>
+        {{ _self.tournament_table(active, hasRuleSet, hasSpecialRules) }}
+    {% endif %}
+
+    {% if archived|length > 0 %}
+        <h2 class="mb-2 mt-6 text-sm font-semibold uppercase tracking-wider text-gray-500">Archiv</h2>
+        {{ _self.tournament_table(archived, hasRuleSet, hasSpecialRules) }}
+    {% endif %}
+
+    {% if active|length == 0 and archived|length == 0 %}
+        <div class="rounded-xl bg-white p-8 text-center shadow">
+            <p class="text-gray-500">Žádné turnaje.</p>
+        </div>
+    {% endif %}
+{% endblock %}
+
+{% macro tournament_table(tournaments, hasRuleSet, hasSpecialRules) %}
+    <div class="mb-6 overflow-hidden rounded-xl bg-white shadow">
+        <table class="w-full text-sm">
+            <tbody>
+                {% for t in tournaments %}
+                    <tr class="border-b border-gray-100 last:border-0">
+                        <td class="px-6 py-3 font-medium">{{ t.name }}</td>
+                        <td class="px-6 py-3 text-gray-500">{{ t.year }}</td>
+                        <td class="px-6 py-3">
+                            {% if t.status.value == 'in_progress' %}
+                                <span class="rounded bg-green-100 px-2 py-0.5 text-xs font-medium text-green-800">Probíhá</span>
+                            {% elseif t.status.value == 'finished' %}
+                                <span class="rounded bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-600">Ukončen</span>
+                            {% else %}
+                                <span class="rounded bg-blue-100 px-2 py-0.5 text-xs font-medium text-blue-800">Nadcházející</span>
+                            {% endif %}
+                        </td>
+                        <td class="px-6 py-3">
+                            {% if hasRuleSet[t.id] %}
+                                <span class="text-xs text-green-600">✓ Bodování</span>
+                            {% endif %}
+                            {% if hasSpecialRules[t.id] %}
+                                <span class="ml-1 text-xs text-green-600">✓ Pravidla</span>
+                            {% endif %}
+                            {% if not hasRuleSet[t.id] and not hasSpecialRules[t.id] %}
+                                <span class="text-xs text-amber-600">⚠ Bez nastavení</span>
+                            {% endif %}
+                        </td>
+                        <td class="px-6 py-3 text-right">
+                            <div class="flex items-center justify-end gap-2">
+                                {% if not hasRuleSet[t.id] and not hasSpecialRules[t.id] %}
+                                    <a href="{{ path('admin_tournament_clone', {id: t.id}) }}"
+                                       class="rounded bg-green-600 px-2 py-1 text-xs font-medium text-white hover:bg-green-700">
+                                        Kopírovat z posledního
+                                    </a>
+                                {% endif %}
+                                <a href="{{ path('admin_tournament_ruleset', {id: t.id}) }}" class="text-xs text-gray-500 hover:underline">Bodování</a>
+                                <a href="{{ path('admin_tournament_edit', {id: t.id}) }}" class="text-xs text-blue-600 hover:underline">Upravit</a>
+                            </div>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endmacro %}

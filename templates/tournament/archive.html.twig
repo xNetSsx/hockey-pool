@@ -1,0 +1,51 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Turnaje — Hockey Pool{% endblock %}
+
+{% block body %}
+    <h1 class="mb-6 text-2xl font-bold text-gray-900">🏒 Turnaje</h1>
+
+    {% if tournaments|length == 0 %}
+        <div class="rounded-xl bg-white p-8 text-center shadow">
+            <p class="text-gray-500">Žádné turnaje.</p>
+        </div>
+    {% else %}
+        <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {% for tournament in tournaments %}
+                {% set isSelected = current_tournament and current_tournament.id == tournament.id %}
+                <div class="overflow-hidden rounded-xl bg-white shadow {{ isSelected ? 'ring-2 ring-[#38bdf8]' : '' }}">
+                    <div class="bg-[#0f172a] px-6 py-4">
+                        <h2 class="text-lg font-bold text-white">{{ tournament.name }}</h2>
+                        <p class="text-sm text-gray-400">{{ tournament.year }}</p>
+                    </div>
+                    <div class="flex items-center justify-between px-6 py-4">
+                        <div>
+                            {% if tournament.status.value == 'in_progress' %}
+                                <span class="rounded bg-green-100 px-2 py-0.5 text-xs font-medium text-green-800">Probíhá</span>
+                            {% elseif tournament.status.value == 'finished' %}
+                                <span class="rounded bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-600">Ukončen</span>
+                            {% else %}
+                                <span class="rounded bg-blue-100 px-2 py-0.5 text-xs font-medium text-blue-800">Nadcházející</span>
+                            {% endif %}
+                            {% if isSelected %}
+                                <span class="ml-1 text-xs text-[#38bdf8]">aktivní</span>
+                            {% endif %}
+                        </div>
+                        <div class="flex gap-2">
+                            <a href="{{ path('tournament_dashboard', {slug: tournament.slug}) }}"
+                               class="rounded bg-gray-200 px-3 py-1 text-xs font-medium text-gray-700 hover:bg-gray-300">
+                                Zobrazit
+                            </a>
+                            {% if not isSelected %}
+                                <a href="{{ path('tournament_select', {slug: tournament.slug}) }}"
+                                   class="rounded bg-blue-600 px-3 py-1 text-xs font-medium text-white hover:bg-blue-700">
+                                    Vybrat
+                                </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+{% endblock %}

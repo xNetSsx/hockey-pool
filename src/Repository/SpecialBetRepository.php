@@ -1,0 +1,68 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Repository;
+
+use App\Entity\SpecialBet;
+use App\Entity\SpecialBetRule;
+use App\Entity\Tournament;
+use App\Entity\User;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Persistence\ManagerRegistry;
+
+/** @extends ServiceEntityRepository<SpecialBet> */
+class SpecialBetRepository extends ServiceEntityRepository
+{
+    public function __construct(ManagerRegistry $registry)
+    {
+        parent::__construct($registry, SpecialBet::class);
+    }
+
+    /**
+     * @return list<SpecialBet>
+     */
+    public function findByTournament(Tournament $tournament): array
+    {
+        /** @var list<SpecialBet> $result */
+        $result = $this->createQueryBuilder('sb')
+            ->join('sb.rule', 'r')
+            ->where('r.tournament = :tournament')
+            ->setParameter('tournament', $tournament)
+            ->getQuery()
+            ->getResult();
+
+        return $result;
+    }
+
+    /**
+     * @return array<int, SpecialBet> Indexed by rule ID
+     */
+    public function findByUserIndexedByRule(User $user, Tournament $tournament): array
+    {
+        /** @var list<SpecialBet> $bets */
+        $bets = $this->createQueryBuilder('sb')
+            ->join('sb.rule', 'r')
+            ->where('sb.user = :user')
+            ->andWhere('r.tournament = :tournament')
+            ->setParameter('user', $user)
+            ->setParameter('tournament', $tournament)
+            ->getQuery()
+            ->getResult();
+
+        $indexed = [];
+        foreach ($bets as $bet) {
+            $indexed[(int) $bet->getRule()->getId()] = $bet;
+        }
+
+        return $indexed;
+    }
+
+    /**
+     * @return list<SpecialBet> All bets for a specific rule
+     */
+    public function findByRule(SpecialBetRule $rule): array
+    {
+        return $this->findBy(['rule' => $rule]);
+    }
+}

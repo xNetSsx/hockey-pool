@@ -1,16 +1,63 @@
 <!DOCTYPE html>
-<html>
+<html lang="cs">
     <head>
         <meta charset="UTF-8">
-        <title>{% block title %}Welcome!{% endblock %}</title>
-        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text><text y=%221.3em%22 x=%220.2em%22 font-size=%2276%22 fill=%22%23fff%22>sf</text></svg>">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>{% block title %}Hockey Pool{% endblock %}</title>
+        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>🏒</text></svg>">
         {% block stylesheets %}
         {% endblock %}
 
         {% block javascripts %}
+            {% block importmap %}{{ importmap('app') }}{% endblock %}
         {% endblock %}
     </head>
-    <body>
-        {% block body %}{% endblock %}
+    <body class="min-h-screen bg-gray-100 text-gray-900">
+        <nav class="bg-white shadow">
+            <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                <div class="flex h-16 items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <a href="{{ path('homepage') }}" class="text-xl font-bold text-gray-900">
+                            Hockey Pool
+                        </a>
+                        {% if current_tournament %}
+                            <a href="{{ path('tournament_archive') }}"
+                               class="rounded-full bg-[#0f172a] px-3 py-1 text-xs font-medium text-white hover:bg-[#1e293b]"
+                               title="Změnit turnaj">
+                                {{ current_tournament.name }}
+                            </a>
+                        {% endif %}
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        {% if app.user %}
+                            <a href="{{ path('match_list') }}" class="text-sm text-gray-600 hover:text-gray-900">Zápasy</a>
+                            <a href="{{ path('prediction_list') }}" class="text-sm text-gray-600 hover:text-gray-900">Tipy</a>
+                            <a href="{{ path('player_compare') }}" class="text-sm text-gray-600 hover:text-gray-900">Porovnat</a>
+                            <a href="{{ path('tournament_archive') }}" class="text-sm text-gray-600 hover:text-gray-900">Turnaje</a>
+                        {% endif %}
+                        {% block nav_links %}{% endblock %}
+                        {% if app.user %}
+                            <span class="text-sm text-gray-600">{{ app.user.username }}</span>
+                            {% if is_granted('ROLE_ADMIN') %}
+                                <a href="{{ path('admin_dashboard') }}" class="rounded bg-red-100 px-2 py-0.5 text-xs font-medium text-red-700 hover:bg-red-200">Admin</a>
+                            {% endif %}
+                            <a href="{{ path('app_logout') }}" class="text-sm text-gray-500 hover:text-gray-700">Odhlásit</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <main class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+            {% for label, messages in app.flashes %}
+                {% for message in messages %}
+                    <div class="mb-4 rounded-md p-4 {{ label == 'success' ? 'bg-green-50 text-green-800' : (label == 'error' ? 'bg-red-50 text-red-800' : 'bg-blue-50 text-blue-800') }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endfor %}
+
+            {% block body %}{% endblock %}
+        </main>
     </body>
 </html>

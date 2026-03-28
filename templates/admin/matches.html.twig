@@ -1,0 +1,75 @@
+{% extends 'admin/layout.html.twig' %}
+
+{% block title %}Zápasy — Admin{% endblock %}
+
+{% block admin_body %}
+    <div class="mb-4 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <h1 class="text-xl font-bold">Zápasy</h1>
+        <div class="flex flex-wrap items-center gap-2">
+            <a href="{{ path('admin_match_bulk') }}" class="rounded-lg bg-green-600 px-4 py-2 text-sm font-medium text-white hover:bg-green-700">+ Hromadně</a>
+            <a href="{{ path('admin_match_new') }}" class="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700">+ Nový zápas</a>
+        </div>
+    </div>
+
+    {# Tournament filter #}
+    {% if tournaments|length > 1 %}
+        <div class="mb-6 flex flex-wrap items-center gap-2">
+            <span class="text-sm text-gray-500">Turnaj:</span>
+            {% for t in tournaments %}
+                <a href="{{ path('admin_matches', {tournament: t.id}) }}"
+                   class="rounded-full px-3 py-1 text-sm {{ tournament and tournament.id == t.id ? 'bg-[#0f172a] text-white' : 'bg-gray-200 text-gray-600 hover:bg-gray-300' }}">
+                    {{ t.name }}
+                </a>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    {% if not tournament %}
+        <div class="rounded-xl bg-white p-8 text-center shadow">
+            <p class="text-gray-500">Žádný turnaj.</p>
+        </div>
+    {% elseif groupedGames|length == 0 %}
+        <div class="rounded-xl bg-white p-8 text-center shadow">
+            <p class="text-gray-500">Zatím žádné zápasy v turnaji {{ tournament.name }}.</p>
+        </div>
+    {% else %}
+        {% for phaseValue, games in groupedGames %}
+            <details class="group mb-4" open>
+                <summary class="mb-2 cursor-pointer list-none">
+                    <div class="inline-flex items-center gap-2 rounded-lg bg-[#0f172a] px-4 py-2 text-sm font-semibold uppercase tracking-wider text-white">
+                        <span class="text-xs transition group-open:rotate-90">▶</span>
+                        {{ phaseValue|phase_label }}
+                        <span class="rounded-full bg-white/20 px-2 py-0.5 text-xs font-normal">{{ games|length }}</span>
+                    </div>
+                </summary>
+                <div class="overflow-hidden rounded-xl bg-white shadow">
+                    <table class="w-full text-sm">
+                        <tbody>
+                            {% for game in games %}
+                                <tr class="border-b border-gray-100 last:border-0">
+                                    <td class="w-28 px-4 py-2.5 text-xs text-gray-400">{{ game.playedAt|date('d.m. H:i') }}</td>
+                                    <td class="w-24 py-2.5 text-right">{{ game.homeTeam.flagEmoji }} {{ game.homeTeam.code }}</td>
+                                    <td class="w-16 py-2.5 text-center">
+                                        {% if game.isFinished %}
+                                            <span class="font-bold tabular-nums">{{ game.homeScore }}:{{ game.awayScore }}</span>
+                                        {% else %}
+                                            <span class="text-gray-400">vs</span>
+                                        {% endif %}
+                                    </td>
+                                    <td class="w-24 py-2.5">{{ game.awayTeam.flagEmoji }} {{ game.awayTeam.code }}</td>
+                                    <td class="space-x-2 px-4 py-2.5 text-right">
+                                        <a href="{{ path('admin_match_edit', {id: game.id}) }}" class="text-xs text-blue-600 hover:underline">Upravit</a>
+                                        <a href="{{ path('admin_match_result', {id: game.id}) }}"
+                                           class="rounded bg-blue-600 px-3 py-1 text-xs font-medium text-white hover:bg-blue-700">
+                                            {{ game.isFinished ? 'Změnit skóre' : 'Zadat skóre' }}
+                                        </a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </details>
+        {% endfor %}
+    {% endif %}
+{% endblock %}

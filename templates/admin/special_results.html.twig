@@ -1,0 +1,62 @@
+{% extends 'admin/layout.html.twig' %}
+
+{% block title %}Výsledky speciálních tipů — Admin{% endblock %}
+
+{% set inputClass = 'w-full rounded-lg border border-gray-300 px-4 py-2.5 text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20' %}
+
+{% block admin_body %}
+    <div class="mx-auto max-w-2xl">
+        <h1 class="mb-4 text-xl font-bold">Zadat výsledky — {{ tournament.name }}</h1>
+
+        {% if rules|length == 0 %}
+            <div class="rounded-xl bg-white p-8 text-center shadow">
+                <p class="text-gray-500">Žádná pravidla. Nejprve <a href="{{ path('admin_rules') }}" class="text-blue-600 hover:underline">vytvoř pravidla</a>.</p>
+            </div>
+        {% else %}
+            <form method="post" class="space-y-6">
+                <input type="hidden" name="_token" value="{{ csrf_token('special_results') }}">
+
+                <div class="overflow-hidden rounded-xl bg-white shadow">
+                    <div class="border-b bg-[#0f172a] px-6 py-3">
+                        <h2 class="font-semibold text-white">Skutečné výsledky</h2>
+                    </div>
+                    <div class="divide-y divide-gray-100">
+                        {% for rule in rules %}
+                            <div class="px-6 py-4">
+                                <label for="rule_{{ rule.id }}" class="mb-1 block text-sm font-medium text-gray-700">
+                                    {{ rule.name }}
+                                    <span class="text-xs text-gray-400">({{ rule.valueType.label }}, {{ rule.points }} b.)</span>
+                                </label>
+
+                                {% if rule.valueType.value == 'team' %}
+                                    <select name="rule_{{ rule.id }}" id="rule_{{ rule.id }}" class="{{ inputClass }}">
+                                        <option value="">— Vyber tým —</option>
+                                        {% for team in teams %}
+                                            <option value="{{ team.id }}" {{ rule.actualTeamValue and rule.actualTeamValue.id == team.id ? 'selected' : '' }}>
+                                                {{ team.flagEmoji }} {{ team.name }}
+                                            </option>
+                                        {% endfor %}
+                                    </select>
+                                {% elseif rule.valueType.value == 'string' %}
+                                    <input type="text" name="rule_{{ rule.id }}" id="rule_{{ rule.id }}"
+                                           value="{{ rule.actualStringValue }}"
+                                           class="{{ inputClass }}">
+                                {% elseif rule.valueType.value == 'integer' %}
+                                    <input type="number" name="rule_{{ rule.id }}" id="rule_{{ rule.id }}"
+                                           value="{{ rule.actualIntValue is not null ? rule.actualIntValue : '' }}"
+                                           class="{{ inputClass }}" min="0">
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <div class="text-center">
+                    <button type="submit" class="rounded-lg bg-blue-600 px-8 py-2.5 font-semibold text-white hover:bg-blue-700">
+                        Uložit a přepočítat speciální tipy
+                    </button>
+                </div>
+            </form>
+        {% endif %}
+    </div>
+{% endblock %}

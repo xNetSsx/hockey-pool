@@ -1,0 +1,119 @@
+{% extends 'admin/layout.html.twig' %}
+
+{% block title %}Hromadné přidání zápasů — Admin{% endblock %}
+
+{% set inputClass = 'w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20' %}
+
+{% block admin_body %}
+    <div class="mx-auto max-w-4xl">
+        <div class="mb-4">
+            <a href="{{ path('admin_matches') }}" class="text-sm text-gray-500 hover:text-gray-700">← Zpět na zápasy</a>
+        </div>
+
+        <div class="overflow-hidden rounded-xl bg-white shadow">
+            <div class="border-b bg-[#0f172a] px-6 py-4">
+                <h1 class="text-lg font-semibold text-white">Hromadné přidání zápasů</h1>
+                <p class="mt-0.5 text-xs text-gray-400">Vyber turnaj a fázi, pak přidej zápasy</p>
+            </div>
+
+            <div class="p-6">
+                {{ form_start(form, {attr: {class: 'space-y-6', novalidate: 'novalidate', id: 'bulk-form'}}) }}
+
+                    {# Tournament + Phase #}
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            {{ form_label(form.tournament, null, {label_attr: {class: 'block text-sm font-medium text-gray-700 mb-1'}}) }}
+                            {{ form_widget(form.tournament, {attr: {class: inputClass}}) }}
+                        </div>
+                        <div>
+                            {{ form_label(form.phase, null, {label_attr: {class: 'block text-sm font-medium text-gray-700 mb-1'}}) }}
+                            {{ form_widget(form.phase, {attr: {class: inputClass}}) }}
+                        </div>
+                    </div>
+
+                    {# Games rows #}
+                    <div>
+                        <div class="mb-2 flex items-center justify-between">
+                            <label class="text-sm font-medium text-gray-700">Zápasy</label>
+                            <button type="button" id="add-row"
+                                    class="rounded bg-green-600 px-3 py-1 text-xs font-medium text-white hover:bg-green-700">
+                                + Přidat řádek
+                            </button>
+                        </div>
+
+                        <div id="games-container" class="space-y-3"
+                             data-prototype="{{ form_widget(form.games.vars.prototype)|e('html_attr') }}"
+                             data-index="{{ form.games|length }}">
+                            {% for row in form.games %}
+                                <div class="game-row flex items-end gap-3 rounded-lg border border-gray-200 bg-gray-50 p-3">
+                                    <div class="flex-1">
+                                        {{ form_label(row.homeTeam, null, {label_attr: {class: 'block text-xs font-medium text-gray-500 mb-1'}}) }}
+                                        {{ form_widget(row.homeTeam, {attr: {class: inputClass}}) }}
+                                    </div>
+                                    <span class="pb-2 text-sm font-bold text-gray-400">vs</span>
+                                    <div class="flex-1">
+                                        {{ form_label(row.awayTeam, null, {label_attr: {class: 'block text-xs font-medium text-gray-500 mb-1'}}) }}
+                                        {{ form_widget(row.awayTeam, {attr: {class: inputClass}}) }}
+                                    </div>
+                                    <div class="w-48">
+                                        {{ form_label(row.playedAt, null, {label_attr: {class: 'block text-xs font-medium text-gray-500 mb-1'}}) }}
+                                        {{ form_widget(row.playedAt, {attr: {class: inputClass}}) }}
+                                    </div>
+                                    <button type="button" class="remove-row pb-2 text-red-400 hover:text-red-600" title="Odebrat">✕</button>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <div class="text-center">
+                        <button type="submit" class="rounded-lg bg-blue-600 px-8 py-2.5 font-semibold text-white hover:bg-blue-700">
+                            Vytvořit zápasy
+                        </button>
+                    </div>
+
+                {{ form_end(form) }}
+            </div>
+        </div>
+    </div>
+
+    <script>
+        (function () {
+            const container = document.getElementById('games-container');
+            const addBtn = document.getElementById('add-row');
+            let index = parseInt(container.dataset.index);
+
+            addBtn.addEventListener('click', function () {
+                const prototype = container.dataset.prototype;
+                const html = prototype.replace(/__name__/g, index);
+                index++;
+                container.dataset.index = index;
+
+                const wrapper = document.createElement('div');
+                wrapper.className = 'game-row flex items-end gap-3 rounded-lg border border-gray-200 bg-gray-50 p-3';
+                wrapper.innerHTML = html + '<button type="button" class="remove-row pb-2 text-red-400 hover:text-red-600" title="Odebrat">✕</button>';
+
+                // Style the generated inputs
+                wrapper.querySelectorAll('select, input').forEach(function (el) {
+                    el.className = '{{ inputClass }}';
+                });
+                wrapper.querySelectorAll('label').forEach(function (el) {
+                    el.className = 'block text-xs font-medium text-gray-500 mb-1';
+                });
+
+                // Wrap fields in flex-1 divs
+                const fields = wrapper.querySelectorAll('div');
+                fields.forEach(function (field) {
+                    field.className = 'flex-1';
+                });
+
+                container.appendChild(wrapper);
+            });
+
+            container.addEventListener('click', function (e) {
+                if (e.target.classList.contains('remove-row')) {
+                    e.target.closest('.game-row').remove();
+                }
+            });
+        })();
+    </script>
+{% endblock %}
