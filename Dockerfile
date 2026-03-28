@@ -42,9 +42,6 @@ RUN composer install --no-dev --optimize-autoloader --no-scripts --no-interactio
 # Copy app source
 COPY . .
 
-# Override .env defaults — ensures Symfony sees APP_ENV=prod even if .env says dev
-RUN echo 'APP_ENV=prod' > .env.local
-
 # Create var/ (excluded by .dockerignore) and set permissions for cache writes
 RUN mkdir -p var && chown -R www-data:www-data var/
 
