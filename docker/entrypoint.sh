@@ -7,11 +7,7 @@ PORT="${PORT:-8080}"
 sed -i "s/Listen 80$/Listen ${PORT}/" /etc/apache2/ports.conf
 sed -i "s/:80>/:${PORT}>/" /etc/apache2/sites-available/*.conf
 
-# Debug: verify only one MPM is loaded
-echo "==> MPM modules enabled:"
-ls /etc/apache2/mods-enabled/mpm_* 2>/dev/null || echo "none"
-echo "==> Apache config test:"
-apache2ctl configtest 2>&1 || true
-echo "==> Starting Apache on port ${PORT}"
+# Fix MPM conflict — remove event, keep only prefork (required for mod_php)
+rm -f /etc/apache2/mods-enabled/mpm_event.* /etc/apache2/mods-enabled/mpm_worker.*
 
 exec apache2-foreground
