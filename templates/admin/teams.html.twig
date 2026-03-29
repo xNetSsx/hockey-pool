@@ -23,7 +23,7 @@
                     <tr class="border-b border-gray-100 last:border-0 dark:border-gray-700 dark:hover:bg-white/5">
                         <td class="px-6 py-3 font-mono font-medium dark:text-white">{{ team.code }}</td>
                         <td class="px-6 py-3 dark:text-gray-100">{{ team.name }}</td>
-                        <td class="px-6 py-3 text-xl">{{ team.flagEmoji ?? '—' }}</td>
+                        <td class="px-6 py-3">{{ team_flag(team.code) ?: '—' }}</td>
                         <td class="px-6 py-3 text-right">
                             <a href="{{ path('admin_team_edit', {id: team.id}) }}" class="text-blue-600 hover:underline dark:text-[#38bdf8]">Upravit</a>
                         </td>

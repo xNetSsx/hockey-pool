@@ -19,12 +19,12 @@
             <div class="p-6">
                 <div class="mb-6 flex items-center justify-center gap-6 text-center">
                     <div>
-                        <div class="text-3xl">{{ game.homeTeam.flagEmoji }}</div>
+                        <div>{{ team_flag(game.homeTeam.code, 'inline-block h-8 w-12 rounded-sm') }}</div>
                         <div class="mt-1 text-sm font-bold">{{ game.homeTeam.code }}</div>
                     </div>
                     <div class="text-xl font-bold text-gray-300">vs</div>
                     <div>
-                        <div class="text-3xl">{{ game.awayTeam.flagEmoji }}</div>
+                        <div>{{ team_flag(game.awayTeam.code, 'inline-block h-8 w-12 rounded-sm') }}</div>
                         <div class="mt-1 text-sm font-bold">{{ game.awayTeam.code }}</div>
                     </div>
                 </div>

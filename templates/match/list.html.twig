@@ -44,7 +44,7 @@
                             {# Home team #}
                             <div class="flex w-24 items-center justify-end gap-1.5 text-sm sm:w-32">
                                 <span class="truncate font-medium">{{ game.homeTeam.code }}</span>
-                                <span>{{ game.homeTeam.flagEmoji }}</span>
+                                <span>{{ team_flag(game.homeTeam.code) }}</span>
                             </div>
 
                             {# Score #}
@@ -62,7 +62,7 @@
 
                             {# Away team #}
                             <div class="flex w-24 items-center gap-1.5 text-sm sm:w-32">
-                                <span>{{ game.awayTeam.flagEmoji }}</span>
+                                <span>{{ team_flag(game.awayTeam.code) }}</span>
                                 <span class="truncate font-medium">{{ game.awayTeam.code }}</span>
                             </div>
                         </div>

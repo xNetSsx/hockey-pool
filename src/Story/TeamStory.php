@@ -24,6 +24,14 @@ final class TeamStory extends Story
         'USA' => ['name' => 'USA', 'flag' => '🇺🇸'],
         'GER' => ['name' => 'Německo', 'flag' => '🇩🇪'],
         'DEN' => ['name' => 'Dánsko', 'flag' => '🇩🇰'],
+        'ROC' => ['name' => 'Ruský olympijský výbor', 'flag' => null],
+        'GBR' => ['name' => 'Velká Británie', 'flag' => '🇬🇧'],
+        'NOR' => ['name' => 'Norsko', 'flag' => '🇳🇴'],
+        'AUS' => ['name' => 'Rakousko', 'flag' => '🇦🇹'],
+        'KAZ' => ['name' => 'Kazachstán', 'flag' => '🇰🇿'],
+        'POL' => ['name' => 'Polsko', 'flag' => '🇵🇱'],
+        'SLO' => ['name' => 'Slovinsko', 'flag' => '🇸🇮'],
+        'HUN' => ['name' => 'Maďarsko', 'flag' => '🇭🇺'],
     ];
 
     public function build(): void

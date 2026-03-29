@@ -84,7 +84,7 @@
                                 <span class="text-sm text-gray-500 dark:text-gray-400">{{ bet.rule.name }}</span>
                                 <span class="text-sm font-medium dark:text-gray-100">
                                     {% if bet.teamValue %}
-                                        {{ bet.teamValue.flagEmoji }} {{ bet.teamValue.code }}
+                                        {{ team_flag(bet.teamValue.code) }} {{ bet.teamValue.code }}
                                     {% elseif bet.stringValue %}
                                         {{ bet.stringValue }}
                                     {% elseif bet.intValue is not null %}
@@ -113,13 +113,13 @@
                             <a href="{{ path('match_detail', {id: game.id}) }}" class="flex items-center gap-3 px-4 py-2.5 text-sm transition hover:bg-gray-50 dark:hover:bg-white/5 dark:text-gray-100 sm:px-6">
                                 <span class="w-10 shrink-0 text-xs text-gray-400 dark:text-gray-500">{{ game.playedAt|date('d.m.') }}</span>
                                 <div class="flex min-w-0 flex-1 items-center gap-2">
-                                    <span class="w-16 text-right text-xs sm:w-20">{{ game.homeTeam.flagEmoji }} {{ game.homeTeam.code }}</span>
+                                    <span class="w-16 text-right text-xs sm:w-20">{{ team_flag(game.homeTeam.code) }} {{ game.homeTeam.code }}</span>
                                     {% if game.isFinished %}
                                         <span class="w-10 text-center text-xs font-bold tabular-nums">{{ game.homeScore }}:{{ game.awayScore }}</span>
                                     {% else %}
                                         <span class="w-10 text-center text-xs text-gray-400 dark:text-gray-500">vs</span>
                                     {% endif %}
-                                    <span class="w-16 text-xs sm:w-20">{{ game.awayTeam.flagEmoji }} {{ game.awayTeam.code }}</span>
+                                    <span class="w-16 text-xs sm:w-20">{{ team_flag(game.awayTeam.code) }} {{ game.awayTeam.code }}</span>
                                 </div>
                                 <div class="w-24 shrink-0 text-right">
                                     {% if prediction %}

@@ -82,9 +82,9 @@
                             <tr class="border-b border-gray-100 last:border-0 dark:border-gray-700 dark:text-gray-100">
                                 <td class="whitespace-nowrap px-4 py-2.5">
                                     <span class="text-xs">
-                                        {{ game.homeTeam.flagEmoji }} {{ game.homeTeam.code }}
+                                        {{ team_flag(game.homeTeam.code) }} {{ game.homeTeam.code }}
                                         <span class="text-gray-400 dark:text-gray-500">vs</span>
-                                        {{ game.awayTeam.flagEmoji }} {{ game.awayTeam.code }}
+                                        {{ team_flag(game.awayTeam.code) }} {{ game.awayTeam.code }}
                                     </span>
                                 </td>
                                 <td class="px-3 py-2.5 text-center">

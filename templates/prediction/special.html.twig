@@ -42,7 +42,7 @@
                                     <option value="">— Vyber tým —</option>
                                     {% for team in teams %}
                                         <option value="{{ team.id }}" {{ bet and bet.teamValue and bet.teamValue.id == team.id ? 'selected' : '' }}>
-                                            {{ team.flagEmoji }} {{ team.name }}
+                                            {{ team.name }} ({{ team.code }})
                                         </option>
                                     {% endfor %}
                                 </select>

@@ -38,7 +38,7 @@ final class SpecialBetStory extends Story
             foreach ($picks as $ruleName => $teamCode) {
                 SpecialBetFactory::createOne([
                     'user' => $user,
-                    'rule' => SpecialBetRuleStory::get($ruleName),
+                    'rule' => SpecialBetRuleStory::get('oh2026:' . $ruleName),
                     'teamValue' => TeamStory::get($teamCode),
                 ]);
             }
@@ -68,7 +68,7 @@ final class SpecialBetStory extends Story
             foreach ($ruleNames as $i => $ruleName) {
                 SpecialBetFactory::createOne([
                     'user' => $user,
-                    'rule' => SpecialBetRuleStory::get($ruleName),
+                    'rule' => SpecialBetRuleStory::get('oh2026:' . $ruleName),
                     'stringValue' => $players[$i],
                 ]);
             }
@@ -93,7 +93,7 @@ final class SpecialBetStory extends Story
         ];
 
         foreach ($numericData as $ruleName => $userValues) {
-            $rule = SpecialBetRuleStory::get($ruleName);
+            $rule = SpecialBetRuleStory::get('oh2026:' . $ruleName);
 
             foreach ($userValues as $username => $value) {
                 SpecialBetFactory::createOne([

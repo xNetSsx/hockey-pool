@@ -19,7 +19,7 @@
             {% if isFinished and medalRules|length > 0 %}
                 <div class="flex items-center gap-3 rounded-xl bg-white/10 px-4 py-2 text-sm">
                     {% for rule in medalRules %}
-                        <span>{{ rule.actualTeamValue.flagEmoji }} {{ rule.actualTeamValue.code }}</span>
+                        <span>{{ team_flag(rule.actualTeamValue.code) }} {{ rule.actualTeamValue.code }}</span>
                     {% endfor %}
                 </div>
             {% endif %}
@@ -37,8 +37,8 @@
                     </p>
                     {% if prediction_status.nextMatch %}
                         <p class="mt-0.5 text-xs text-amber-700 dark:text-amber-300">
-                            Další zápas: {{ prediction_status.nextMatch.homeTeam.flagEmoji }} {{ prediction_status.nextMatch.homeTeam.code }}
-                            vs {{ prediction_status.nextMatch.awayTeam.flagEmoji }} {{ prediction_status.nextMatch.awayTeam.code }}
+                            Další zápas: {{ team_flag(prediction_status.nextMatch.homeTeam.code) }} {{ prediction_status.nextMatch.homeTeam.code }}
+                            vs {{ team_flag(prediction_status.nextMatch.awayTeam.code) }} {{ prediction_status.nextMatch.awayTeam.code }}
                             — {{ prediction_status.nextMatch.playedAt|date('d.m. H:i') }}
                         </p>
                     {% endif %}
@@ -157,9 +157,9 @@
                             <div class="px-6 py-3">
                                 <div class="flex items-center justify-between">
                                     <div class="flex items-center gap-2 text-sm dark:text-gray-100">
-                                        <span>{{ game.homeTeam.flagEmoji }} {{ game.homeTeam.code }}</span>
+                                        <span>{{ team_flag(game.homeTeam.code) }} {{ game.homeTeam.code }}</span>
                                         <span class="text-gray-400 dark:text-gray-500">vs</span>
-                                        <span class="dark:text-gray-100">{{ game.awayTeam.flagEmoji }} {{ game.awayTeam.code }}</span>
+                                        <span class="dark:text-gray-100">{{ team_flag(game.awayTeam.code) }} {{ game.awayTeam.code }}</span>
                                     </div>
                                     <span class="text-xs text-gray-400 dark:text-gray-500">
                                         {{ game.playedAt|date('d.m. H:i') }}

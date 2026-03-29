@@ -73,19 +73,13 @@ class Team
         return $this;
     }
 
-    /**
-     * Short label: "🇨🇿 CZE".
-     */
     public function getLabel(): string
     {
-        return trim(($this->flagEmoji ?? '') . ' ' . $this->code);
+        return $this->code;
     }
 
-    /**
-     * Full label for dropdowns: "🇨🇿 Česká republika (CZE)".
-     */
     public function getFullLabel(): string
     {
-        return trim(($this->flagEmoji ?? '') . ' ' . $this->name . ' (' . $this->code . ')');
+        return $this->name . ' (' . $this->code . ')';
     }
 }
