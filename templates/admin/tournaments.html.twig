@@ -61,6 +61,8 @@
                                         Kopírovat z posledního
                                     </a>
                                 {% endif %}
+                                <a href="{{ path('admin_tournament_content', {id: t.id, field: 'rules'}) }}" class="text-xs text-gray-500 hover:underline dark:text-gray-400 dark:hover:text-white">Pravidla</a>
+                                <a href="{{ path('admin_tournament_content', {id: t.id, field: 'manual'}) }}" class="text-xs text-gray-500 hover:underline dark:text-gray-400 dark:hover:text-white">Manuál</a>
                                 <a href="{{ path('admin_tournament_ruleset', {id: t.id}) }}" class="text-xs text-gray-500 hover:underline dark:text-gray-400 dark:hover:text-white">Bodování</a>
                                 <a href="{{ path('admin_tournament_edit', {id: t.id}) }}" class="text-xs text-blue-600 hover:underline dark:text-[#38bdf8]">Upravit</a>
                             </div>

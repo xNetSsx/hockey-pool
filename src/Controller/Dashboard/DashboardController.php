@@ -67,6 +67,7 @@ class DashboardController extends AbstractController
             'highestMatchScore' => $pointEntryRepository->findHighestMatchScore($tournament),
             'mostExactPredictions' => $pointEntryRepository->findMostExactPredictions($tournament),
             'timeline' => $timelineBuilder->build($tournament),
+            'todayPoints' => $isFinished ? [] : $pointEntryRepository->getTodayPointsByUser($tournament),
         ]);
     }
 }

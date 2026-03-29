@@ -1,0 +1,38 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ title }} — {{ tournament ? tournament.name : 'Hockey Pool' }}{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/trix@2/dist/trix.min.css">
+{% endblock %}
+
+{% block body %}
+    <div class="mx-auto max-w-3xl">
+        <div class="mb-6">
+            <h1 class="text-2xl font-bold text-gray-900 dark:text-white">{{ title }}</h1>
+            {% if tournament %}
+                <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">{{ tournament.name }}</p>
+            {% endif %}
+        </div>
+
+        <div class="overflow-hidden rounded-xl bg-white p-6 shadow dark:bg-[#1e293b] dark:shadow-gray-900/30 sm:p-8">
+            {% if content %}
+                <div class="trix-content prose max-w-none dark:prose-invert">
+                    {{ content|raw }}
+                </div>
+            {% else %}
+                <p class="text-center text-gray-500 dark:text-gray-400">{{ emptyMessage }}</p>
+            {% endif %}
+        </div>
+
+        {% if is_granted('ROLE_ADMIN') and tournament %}
+            <div class="mt-4 text-center">
+                <a href="{{ path('admin_tournament_content', {id: tournament.id, field: title == 'Pravidla' ? 'rules' : 'manual'}) }}"
+                   class="text-sm text-blue-600 hover:underline dark:text-[#38bdf8]">
+                    Upravit obsah
+                </a>
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}

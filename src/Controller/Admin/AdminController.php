@@ -36,6 +36,8 @@ use App\Service\Manager\TournamentManager;
 use App\Service\Manager\UserManager;
 use App\Service\Provider\ActiveTournamentProvider;
 use App\Service\Resolver\TournamentResolver;
+use DateTime;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -386,7 +388,7 @@ class AdminController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            /** @var array{tournament: Tournament, phase: TournamentPhase, games: list<array{homeTeam: Team|null, awayTeam: Team|null, playedAt: \DateTime|null}>} $data */
+            /** @var array{tournament: Tournament, phase: TournamentPhase, games: list<array{homeTeam: Team|null, awayTeam: Team|null, playedAt: DateTime|null}>} $data */
             $data = $form->getData();
             $games = [];
 
@@ -504,44 +506,43 @@ class AdminController extends AbstractController
         ]);
     }
 
-    #[Route('/special-results', name: 'admin_special_results', methods: ['GET'])]
+    #[Route('/special-results/{id?}', name: 'admin_special_results', requirements: ['id' => '\d+'], methods: ['GET'])]
     public function specialResults(
         ActiveTournamentProvider $activeTournamentProvider,
+        TournamentRepository $tournamentRepo,
         SpecialBetRuleRepository $ruleRepo,
         TeamRepository $teamRepository,
+        ?int $id = null,
     ): Response {
-        $tournament = $activeTournamentProvider->getActiveTournament();
+        if (null !== $id) {
+            $tournament = $tournamentRepo->find($id);
+        } else {
+            $tournament = $activeTournamentProvider->getActiveTournament();
+        }
 
         if (null === $tournament) {
-            $this->addFlash('error', 'Žádný aktivní turnaj.');
+            $this->addFlash('error', 'Žádný turnaj.');
 
             return $this->redirectToRoute('admin_dashboard');
         }
 
         return $this->render('admin/special_results.html.twig', [
             'tournament' => $tournament,
+            'tournaments' => $tournamentRepo->findBy([], ['year' => 'DESC']),
             'rules' => $ruleRepo->findByTournament($tournament),
-            'teams' => $teamRepository->findBy([], ['name' => 'ASC']),
+            'teams' => $teamRepository->findByTournament($tournament),
         ]);
     }
 
-    #[Route('/special-results', name: 'admin_special_results_save', methods: ['POST'])]
+    #[Route('/special-results/{id}', name: 'admin_special_results_save', requirements: ['id' => '\d+'], methods: ['POST'])]
     #[IsCsrfTokenValid('special_results')]
     public function specialResultsSave(
+        Tournament $tournament,
         Request $request,
-        ActiveTournamentProvider $activeTournamentProvider,
         SpecialBetRuleRepository $ruleRepo,
         SpecialBetRuleManager $ruleManager,
         TournamentResolver $tournamentResolver,
     ): Response {
-        $tournament = $activeTournamentProvider->getActiveTournament();
-
-        if (null === $tournament) {
-            $this->addFlash('error', 'Žádný aktivní turnaj.');
-
-            return $this->redirectToRoute('admin_dashboard');
-        }
-
         $rules = $ruleRepo->findByTournament($tournament);
         $rawValues = [];
         foreach ($rules as $rule) {
@@ -552,9 +553,9 @@ class AdminController extends AbstractController
         $ruleManager->updateActualValues($rules, $rawValues);
         $tournamentResolver->resolveSpecialBets($tournament);
 
-        $this->addFlash('success', 'Výsledky uloženy a speciální tipy přepočteny.');
+        $this->addFlash('success', sprintf('Výsledky uloženy a speciální tipy přepočteny pro "%s".', $tournament->getName()));
 
-        return $this->redirectToRoute('admin_special_results');
+        return $this->redirectToRoute('admin_special_results', ['id' => $tournament->getId()]);
     }
 
     #[Route('/recalculate', name: 'admin_recalculate', methods: ['POST'])]
@@ -610,7 +611,7 @@ class AdminController extends AbstractController
         ActiveTournamentProvider $activeTournamentProvider,
         UserRepository $userRepo,
         TournamentParticipantRepository $participantRepo,
-        \Doctrine\ORM\EntityManagerInterface $em,
+        EntityManagerInterface $em,
     ): Response {
         $tournament = $activeTournamentProvider->getActiveTournament();
 
@@ -635,11 +636,11 @@ class AdminController extends AbstractController
         return $this->redirectToRoute('admin_participants');
     }
 
-    #[Route('/participants/{id}/remove', name: 'admin_participant_remove', methods: ['POST'], requirements: ['id' => '\d+'])]
+    #[Route('/participants/{id}/remove', name: 'admin_participant_remove', requirements: ['id' => '\d+'], methods: ['POST'])]
     #[IsCsrfTokenValid('participant_remove')]
     public function participantRemove(
         TournamentParticipant $participant,
-        \Doctrine\ORM\EntityManagerInterface $em,
+        EntityManagerInterface $em,
     ): Response {
         $username = $participant->getUser()->getUsername();
         $em->remove($participant);
@@ -650,15 +651,55 @@ class AdminController extends AbstractController
         return $this->redirectToRoute('admin_participants');
     }
 
-    #[Route('/participants/{id}/toggle-paid', name: 'admin_participant_toggle_paid', methods: ['POST'], requirements: ['id' => '\d+'])]
+    #[Route('/participants/{id}/toggle-paid', name: 'admin_participant_toggle_paid', requirements: ['id' => '\d+'], methods: ['POST'])]
     #[IsCsrfTokenValid('participant_paid')]
     public function participantTogglePaid(
         TournamentParticipant $participant,
-        \Doctrine\ORM\EntityManagerInterface $em,
+        EntityManagerInterface $em,
     ): Response {
         $participant->setPaid(!$participant->isPaid());
         $em->flush();
 
         return $this->redirectToRoute('admin_participants');
+    }
+
+    #[Route('/tournaments/{id}/content/{field}', name: 'admin_tournament_content', requirements: ['id' => '\d+', 'field' => 'rules|manual'], methods: ['GET'])]
+    public function tournamentContent(Tournament $tournament, string $field): Response
+    {
+        $content = $field === 'rules' ? $tournament->getRulesContent() : $tournament->getManualContent();
+
+        return $this->render('admin/tournament_content_edit.html.twig', [
+            'tournament' => $tournament,
+            'field' => $field,
+            'title' => $field === 'rules' ? 'Pravidla' : 'Manuál',
+            'content' => $content ?? '',
+        ]);
+    }
+
+    #[Route('/tournaments/{id}/content/{field}', name: 'admin_tournament_content_save', requirements: ['id' => '\d+', 'field' => 'rules|manual'], methods: ['POST'])]
+    #[IsCsrfTokenValid('tournament_content')]
+    public function tournamentContentSave(
+        Tournament $tournament,
+        string $field,
+        Request $request,
+        EntityManagerInterface $em,
+    ): Response {
+        $content = $request->getPayload()->getString('content');
+
+        if ($field === 'rules') {
+            $tournament->setRulesContent($content ?: null);
+        } else {
+            $tournament->setManualContent($content ?: null);
+        }
+
+        $em->flush();
+
+        $label = $field === 'rules' ? 'Pravidla' : 'Manuál';
+        $this->addFlash('success', sprintf('%s pro "%s" uložena.', $label, $tournament->getName()));
+
+        return $this->redirectToRoute('admin_tournament_content', [
+            'id' => $tournament->getId(),
+            'field' => $field,
+        ]);
     }
 }

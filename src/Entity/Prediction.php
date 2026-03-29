@@ -37,6 +37,7 @@ class Prediction
     #[ORM\Column]
     #[Assert\NotNull]
     #[Assert\PositiveOrZero]
+    #[Assert\NotEqualTo(propertyPath: 'awayScore', message: 'Remíza není povolena — vždy musí být vítěz.')]
     private int $homeScore;
 
     #[ORM\Column]

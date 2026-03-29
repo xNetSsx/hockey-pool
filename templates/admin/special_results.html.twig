@@ -8,12 +8,24 @@
     <div class="mx-auto max-w-2xl">
         <h1 class="mb-4 text-xl font-bold dark:text-white">Zadat výsledky — {{ tournament.name }}</h1>
 
+        {% if tournaments|length > 1 %}
+            <div class="mb-6 flex flex-wrap items-center gap-2">
+                <span class="text-sm text-gray-500 dark:text-gray-400">Turnaj:</span>
+                {% for t in tournaments %}
+                    <a href="{{ path('admin_special_results', {id: t.id}) }}"
+                       class="rounded-full px-3 py-1 text-sm {{ tournament.id == t.id ? 'bg-[#0f172a] text-white' : 'bg-gray-200 text-gray-600 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600' }}">
+                        {{ t.name }}
+                    </a>
+                {% endfor %}
+            </div>
+        {% endif %}
+
         {% if rules|length == 0 %}
             <div class="rounded-xl bg-white p-8 text-center shadow dark:bg-[#1e293b] dark:shadow-gray-900/30">
                 <p class="text-gray-500 dark:text-gray-400">Žádná pravidla. Nejprve <a href="{{ path('admin_rules') }}" class="text-blue-600 hover:underline dark:text-[#38bdf8]">vytvoř pravidla</a>.</p>
             </div>
         {% else %}
-            <form method="post" class="space-y-6">
+            <form method="post" action="{{ path('admin_special_results_save', {id: tournament.id}) }}" class="space-y-6">
                 <input type="hidden" name="_token" value="{{ csrf_token('special_results') }}">
 
                 <div class="overflow-hidden rounded-xl bg-white shadow dark:bg-[#1e293b] dark:shadow-gray-900/30">

@@ -18,18 +18,21 @@
             </div>
             {% if isFinished and medalRules|length >= 3 %}
                 <div class="flex items-end gap-1 text-center text-xs">
-                    <div class="flex flex-col items-center rounded-lg bg-white/10 px-3 pb-2 pt-6">
-                        <span class="text-gray-400">2.</span>
+                    {# Silver - medium height #}
+                    <div class="flex w-14 flex-col items-center rounded-lg bg-white/10 px-2 pb-2 pt-3">
+                        <span class="text-gray-300">🥈</span>
                         <div class="my-1">{{ team_flag(medalRules[1].actualTeamValue.code, 'inline-block h-5 w-7 rounded-sm') }}</div>
                         <span class="font-medium">{{ medalRules[1].actualTeamValue.code }}</span>
                     </div>
-                    <div class="flex flex-col items-center rounded-lg bg-white/10 px-3 pb-2 pt-3">
+                    {# Gold - tallest #}
+                    <div class="flex w-16 flex-col items-center rounded-lg bg-white/10 px-2 pb-2 pt-1">
                         <span class="text-yellow-400">🥇</span>
                         <div class="my-1">{{ team_flag(medalRules[0].actualTeamValue.code, 'inline-block h-6 w-9 rounded-sm') }}</div>
                         <span class="font-bold">{{ medalRules[0].actualTeamValue.code }}</span>
                     </div>
-                    <div class="flex flex-col items-center rounded-lg bg-white/10 px-3 pb-2 pt-8">
-                        <span class="text-amber-600">3.</span>
+                    {# Bronze - shortest #}
+                    <div class="flex w-14 flex-col items-center rounded-lg bg-white/10 px-2 pb-2 pt-5">
+                        <span class="text-amber-600">🥉</span>
                         <div class="my-1">{{ team_flag(medalRules[2].actualTeamValue.code, 'inline-block h-5 w-7 rounded-sm') }}</div>
                         <span class="font-medium">{{ medalRules[2].actualTeamValue.code }}</span>
                     </div>
@@ -73,26 +76,33 @@
                     <table class="w-full text-sm">
                         <thead>
                             <tr class="border-b border-gray-100 bg-gray-50 text-left text-xs uppercase tracking-wider text-gray-500 dark:border-gray-700 dark:bg-[#0f172a] dark:text-gray-400">
-                                <th class="px-6 py-3 w-12">#</th>
-                                <th class="px-6 py-3">Hráč</th>
-                                <th class="px-6 py-3 text-right">Body</th>
-                                <th class="px-6 py-3 text-right w-20">Rozdíl</th>
+                                <th class="px-4 py-3 w-10">#</th>
+                                <th class="px-4 py-3">Hráč</th>
+                                <th class="px-4 py-3 text-right">Body</th>
+                                <th class="hidden px-4 py-3 text-right sm:table-cell" title="Rozdíl od předchozího">+/-</th>
+                                <th class="hidden px-4 py-3 text-right sm:table-cell" title="Ztráta na 1. místo">Od 1.</th>
+                                {% if todayPoints|length > 0 %}
+                                    <th class="px-4 py-3 text-right" title="Body dnes">Dnes</th>
+                                {% endif %}
                             </tr>
                         </thead>
                         <tbody>
                             {% set previousPoints = null %}
+                            {% set leaderPoints = leaderboard|length > 0 ? leaderboard[0].totalPoints : 0 %}
                             {% for row in leaderboard %}
                                 {% set isCurrentUser = currentUser and currentUser.id == row.user.id %}
                                 {% set diff = previousPoints is not null ? previousPoints - row.totalPoints : 0 %}
+                                {% set diffFromFirst = leaderPoints - row.totalPoints %}
+                                {% set today = todayPoints[row.user.id] ?? 0 %}
                                 <tr class="{{ isCurrentUser ? 'bg-[#38bdf8]/10 font-semibold' : '' }} {{ loop.index is odd and not isCurrentUser ? 'bg-white dark:bg-[#1e293b]' : (not isCurrentUser ? 'bg-gray-50 dark:bg-[#0f172a]/50' : '') }} border-b border-gray-100 last:border-0 dark:border-gray-700 dark:text-gray-100">
-                                    <td class="px-6 py-3">
+                                    <td class="px-4 py-3">
                                         {% if row.rank <= 3 %}
                                             <span class="text-base">{{ row.rank == 1 ? '🥇' : (row.rank == 2 ? '🥈' : '🥉') }}</span>
                                         {% else %}
                                             <span class="text-gray-400">{{ row.rank }}.</span>
                                         {% endif %}
                                     </td>
-                                    <td class="px-6 py-3">
+                                    <td class="px-4 py-3">
                                         <a href="{{ path('player_profile', {username: row.user.username}) }}" class="hover:text-[#38bdf8] dark:text-gray-100">
                                             {{ row.user.username }}
                                         </a>
@@ -100,14 +110,30 @@
                                             <span class="ml-1 text-xs text-[#38bdf8]">← ty</span>
                                         {% endif %}
                                     </td>
-                                    <td class="px-6 py-3 text-right tabular-nums">
+                                    <td class="px-4 py-3 text-right tabular-nums">
                                         {{ row.totalPoints|number_format(2) }}
                                     </td>
-                                    <td class="px-6 py-3 text-right tabular-nums text-gray-400">
+                                    <td class="hidden px-4 py-3 text-right tabular-nums text-gray-400 sm:table-cell">
                                         {% if diff > 0 %}
                                             -{{ diff|number_format(2) }}
                                         {% endif %}
                                     </td>
+                                    <td class="hidden px-4 py-3 text-right tabular-nums sm:table-cell {{ diffFromFirst > 0 ? 'text-red-400 dark:text-red-500' : 'text-green-600 dark:text-green-400' }}">
+                                        {% if diffFromFirst > 0 %}
+                                            -{{ diffFromFirst|number_format(2) }}
+                                        {% elseif loop.first %}
+                                            —
+                                        {% endif %}
+                                    </td>
+                                    {% if todayPoints|length > 0 %}
+                                        <td class="px-4 py-3 text-right tabular-nums {{ today > 0 ? 'text-green-600 dark:text-green-400' : 'text-gray-300 dark:text-gray-600' }}">
+                                            {% if today > 0 %}
+                                                +{{ today|number_format(2) }}
+                                            {% else %}
+                                                —
+                                            {% endif %}
+                                        </td>
+                                    {% endif %}
                                 </tr>
                                 {% set previousPoints = row.totalPoints %}
                             {% endfor %}

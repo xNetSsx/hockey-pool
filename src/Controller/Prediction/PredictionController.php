@@ -139,7 +139,7 @@ class PredictionController extends AbstractController
             'rules' => $ruleRepository->findByTournament($tournament),
             'existingBets' => $specialBetRepository->findByUserIndexedByRule($user, $tournament),
             'isLocked' => $isLocked,
-            'teams' => $teamRepository->findBy([], ['name' => 'ASC']),
+            'teams' => $teamRepository->findByTournament($tournament),
         ]);
     }
 

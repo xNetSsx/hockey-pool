@@ -43,6 +43,12 @@ class Tournament
     #[ORM\Column]
     private DateTimeImmutable $createdAt;
 
+    #[ORM\Column(type: 'text', nullable: true)]
+    private ?string $rulesContent = null;
+
+    #[ORM\Column(type: 'text', nullable: true)]
+    private ?string $manualContent = null;
+
     /**
      * @var Collection<int, Game>
      */
@@ -111,6 +117,30 @@ class Tournament
     public function getCreatedAt(): DateTimeImmutable
     {
         return $this->createdAt;
+    }
+
+    public function getRulesContent(): ?string
+    {
+        return $this->rulesContent;
+    }
+
+    public function setRulesContent(?string $rulesContent): self
+    {
+        $this->rulesContent = $rulesContent;
+
+        return $this;
+    }
+
+    public function getManualContent(): ?string
+    {
+        return $this->manualContent;
+    }
+
+    public function setManualContent(?string $manualContent): self
+    {
+        $this->manualContent = $manualContent;
+
+        return $this;
     }
 
     /** @return Collection<int, Game> */

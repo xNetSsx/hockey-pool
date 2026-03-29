@@ -130,6 +130,91 @@ class PointEntryRepository extends ServiceEntityRepository
     }
 
     /**
+     * Count of 'Exact score bonus' entries per user for tiebreaking.
+     *
+     * @return array<int, int> userId => count
+     */
+    public function countExactScoresByUser(Tournament $tournament): array
+    {
+        /** @var list<array{userId: int|string, cnt: int|string}> $rows */
+        $rows = $this->createQueryBuilder('pe')
+            ->select('IDENTITY(pe.user) as userId, COUNT(pe.id) as cnt')
+            ->where('pe.tournament = :tournament')
+            ->andWhere('pe.reason = :reason')
+            ->setParameter('tournament', $tournament)
+            ->setParameter('reason', 'Exact score bonus')
+            ->groupBy('pe.user')
+            ->getQuery()
+            ->getResult();
+
+        $result = [];
+        foreach ($rows as $row) {
+            $result[(int) $row['userId']] = (int) $row['cnt'];
+        }
+
+        return $result;
+    }
+
+    /**
+     * Count of 'Correct winner' entries per user for tiebreaking.
+     *
+     * @return array<int, int> userId => count
+     */
+    public function countCorrectWinnersByUser(Tournament $tournament): array
+    {
+        /** @var list<array{userId: int|string, cnt: int|string}> $rows */
+        $rows = $this->createQueryBuilder('pe')
+            ->select('IDENTITY(pe.user) as userId, COUNT(pe.id) as cnt')
+            ->where('pe.tournament = :tournament')
+            ->andWhere('pe.reason = :reason')
+            ->setParameter('tournament', $tournament)
+            ->setParameter('reason', 'Correct winner')
+            ->groupBy('pe.user')
+            ->getQuery()
+            ->getResult();
+
+        $result = [];
+        foreach ($rows as $row) {
+            $result[(int) $row['userId']] = (int) $row['cnt'];
+        }
+
+        return $result;
+    }
+
+    /**
+     * Points earned today per user (from matches played today).
+     *
+     * @return array<int, float> userId => points
+     */
+    public function getTodayPointsByUser(Tournament $tournament): array
+    {
+        $today = new \DateTimeImmutable('today');
+        $tomorrow = new \DateTimeImmutable('tomorrow');
+
+        /** @var list<array{userId: int|string, total: float|string}> $rows */
+        $rows = $this->createQueryBuilder('pe')
+            ->select('IDENTITY(pe.user) as userId, SUM(pe.points) as total')
+            ->join('pe.game', 'g')
+            ->where('pe.tournament = :tournament')
+            ->andWhere('pe.game IS NOT NULL')
+            ->andWhere('g.playedAt >= :today')
+            ->andWhere('g.playedAt < :tomorrow')
+            ->setParameter('tournament', $tournament)
+            ->setParameter('today', $today)
+            ->setParameter('tomorrow', $tomorrow)
+            ->groupBy('pe.user')
+            ->getQuery()
+            ->getResult();
+
+        $result = [];
+        foreach ($rows as $row) {
+            $result[(int) $row['userId']] = (float) $row['total'];
+        }
+
+        return $result;
+    }
+
+    /**
      * Highest total points any user scored on a single match.
      *
      * @return array{username: string, points: float, gameId: int}|null

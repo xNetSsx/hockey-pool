@@ -13,6 +13,10 @@ use App\Repository\UserRepository;
 /**
  * Builds the tournament leaderboard with ranking.
  * Only includes tournament participants.
+ *
+ * Tiebreakers (when points are equal):
+ *  1. More exact score predictions wins
+ *  2. More correct winner predictions wins
  */
 final readonly class LeaderboardBuilder
 {
@@ -24,20 +28,19 @@ final readonly class LeaderboardBuilder
     }
 
     /**
-     * @return list<array{user: User, totalPoints: float, rank: int}>
+     * @return list<array{user: User, totalPoints: float, rank: int, exactScores: int, correctWinners: int}>
      */
     public function build(Tournament $tournament): array
     {
         $rows = $this->pointEntryRepository->getPointsGroupedByUser($tournament);
         $participantUserIds = $this->participantRepository->getParticipantUserIds($tournament);
+        $exactScores = $this->pointEntryRepository->countExactScoresByUser($tournament);
+        $correctWinners = $this->pointEntryRepository->countCorrectWinnersByUser($tournament);
 
         $userIds = array_column($rows, 'userId');
         $users = $this->userRepository->findByIds($userIds);
 
-        $leaderboard = [];
-        $rank = 0;
-        $lastPoints = null;
-        $position = 0;
+        $entries = [];
 
         foreach ($rows as $row) {
             if (!isset($users[$row['userId']])) {
@@ -48,21 +51,43 @@ final readonly class LeaderboardBuilder
                 continue;
             }
 
-            $position++;
-            $points = $row['totalPoints'];
-
-            if ($points !== $lastPoints) {
-                $rank = $position;
-                $lastPoints = $points;
-            }
-
-            $leaderboard[] = [
+            $entries[] = [
                 'user' => $users[$row['userId']],
-                'totalPoints' => $points,
-                'rank' => $rank,
+                'totalPoints' => $row['totalPoints'],
+                'exactScores' => $exactScores[$row['userId']] ?? 0,
+                'correctWinners' => $correctWinners[$row['userId']] ?? 0,
+                'rank' => 0,
             ];
         }
 
-        return $leaderboard;
+        usort($entries, static function (array $a, array $b): int {
+            $pointsDiff = $b['totalPoints'] <=> $a['totalPoints'];
+            if (0 !== $pointsDiff) {
+                return $pointsDiff;
+            }
+
+            $exactDiff = $b['exactScores'] <=> $a['exactScores'];
+            if (0 !== $exactDiff) {
+                return $exactDiff;
+            }
+
+            return $b['correctWinners'] <=> $a['correctWinners'];
+        });
+
+        $rank = 0;
+        $lastKey = null;
+
+        foreach ($entries as $i => &$entry) {
+            $currentKey = $entry['totalPoints'] . '|' . $entry['exactScores'] . '|' . $entry['correctWinners'];
+
+            if ($currentKey !== $lastKey) {
+                $rank = $i + 1;
+                $lastKey = $currentKey;
+            }
+
+            $entry['rank'] = $rank;
+        }
+
+        return $entries;
     }
 }
