@@ -1,5 +1,5 @@
 -- Generated seed data from Tipování hokej (1).xlsx
--- Generated at 2026-03-29T10:39:44.358570
+-- Generated at 2026-03-29T12:46:48.059985
 
 -- Teams
 INSERT INTO team (id, name, code, flag_emoji) VALUES (1, 'Rakousko', 'AUS', '🇦🇹');
@@ -50,6 +50,11 @@ SELECT setval('user_id_seq', 17);
 
 -- Tournament: MS 2017
 INSERT INTO tournament (id, name, year, slug, status, created_at) VALUES (1, 'MS 2017', 2017, 'ms-2017', 'finished', '2024-01-01 00:00:00');
+INSERT INTO tournament_participant (id, user_id, tournament_id, paid, joined_at) VALUES (1, 11, 1, true, '2024-01-01 00:00:00');
+INSERT INTO tournament_participant (id, user_id, tournament_id, paid, joined_at) VALUES (2, 7, 1, true, '2024-01-01 00:00:00');
+INSERT INTO tournament_participant (id, user_id, tournament_id, paid, joined_at) VALUES (3, 14, 1, true, '2024-01-01 00:00:00');
+INSERT INTO tournament_participant (id, user_id, tournament_id, paid, joined_at) VALUES (4, 8, 1, true, '2024-01-01 00:00:00');
+INSERT INTO tournament_participant (id, user_id, tournament_id, paid, joined_at) VALUES (5, 17, 1, true, '2024-01-01 00:00:00');
 INSERT INTO rule_set (id, tournament_id, winner_base_points, wrong_opponent_bonus, exact_score_bonus, prizes) VALUES (1, 1, 1.0, 0.25, 2.0, '{"1": 300, "2": 150, "3": 50}');
 INSERT INTO "match" (id, tournament_id, home_team_id, away_team_id, phase, played_at, home_score, away_score, is_finished) VALUES (1, 1, 23, 19, 'group_stage', '2021-05-05 16:15:00', 1, 2, true);
 INSERT INTO "match" (id, tournament_id, home_team_id, away_team_id, phase, played_at, home_score, away_score, is_finished) VALUES (2, 1, 8, 3, 'group_stage', '2021-05-05 16:15:00', 3, 2, true);
@@ -453,6 +458,15 @@ INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_
 
 -- Tournament: MS 2018
 INSERT INTO tournament (id, name, year, slug, status, created_at) VALUES (2, 'MS 2018', 2018, 'ms-2018', 'finished', '2024-01-01 00:00:00');
+INSERT INTO tournament_participant (id, user_id, tournament_id, paid, joined_at) VALUES (6, 11, 2, true, '2024-01-01 00:00:00');
+INSERT INTO tournament_participant (id, user_id, tournament_id, paid, joined_at) VALUES (7, 7, 2, true, '2024-01-01 00:00:00');
+INSERT INTO tournament_participant (id, user_id, tournament_id, paid, joined_at) VALUES (8, 14, 2, true, '2024-01-01 00:00:00');
+INSERT INTO tournament_participant (id, user_id, tournament_id, paid, joined_at) VALUES (9, 8, 2, true, '2024-01-01 00:00:00');
+INSERT INTO tournament_participant (id, user_id, tournament_id, paid, joined_at) VALUES (10, 17, 2, true, '2024-01-01 00:00:00');
+INSERT INTO tournament_participant (id, user_id, tournament_id, paid, joined_at) VALUES (11, 12, 2, true, '2024-01-01 00:00:00');
+INSERT INTO tournament_participant (id, user_id, tournament_id, paid, joined_at) VALUES (12, 13, 2, true, '2024-01-01 00:00:00');
+INSERT INTO tournament_participant (id, user_id, tournament_id, paid, joined_at) VALUES (13, 15, 2, true, '2024-01-01 00:00:00');
+INSERT INTO tournament_participant (id, user_id, tournament_id, paid, joined_at) VALUES (14, 6, 2, true, '2024-01-01 00:00:00');
 INSERT INTO rule_set (id, tournament_id, winner_base_points, wrong_opponent_bonus, exact_score_bonus, prizes) VALUES (2, 2, 1.0, 0.25, 2.0, '{"1": 300, "2": 150, "3": 50}');
 INSERT INTO "match" (id, tournament_id, home_team_id, away_team_id, phase, played_at, home_score, away_score, is_finished) VALUES (65, 2, 19, 9, 'group_stage', '2021-05-04 16:15:00', 7, 0, true);
 INSERT INTO "match" (id, tournament_id, home_team_id, away_team_id, phase, played_at, home_score, away_score, is_finished) VALUES (66, 2, 24, 4, 'group_stage', '2021-05-04 16:15:00', 5, 4, true);
@@ -1147,6 +1161,16 @@ INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_
 
 -- Tournament: MS 2019
 INSERT INTO tournament (id, name, year, slug, status, created_at) VALUES (3, 'MS 2019', 2019, 'ms-2019', 'finished', '2024-01-01 00:00:00');
+INSERT INTO tournament_participant (id, user_id, tournament_id, paid, joined_at) VALUES (15, 11, 3, true, '2024-01-01 00:00:00');
+INSERT INTO tournament_participant (id, user_id, tournament_id, paid, joined_at) VALUES (16, 7, 3, true, '2024-01-01 00:00:00');
+INSERT INTO tournament_participant (id, user_id, tournament_id, paid, joined_at) VALUES (17, 14, 3, true, '2024-01-01 00:00:00');
+INSERT INTO tournament_participant (id, user_id, tournament_id, paid, joined_at) VALUES (18, 8, 3, true, '2024-01-01 00:00:00');
+INSERT INTO tournament_participant (id, user_id, tournament_id, paid, joined_at) VALUES (19, 17, 3, true, '2024-01-01 00:00:00');
+INSERT INTO tournament_participant (id, user_id, tournament_id, paid, joined_at) VALUES (20, 12, 3, true, '2024-01-01 00:00:00');
+INSERT INTO tournament_participant (id, user_id, tournament_id, paid, joined_at) VALUES (21, 13, 3, true, '2024-01-01 00:00:00');
+INSERT INTO tournament_participant (id, user_id, tournament_id, paid, joined_at) VALUES (22, 15, 3, true, '2024-01-01 00:00:00');
+INSERT INTO tournament_participant (id, user_id, tournament_id, paid, joined_at) VALUES (23, 6, 3, true, '2024-01-01 00:00:00');
+INSERT INTO tournament_participant (id, user_id, tournament_id, paid, joined_at) VALUES (24, 10, 3, true, '2024-01-01 00:00:00');
 INSERT INTO rule_set (id, tournament_id, winner_base_points, wrong_opponent_bonus, exact_score_bonus, prizes) VALUES (3, 3, 1.0, 0.25, 2.0, '{"1": 300, "2": 150, "3": 50}');
 INSERT INTO "match" (id, tournament_id, home_team_id, away_team_id, phase, played_at, home_score, away_score, is_finished) VALUES (129, 3, 8, 4, 'group_stage', '2021-05-10 16:15:00', 3, 1, true);
 INSERT INTO "match" (id, tournament_id, home_team_id, away_team_id, phase, played_at, home_score, away_score, is_finished) VALUES (130, 3, 19, 16, 'group_stage', '2021-05-10 16:15:00', 5, 2, true);
@@ -1939,6 +1963,17 @@ INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_
 
 -- Tournament: MS 2021
 INSERT INTO tournament (id, name, year, slug, status, created_at) VALUES (4, 'MS 2021', 2021, 'ms-2021', 'finished', '2024-01-01 00:00:00');
+INSERT INTO tournament_participant (id, user_id, tournament_id, paid, joined_at) VALUES (25, 11, 4, true, '2024-01-01 00:00:00');
+INSERT INTO tournament_participant (id, user_id, tournament_id, paid, joined_at) VALUES (26, 7, 4, true, '2024-01-01 00:00:00');
+INSERT INTO tournament_participant (id, user_id, tournament_id, paid, joined_at) VALUES (27, 14, 4, true, '2024-01-01 00:00:00');
+INSERT INTO tournament_participant (id, user_id, tournament_id, paid, joined_at) VALUES (28, 8, 4, true, '2024-01-01 00:00:00');
+INSERT INTO tournament_participant (id, user_id, tournament_id, paid, joined_at) VALUES (29, 17, 4, true, '2024-01-01 00:00:00');
+INSERT INTO tournament_participant (id, user_id, tournament_id, paid, joined_at) VALUES (30, 12, 4, true, '2024-01-01 00:00:00');
+INSERT INTO tournament_participant (id, user_id, tournament_id, paid, joined_at) VALUES (31, 13, 4, true, '2024-01-01 00:00:00');
+INSERT INTO tournament_participant (id, user_id, tournament_id, paid, joined_at) VALUES (32, 15, 4, true, '2024-01-01 00:00:00');
+INSERT INTO tournament_participant (id, user_id, tournament_id, paid, joined_at) VALUES (33, 6, 4, true, '2024-01-01 00:00:00');
+INSERT INTO tournament_participant (id, user_id, tournament_id, paid, joined_at) VALUES (34, 10, 4, true, '2024-01-01 00:00:00');
+INSERT INTO tournament_participant (id, user_id, tournament_id, paid, joined_at) VALUES (35, 16, 4, true, '2024-01-01 00:00:00');
 INSERT INTO rule_set (id, tournament_id, winner_base_points, wrong_opponent_bonus, exact_score_bonus, prizes) VALUES (4, 4, 1.0, 0.25, 2.0, '{"1": 300, "2": 150, "3": 50}');
 INSERT INTO "match" (id, tournament_id, home_team_id, away_team_id, phase, played_at, home_score, away_score, is_finished) VALUES (193, 4, 19, 6, 'group_stage', '2021-05-21 15:15:00', 4, 3, true);
 INSERT INTO "match" (id, tournament_id, home_team_id, away_team_id, phase, played_at, home_score, away_score, is_finished) VALUES (194, 4, 11, 13, 'group_stage', '2021-05-21 15:15:00', 9, 4, true);
@@ -2782,6 +2817,11 @@ INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_
 
 -- Tournament: OH 2022
 INSERT INTO tournament (id, name, year, slug, status, created_at) VALUES (5, 'OH 2022', 2022, 'oh-2022', 'finished', '2024-01-01 00:00:00');
+INSERT INTO tournament_participant (id, user_id, tournament_id, paid, joined_at) VALUES (36, 11, 5, true, '2024-01-01 00:00:00');
+INSERT INTO tournament_participant (id, user_id, tournament_id, paid, joined_at) VALUES (37, 14, 5, true, '2024-01-01 00:00:00');
+INSERT INTO tournament_participant (id, user_id, tournament_id, paid, joined_at) VALUES (38, 8, 5, true, '2024-01-01 00:00:00');
+INSERT INTO tournament_participant (id, user_id, tournament_id, paid, joined_at) VALUES (39, 12, 5, true, '2024-01-01 00:00:00');
+INSERT INTO tournament_participant (id, user_id, tournament_id, paid, joined_at) VALUES (40, 16, 5, true, '2024-01-01 00:00:00');
 INSERT INTO rule_set (id, tournament_id, winner_base_points, wrong_opponent_bonus, exact_score_bonus, prizes) VALUES (5, 5, 1.0, 0.25, 2.0, '{"1": 300, "2": 150, "3": 50}');
 INSERT INTO "match" (id, tournament_id, home_team_id, away_team_id, phase, played_at, home_score, away_score, is_finished) VALUES (257, 5, 19, 21, 'group_stage', '2022-02-09 09:40:00', 1, 0, true);
 INSERT INTO "match" (id, tournament_id, home_team_id, away_team_id, phase, played_at, home_score, away_score, is_finished) VALUES (258, 5, 6, 7, 'group_stage', '2022-02-09 14:10:00', 1, 2, true);
@@ -2990,6 +3030,14 @@ INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_
 
 -- Tournament: MS 2022
 INSERT INTO tournament (id, name, year, slug, status, created_at) VALUES (6, 'MS 2022', 2022, 'ms-2022', 'finished', '2024-01-01 00:00:00');
+INSERT INTO tournament_participant (id, user_id, tournament_id, paid, joined_at) VALUES (41, 11, 6, true, '2024-01-01 00:00:00');
+INSERT INTO tournament_participant (id, user_id, tournament_id, paid, joined_at) VALUES (42, 14, 6, true, '2024-01-01 00:00:00');
+INSERT INTO tournament_participant (id, user_id, tournament_id, paid, joined_at) VALUES (43, 8, 6, true, '2024-01-01 00:00:00');
+INSERT INTO tournament_participant (id, user_id, tournament_id, paid, joined_at) VALUES (44, 12, 6, true, '2024-01-01 00:00:00');
+INSERT INTO tournament_participant (id, user_id, tournament_id, paid, joined_at) VALUES (45, 16, 6, true, '2024-01-01 00:00:00');
+INSERT INTO tournament_participant (id, user_id, tournament_id, paid, joined_at) VALUES (46, 15, 6, true, '2024-01-01 00:00:00');
+INSERT INTO tournament_participant (id, user_id, tournament_id, paid, joined_at) VALUES (47, 6, 6, true, '2024-01-01 00:00:00');
+INSERT INTO tournament_participant (id, user_id, tournament_id, paid, joined_at) VALUES (48, 10, 6, true, '2024-01-01 00:00:00');
 INSERT INTO rule_set (id, tournament_id, winner_base_points, wrong_opponent_bonus, exact_score_bonus, prizes) VALUES (6, 6, 1.0, 0.25, 2.0, '{"1": 300, "2": 150, "3": 50}');
 INSERT INTO "match" (id, tournament_id, home_team_id, away_team_id, phase, played_at, home_score, away_score, is_finished) VALUES (285, 6, 9, 22, 'group_stage', '2022-05-13 15:20:00', 2, 4, true);
 INSERT INTO "match" (id, tournament_id, home_team_id, away_team_id, phase, played_at, home_score, away_score, is_finished) VALUES (286, 6, 24, 15, 'group_stage', '2022-05-13 15:20:00', 4, 1, true);
@@ -3651,6 +3699,15 @@ INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_
 
 -- Tournament: MS 2023
 INSERT INTO tournament (id, name, year, slug, status, created_at) VALUES (7, 'MS 2023', 2023, 'ms-2023', 'finished', '2024-01-01 00:00:00');
+INSERT INTO tournament_participant (id, user_id, tournament_id, paid, joined_at) VALUES (49, 11, 7, true, '2024-01-01 00:00:00');
+INSERT INTO tournament_participant (id, user_id, tournament_id, paid, joined_at) VALUES (50, 14, 7, true, '2024-01-01 00:00:00');
+INSERT INTO tournament_participant (id, user_id, tournament_id, paid, joined_at) VALUES (51, 8, 7, true, '2024-01-01 00:00:00');
+INSERT INTO tournament_participant (id, user_id, tournament_id, paid, joined_at) VALUES (52, 12, 7, true, '2024-01-01 00:00:00');
+INSERT INTO tournament_participant (id, user_id, tournament_id, paid, joined_at) VALUES (53, 16, 7, true, '2024-01-01 00:00:00');
+INSERT INTO tournament_participant (id, user_id, tournament_id, paid, joined_at) VALUES (54, 17, 7, true, '2024-01-01 00:00:00');
+INSERT INTO tournament_participant (id, user_id, tournament_id, paid, joined_at) VALUES (55, 6, 7, true, '2024-01-01 00:00:00');
+INSERT INTO tournament_participant (id, user_id, tournament_id, paid, joined_at) VALUES (56, 10, 7, true, '2024-01-01 00:00:00');
+INSERT INTO tournament_participant (id, user_id, tournament_id, paid, joined_at) VALUES (57, 5, 7, true, '2024-01-01 00:00:00');
 INSERT INTO rule_set (id, tournament_id, winner_base_points, wrong_opponent_bonus, exact_score_bonus, prizes) VALUES (7, 7, 1.0, 0.25, 2.0, '{"1": 300, "2": 150, "3": 50}');
 INSERT INTO "match" (id, tournament_id, home_team_id, away_team_id, phase, played_at, home_score, away_score, is_finished) VALUES (349, 7, 8, 24, 'group_stage', '2022-05-12 15:20:00', 1, 4, true);
 INSERT INTO "match" (id, tournament_id, home_team_id, away_team_id, phase, played_at, home_score, away_score, is_finished) VALUES (350, 7, 22, 6, 'group_stage', '2022-05-12 15:20:00', 2, 3, true);
@@ -4395,6 +4452,16 @@ INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_
 
 -- Tournament: MS 2024
 INSERT INTO tournament (id, name, year, slug, status, created_at) VALUES (8, 'MS 2024', 2024, 'ms-2024', 'finished', '2024-01-01 00:00:00');
+INSERT INTO tournament_participant (id, user_id, tournament_id, paid, joined_at) VALUES (58, 11, 8, true, '2024-01-01 00:00:00');
+INSERT INTO tournament_participant (id, user_id, tournament_id, paid, joined_at) VALUES (59, 14, 8, true, '2024-01-01 00:00:00');
+INSERT INTO tournament_participant (id, user_id, tournament_id, paid, joined_at) VALUES (60, 8, 8, true, '2024-01-01 00:00:00');
+INSERT INTO tournament_participant (id, user_id, tournament_id, paid, joined_at) VALUES (61, 12, 8, true, '2024-01-01 00:00:00');
+INSERT INTO tournament_participant (id, user_id, tournament_id, paid, joined_at) VALUES (62, 16, 8, true, '2024-01-01 00:00:00');
+INSERT INTO tournament_participant (id, user_id, tournament_id, paid, joined_at) VALUES (63, 2, 8, true, '2024-01-01 00:00:00');
+INSERT INTO tournament_participant (id, user_id, tournament_id, paid, joined_at) VALUES (64, 6, 8, true, '2024-01-01 00:00:00');
+INSERT INTO tournament_participant (id, user_id, tournament_id, paid, joined_at) VALUES (65, 10, 8, true, '2024-01-01 00:00:00');
+INSERT INTO tournament_participant (id, user_id, tournament_id, paid, joined_at) VALUES (66, 5, 8, true, '2024-01-01 00:00:00');
+INSERT INTO tournament_participant (id, user_id, tournament_id, paid, joined_at) VALUES (67, 9, 8, true, '2024-01-01 00:00:00');
 INSERT INTO rule_set (id, tournament_id, winner_base_points, wrong_opponent_bonus, exact_score_bonus, prizes) VALUES (8, 8, 1.0, 0.25, 2.0, '{"1": 300, "2": 150, "3": 50}');
 INSERT INTO "match" (id, tournament_id, home_team_id, away_team_id, phase, played_at, home_score, away_score, is_finished) VALUES (413, 8, 22, 11, 'group_stage', '2024-05-10 16:20:00', 4, 6, true);
 INSERT INTO "match" (id, tournament_id, home_team_id, away_team_id, phase, played_at, home_score, away_score, is_finished) VALUES (414, 8, 21, 16, 'group_stage', '2024-05-10 16:20:00', 5, 2, true);
@@ -5378,6 +5445,18 @@ INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_
 
 -- Tournament: MS 2025
 INSERT INTO tournament (id, name, year, slug, status, created_at) VALUES (9, 'MS 2025', 2025, 'ms-2025', 'finished', '2024-01-01 00:00:00');
+INSERT INTO tournament_participant (id, user_id, tournament_id, paid, joined_at) VALUES (68, 11, 9, true, '2024-01-01 00:00:00');
+INSERT INTO tournament_participant (id, user_id, tournament_id, paid, joined_at) VALUES (69, 14, 9, true, '2024-01-01 00:00:00');
+INSERT INTO tournament_participant (id, user_id, tournament_id, paid, joined_at) VALUES (70, 8, 9, true, '2024-01-01 00:00:00');
+INSERT INTO tournament_participant (id, user_id, tournament_id, paid, joined_at) VALUES (71, 12, 9, true, '2024-01-01 00:00:00');
+INSERT INTO tournament_participant (id, user_id, tournament_id, paid, joined_at) VALUES (72, 2, 9, true, '2024-01-01 00:00:00');
+INSERT INTO tournament_participant (id, user_id, tournament_id, paid, joined_at) VALUES (73, 6, 9, true, '2024-01-01 00:00:00');
+INSERT INTO tournament_participant (id, user_id, tournament_id, paid, joined_at) VALUES (74, 10, 9, true, '2024-01-01 00:00:00');
+INSERT INTO tournament_participant (id, user_id, tournament_id, paid, joined_at) VALUES (75, 5, 9, true, '2024-01-01 00:00:00');
+INSERT INTO tournament_participant (id, user_id, tournament_id, paid, joined_at) VALUES (76, 9, 9, true, '2024-01-01 00:00:00');
+INSERT INTO tournament_participant (id, user_id, tournament_id, paid, joined_at) VALUES (77, 3, 9, true, '2024-01-01 00:00:00');
+INSERT INTO tournament_participant (id, user_id, tournament_id, paid, joined_at) VALUES (78, 4, 9, true, '2024-01-01 00:00:00');
+INSERT INTO tournament_participant (id, user_id, tournament_id, paid, joined_at) VALUES (79, 1, 9, true, '2024-01-01 00:00:00');
 INSERT INTO rule_set (id, tournament_id, winner_base_points, wrong_opponent_bonus, exact_score_bonus, prizes) VALUES (9, 9, 1.0, 0.25, 2.0, '{"1": 350, "2": 200, "3": 50}');
 INSERT INTO "match" (id, tournament_id, home_team_id, away_team_id, phase, played_at, home_score, away_score, is_finished) VALUES (477, 9, 1, 8, 'group_stage', '2025-05-09 16:20:00', 1, 2, true);
 INSERT INTO "match" (id, tournament_id, home_team_id, away_team_id, phase, played_at, home_score, away_score, is_finished) VALUES (478, 9, 21, 6, 'group_stage', '2025-05-09 16:20:00', 4, 5, true);
@@ -6526,6 +6605,16 @@ INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_
 
 -- Tournament: OH 2026
 INSERT INTO tournament (id, name, year, slug, status, created_at) VALUES (10, 'OH 2026', 2026, 'oh-2026', 'finished', '2024-01-01 00:00:00');
+INSERT INTO tournament_participant (id, user_id, tournament_id, paid, joined_at) VALUES (80, 11, 10, true, '2024-01-01 00:00:00');
+INSERT INTO tournament_participant (id, user_id, tournament_id, paid, joined_at) VALUES (81, 14, 10, true, '2024-01-01 00:00:00');
+INSERT INTO tournament_participant (id, user_id, tournament_id, paid, joined_at) VALUES (82, 8, 10, true, '2024-01-01 00:00:00');
+INSERT INTO tournament_participant (id, user_id, tournament_id, paid, joined_at) VALUES (83, 12, 10, true, '2024-01-01 00:00:00');
+INSERT INTO tournament_participant (id, user_id, tournament_id, paid, joined_at) VALUES (84, 16, 10, true, '2024-01-01 00:00:00');
+INSERT INTO tournament_participant (id, user_id, tournament_id, paid, joined_at) VALUES (85, 6, 10, true, '2024-01-01 00:00:00');
+INSERT INTO tournament_participant (id, user_id, tournament_id, paid, joined_at) VALUES (86, 10, 10, true, '2024-01-01 00:00:00');
+INSERT INTO tournament_participant (id, user_id, tournament_id, paid, joined_at) VALUES (87, 5, 10, true, '2024-01-01 00:00:00');
+INSERT INTO tournament_participant (id, user_id, tournament_id, paid, joined_at) VALUES (88, 9, 10, true, '2024-01-01 00:00:00');
+INSERT INTO tournament_participant (id, user_id, tournament_id, paid, joined_at) VALUES (89, 2, 10, true, '2024-01-01 00:00:00');
 INSERT INTO rule_set (id, tournament_id, winner_base_points, wrong_opponent_bonus, exact_score_bonus, prizes) VALUES (10, 10, 1.0, 0.25, 2.0, '{"1": 300, "2": 150, "3": 50}');
 INSERT INTO "match" (id, tournament_id, home_team_id, away_team_id, phase, played_at, home_score, away_score, is_finished) VALUES (541, 10, 22, 8, 'group_stage', '2026-02-11 16:40:00', 4, 1, true);
 INSERT INTO "match" (id, tournament_id, home_team_id, away_team_id, phase, played_at, home_score, away_score, is_finished) VALUES (542, 10, 23, 13, 'group_stage', '2026-02-11 21:10:00', 5, 2, true);
@@ -6964,3 +7053,4 @@ SELECT setval('match_id_seq', 570);
 SELECT setval('prediction_id_seq', 5147);
 SELECT setval('special_bet_rule_id_seq', 107);
 SELECT setval('special_bet_id_seq', 1045);
+SELECT setval('tournament_participant_id_seq', 89);

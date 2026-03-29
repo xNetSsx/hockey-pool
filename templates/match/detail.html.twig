@@ -65,9 +65,9 @@
                             <th class="px-6 py-3">Hráč</th>
                             <th class="px-6 py-3 text-center">Tip</th>
                             <th class="px-6 py-3 text-center">Výsledek</th>
-                            <th class="px-6 py-3 text-right">Základ</th>
-                            <th class="px-6 py-3 text-right">Bonus</th>
-                            <th class="px-6 py-3 text-right">Přesný</th>
+                            <th class="hidden px-6 py-3 text-right sm:table-cell">Základ</th>
+                            <th class="hidden px-6 py-3 text-right sm:table-cell">Bonus</th>
+                            <th class="hidden px-6 py-3 text-right sm:table-cell">Přesný</th>
                             <th class="px-6 py-3 text-right font-semibold">Celkem</th>
                         </tr>
                     </thead>
@@ -101,13 +101,13 @@
                                         {% endif %}
                                     {% endif %}
                                 </td>
-                                <td class="px-6 py-3 text-right tabular-nums {{ row.basePoints > 0 ? 'text-green-700 dark:text-green-400' : 'text-gray-300 dark:text-gray-600' }}">
+                                <td class="hidden px-6 py-3 text-right tabular-nums sm:table-cell {{ row.basePoints > 0 ? 'text-green-700 dark:text-green-400' : 'text-gray-300 dark:text-gray-600' }}">
                                     {{ row.basePoints > 0 ? row.basePoints|number_format(2) : '—' }}
                                 </td>
-                                <td class="px-6 py-3 text-right tabular-nums {{ row.opponentBonus > 0 ? 'text-blue-700 dark:text-blue-400' : 'text-gray-300 dark:text-gray-600' }}">
+                                <td class="hidden px-6 py-3 text-right tabular-nums sm:table-cell {{ row.opponentBonus > 0 ? 'text-blue-700 dark:text-blue-400' : 'text-gray-300 dark:text-gray-600' }}">
                                     {{ row.opponentBonus > 0 ? '+' ~ row.opponentBonus|number_format(2) : '—' }}
                                 </td>
-                                <td class="px-6 py-3 text-right tabular-nums {{ row.exactBonus > 0 ? 'text-amber-700 dark:text-amber-400' : 'text-gray-300 dark:text-gray-600' }}">
+                                <td class="hidden px-6 py-3 text-right tabular-nums sm:table-cell {{ row.exactBonus > 0 ? 'text-amber-700 dark:text-amber-400' : 'text-gray-300 dark:text-gray-600' }}">
                                     {{ row.exactBonus > 0 ? '+' ~ row.exactBonus|number_format(2) : '—' }}
                                 </td>
                                 <td class="px-6 py-3 text-right tabular-nums font-bold {{ row.totalPoints > 0 ? '' : 'text-gray-300 dark:text-gray-600' }}">

@@ -25,6 +25,9 @@ if [ -f /app/docker/seed.sql ]; then
     fi
 fi
 
+# Seed new tournaments (idempotent — skips if already exists)
+php bin/console app:seed-ms2026 2>&1 || true
+
 # Clear and rebuild cache with real env vars
 php bin/console cache:clear 2>&1 || true
 php bin/console cache:warmup 2>&1 || true

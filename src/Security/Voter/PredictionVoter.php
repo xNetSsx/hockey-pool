@@ -7,6 +7,7 @@ namespace App\Security\Voter;
 use App\Entity\Game;
 use App\Entity\Prediction;
 use App\Entity\User;
+use App\Repository\TournamentParticipantRepository;
 use DateTime;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
@@ -15,7 +16,8 @@ use Symfony\Component\Security\Core\Authorization\Voter\Voter;
  * Controls whether a prediction can be created or edited.
  *
  * Rules:
- *  - Predictions can only be created/edited before the match starts (playedAt).
+ *  - User must be a participant of the tournament.
+ *  - Predictions can only be created/edited before the match starts.
  *  - Only the prediction owner can edit their prediction.
  *  - Admins can always edit.
  *
@@ -25,6 +27,11 @@ class PredictionVoter extends Voter
 {
     public const string CREATE = 'PREDICTION_CREATE';
     public const string EDIT = 'PREDICTION_EDIT';
+
+    public function __construct(
+        private readonly TournamentParticipantRepository $participantRepository,
+    ) {
+    }
 
     protected function supports(string $attribute, mixed $subject): bool
     {
@@ -62,6 +69,10 @@ class PredictionVoter extends Voter
     {
         if ($user->hasRole('ROLE_ADMIN')) {
             return true;
+        }
+
+        if (!$this->participantRepository->isParticipant($user, $game->getTournament())) {
+            return false;
         }
 
         return !$this->hasMatchStarted($game);

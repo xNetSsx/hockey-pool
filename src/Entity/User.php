@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use DateTimeImmutable;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
@@ -34,6 +35,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column]
     private string $password;
+
+    #[ORM\Column(nullable: true)]
+    private ?DateTimeImmutable $lastLogin = null;
 
     /**
      * @var list<string>
@@ -109,6 +113,23 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->password = $password;
 
         return $this;
+    }
+
+    public function getLastLogin(): ?DateTimeImmutable
+    {
+        return $this->lastLogin;
+    }
+
+    public function setLastLogin(DateTimeImmutable $lastLogin): self
+    {
+        $this->lastLogin = $lastLogin;
+
+        return $this;
+    }
+
+    public function isFirstLogin(): bool
+    {
+        return null === $this->lastLogin;
     }
 
     public function eraseCredentials(): void

@@ -88,6 +88,9 @@
                             {% endif %}
 
                             {% if not locked %}
+                                {% if not prediction %}
+                                    <span class="countdown-timer flex items-center gap-1 text-[11px] tabular-nums" data-deadline="{{ game.playedAt|date('c') }}"></span>
+                                {% endif %}
                                 <a href="{{ path('prediction_edit', {id: game.id}) }}"
                                    class="rounded bg-blue-600 px-3 py-1 text-xs font-medium text-white hover:bg-blue-700">
                                     {{ prediction ? 'Změnit' : 'Tipovat' }}
@@ -101,4 +104,51 @@
             </div>
         </div>
     {% endfor %}
+
+    {# Tailwind safelist: text-green-500 text-yellow-500 text-orange-500 text-red-500 text-red-600 animate-pulse #}
+    <script>
+        (function () {
+            function updateCountdowns() {
+                document.querySelectorAll('.countdown-timer').forEach(function (el) {
+                    var deadline = new Date(el.dataset.deadline).getTime();
+                    var now = Date.now();
+                    var diff = deadline - now;
+
+                    if (diff <= 0) {
+                        el.textContent = '🔒';
+                        el.className = 'text-[11px]';
+                        return;
+                    }
+
+                    var days = Math.floor(diff / 86400000);
+                    var hours = Math.floor((diff % 86400000) / 3600000);
+                    var mins = Math.floor((diff % 3600000) / 60000);
+                    var text, color;
+
+                    if (days > 3) {
+                        text = days + 'd';
+                        color = 'text-green-500';
+                    } else if (days > 0) {
+                        text = days + 'd ' + hours + 'h';
+                        color = 'text-yellow-500';
+                    } else if (hours > 3) {
+                        text = hours + 'h ' + mins + 'm';
+                        color = 'text-orange-500';
+                    } else if (hours > 0) {
+                        text = hours + 'h ' + mins + 'm';
+                        color = 'text-red-500';
+                    } else {
+                        text = mins + 'm';
+                        color = 'text-red-600 animate-pulse';
+                    }
+
+                    el.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" class="inline h-3.5 w-3.5 ' + color + '" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><circle cx="12" cy="12" r="10"></circle><path stroke-linecap="round" d="M12 6v6l4 2"></path></svg><span class="font-medium text-gray-700 dark:text-gray-300">' + text + '</span>';
+                    el.className = 'flex items-center gap-1 text-[11px] tabular-nums';
+                });
+            }
+
+            updateCountdowns();
+            setInterval(updateCountdowns, 60000);
+        })();
+    </script>
 {% endblock %}

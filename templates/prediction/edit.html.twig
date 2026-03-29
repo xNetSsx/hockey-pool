@@ -2,6 +2,16 @@
 
 {% block title %}Tip: {{ game.homeTeam.code }} vs {{ game.awayTeam.code }} — Hockey Pool{% endblock %}
 
+{% set czechTeamCode = null %}
+{% set czechSide = null %}
+{% if game.homeTeam.code == 'CZE' %}
+    {% set czechTeamCode = 'CZE' %}
+    {% set czechSide = 'home' %}
+{% elseif game.awayTeam.code == 'CZE' %}
+    {% set czechTeamCode = 'CZE' %}
+    {% set czechSide = 'away' %}
+{% endif %}
+
 {% block body %}
     <div class="mb-6">
         <a href="{{ path('prediction_list') }}" class="text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">← Zpět na tipy</a>
@@ -34,17 +44,17 @@
                     </div>
                 </div>
 
-                {{ form_start(form, {attr: {class: 'space-y-4'}}) }}
+                {{ form_start(form, {attr: {class: 'space-y-4', id: 'prediction-form'}}) }}
                     <div class="flex items-end justify-center gap-4">
                         <div class="text-center">
                             {{ form_label(form.homeScore, null, {label_attr: {class: 'block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300'}}) }}
-                            {{ form_widget(form.homeScore, {attr: {class: 'w-20 rounded-lg border border-gray-300 px-3 py-2.5 text-center text-lg font-bold focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 dark:bg-[#0f172a] dark:border-gray-600 dark:text-white'}}) }}
+                            {{ form_widget(form.homeScore, {attr: {class: 'w-20 rounded-lg border border-gray-300 px-3 py-2.5 text-center text-lg font-bold focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 dark:bg-[#0f172a] dark:border-gray-600 dark:text-white', id: 'home-score'}}) }}
                             {{ form_errors(form.homeScore) }}
                         </div>
                         <div class="pb-3 text-xl font-bold text-gray-400 dark:text-gray-500">:</div>
                         <div class="text-center">
                             {{ form_label(form.awayScore, null, {label_attr: {class: 'block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300'}}) }}
-                            {{ form_widget(form.awayScore, {attr: {class: 'w-20 rounded-lg border border-gray-300 px-3 py-2.5 text-center text-lg font-bold focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 dark:bg-[#0f172a] dark:border-gray-600 dark:text-white'}}) }}
+                            {{ form_widget(form.awayScore, {attr: {class: 'w-20 rounded-lg border border-gray-300 px-3 py-2.5 text-center text-lg font-bold focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 dark:bg-[#0f172a] dark:border-gray-600 dark:text-white', id: 'away-score'}}) }}
                             {{ form_errors(form.awayScore) }}
                         </div>
                     </div>
@@ -52,10 +62,123 @@
                     {{ form_errors(form) }}
 
                     <div class="pt-4 text-center">
-                        {{ form_widget(form.save, {attr: {class: 'rounded-lg bg-blue-600 px-6 py-2.5 font-semibold text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:bg-[#38bdf8] dark:text-[#0f172a] dark:hover:bg-[#7dd3fc]'}}) }}
+                        {{ form_widget(form.save, {attr: {class: 'rounded-lg bg-blue-600 px-6 py-2.5 font-semibold text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:bg-[#38bdf8] dark:text-[#0f172a] dark:hover:bg-[#7dd3fc]', id: 'submit-btn'}}) }}
                     </div>
                 {{ form_end(form) }}
             </div>
         </div>
     </div>
+
+{% endblock %}
+
+{% block modals %}
+    {% if czechSide %}
+        <div id="treason-modal-1" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;z-index:9999;background:rgba(0,0,0,0.85)">
+            <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:100%;max-width:24rem;padding:0 1rem">
+                <div class="rounded-2xl border-2 border-red-500 bg-white p-8 text-center shadow-2xl dark:bg-[#1e293b]" style="animation:shake 0.5s ease-in-out">
+                    <div class="mb-3 text-7xl">🇨🇿</div>
+                    <h2 class="mb-1 text-3xl font-black uppercase tracking-wide text-red-600">Vlastizrada!</h2>
+                    <p class="mb-2 text-xs font-semibold uppercase tracking-widest text-red-400">Detekován tip proti vlasti</p>
+                    <p class="mb-6 text-sm text-gray-600 dark:text-gray-300">
+                        Vážně tipuješ prohru České republiky?<br>
+                        <span class="font-semibold">Tohle je tvoje šance to napravit.</span>
+                    </p>
+                    <div class="flex flex-col gap-2 sm:flex-row sm:gap-3">
+                        <button onclick="document.getElementById('treason-modal-1').style.display='none'" class="order-1 rounded-lg bg-blue-600 px-4 py-3 text-sm font-bold text-white hover:bg-blue-700 dark:bg-[#38bdf8] dark:text-[#0f172a] sm:flex-1">
+                            🇨🇿 Sláva! Opravím to
+                        </button>
+                        <button onclick="showSecondWarning()" class="order-2 rounded-lg bg-gray-200 px-4 py-3 text-sm font-medium text-gray-500 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-400 sm:flex-1">
+                            Stojím si za tím...
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="treason-modal-2" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;z-index:9999;background:rgba(127,0,0,0.9)">
+            <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:100%;max-width:24rem;padding:0 1rem">
+                <div class="rounded-2xl border-2 border-red-700 bg-white p-8 text-center shadow-2xl dark:bg-[#1e293b]" style="animation:shake 0.3s ease-in-out 3">
+                    <div class="mb-3 text-7xl">⛔</div>
+                    <h2 class="mb-2 text-2xl font-black uppercase text-red-700">Poslední varování!</h2>
+                    <div class="mb-4 rounded-lg bg-red-50 p-3 dark:bg-red-900/30">
+                        <p class="text-sm text-red-800 dark:text-red-300">
+                            Tímto se oficiálně prohlašuješ za
+                        </p>
+                        <p class="mt-1 text-xl font-black text-red-600">VLASTIZRÁDCE</p>
+                    </div>
+                    <p class="mb-6 text-xs text-gray-500 dark:text-gray-400">
+                        Tvůj hanebný tip bude zaznamenán.<br>Ostatní se to dozví. Není cesta zpět.
+                    </p>
+                    <div class="flex flex-col gap-2 sm:flex-row sm:gap-3">
+                        <button onclick="cancelTreason()" class="order-1 rounded-lg bg-green-600 px-4 py-3 text-sm font-bold text-white hover:bg-green-700 sm:flex-1">
+                            🇨🇿 Měním tip! Sláva Čechům!
+                        </button>
+                        <button onclick="confirmTreason()" class="order-2 rounded-lg bg-red-900 px-4 py-3 text-xs font-medium text-red-300 hover:bg-red-950 sm:flex-1">
+                            Potvrzuji zradu...
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <style>
+            @keyframes shake {
+                0%, 100% { transform: translateX(0); }
+                10%, 30%, 50%, 70%, 90% { transform: translateX(-4px); }
+                20%, 40%, 60%, 80% { transform: translateX(4px); }
+            }
+        </style>
+
+        <script>
+            (function () {
+                var czechSide = '{{ czechSide }}';
+                var form = document.querySelector('form[name="prediction"]') || document.querySelector('form[name="match_result"]') || document.querySelector('#prediction-form') || document.querySelector('form');
+                var treasonConfirmed = false;
+
+                function getScore(name) {
+                    var el = document.querySelector('[name$="[homeScore]"]');
+                    if (name === 'away') el = document.querySelector('[name$="[awayScore]"]');
+                    return el ? (parseInt(el.value) || 0) : 0;
+                }
+
+                function isBettingAgainstCzech() {
+                    var home = getScore('home');
+                    var away = getScore('away');
+                    if (czechSide === 'home') return away > home;
+                    if (czechSide === 'away') return home > away;
+                    return false;
+                }
+
+                function showModal(id) {
+                    document.getElementById(id).style.display = 'flex';
+                }
+                function hideModal(id) {
+                    document.getElementById(id).style.display = 'none';
+                }
+
+                form.addEventListener('submit', function (e) {
+                    if (isBettingAgainstCzech() && !treasonConfirmed) {
+                        e.preventDefault();
+                        showModal('treason-modal-1');
+                    }
+                });
+
+                window.showSecondWarning = function () {
+                    hideModal('treason-modal-1');
+                    showModal('treason-modal-2');
+                };
+
+                window.cancelTreason = function () {
+                    hideModal('treason-modal-2');
+                    treasonConfirmed = false;
+                };
+
+                window.confirmTreason = function () {
+                    hideModal('treason-modal-2');
+                    treasonConfirmed = true;
+                    form.submit();
+                };
+            })();
+        </script>
+    {% endif %}
 {% endblock %}

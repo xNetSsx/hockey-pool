@@ -184,6 +184,12 @@
         </div>
     </div>
 
+    {% if prediction_status and prediction_status.missingCount > 0 %}
+        <a href="{{ path('prediction_list') }}" class="fixed bottom-6 right-6 flex h-14 w-14 items-center justify-center rounded-full bg-blue-600 text-2xl text-white shadow-lg hover:bg-blue-700 dark:bg-[#38bdf8] dark:text-[#0f172a] sm:hidden" title="Tipovat">
+            🎯
+        </a>
+    {% endif %}
+
     {% if timeline.labels|length > 0 %}
         <script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
         <script>
