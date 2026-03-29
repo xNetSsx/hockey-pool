@@ -30,40 +30,40 @@
     <div class="grid gap-6 lg:grid-cols-3">
         {# Stats cards #}
         <div class="space-y-6 lg:col-span-1">
-            <div class="rounded-xl bg-white shadow">
-                <div class="border-b border-gray-200 bg-[#0f172a] px-6 py-4">
+            <div class="rounded-xl bg-white shadow dark:bg-[#1e293b] dark:shadow-gray-900/30">
+                <div class="border-b border-gray-200 bg-[#0f172a] px-6 py-4 dark:border-gray-700">
                     <h2 class="text-lg font-semibold text-white">📊 Statistiky</h2>
                 </div>
-                <div class="divide-y divide-gray-100">
+                <div class="divide-y divide-gray-100 dark:divide-gray-700">
                     <div class="flex justify-between px-6 py-3">
-                        <span class="text-sm text-gray-500">Správný vítěz</span>
-                        <span class="font-semibold text-green-700">{{ stats.correctWinners }}×</span>
+                        <span class="text-sm text-gray-500 dark:text-gray-400">Správný vítěz</span>
+                        <span class="font-semibold text-green-700 dark:text-green-400">{{ stats.correctWinners }}×</span>
                     </div>
                     <div class="flex justify-between px-6 py-3">
-                        <span class="text-sm text-gray-500">Přesné skóre</span>
-                        <span class="font-semibold text-amber-700">{{ stats.exactScores }}×</span>
+                        <span class="text-sm text-gray-500 dark:text-gray-400">Přesné skóre</span>
+                        <span class="font-semibold text-amber-700 dark:text-amber-400">{{ stats.exactScores }}×</span>
                     </div>
                     <div class="flex justify-between px-6 py-3">
-                        <span class="text-sm text-gray-500">Špatně</span>
-                        <span class="font-semibold text-red-700">{{ stats.wrongPredictions }}×</span>
+                        <span class="text-sm text-gray-500 dark:text-gray-400">Špatně</span>
+                        <span class="font-semibold text-red-700 dark:text-red-400">{{ stats.wrongPredictions }}×</span>
                     </div>
                     <div class="flex justify-between px-6 py-3">
-                        <span class="text-sm text-gray-500">Celkem tipů</span>
-                        <span class="font-semibold">{{ stats.totalPredictions }}</span>
+                        <span class="text-sm text-gray-500 dark:text-gray-400">Celkem tipů</span>
+                        <span class="font-semibold dark:text-gray-100">{{ stats.totalPredictions }}</span>
                     </div>
                     {% if stats.bestMatchDay %}
                         <div class="flex justify-between px-6 py-3">
-                            <span class="text-sm text-gray-500">Nejlepší den</span>
-                            <span class="font-semibold text-green-700">{{ stats.bestMatchDay.points|number_format(2) }}b
-                                <span class="text-xs text-gray-400">({{ stats.bestMatchDay.date|date('d.m.') }})</span>
+                            <span class="text-sm text-gray-500 dark:text-gray-400">Nejlepší den</span>
+                            <span class="font-semibold text-green-700 dark:text-green-400">{{ stats.bestMatchDay.points|number_format(2) }}b
+                                <span class="text-xs text-gray-400 dark:text-gray-500">({{ stats.bestMatchDay.date|date('d.m.') }})</span>
                             </span>
                         </div>
                     {% endif %}
                     {% if stats.worstMatchDay %}
                         <div class="flex justify-between px-6 py-3">
-                            <span class="text-sm text-gray-500">Nejhorší den</span>
-                            <span class="font-semibold text-red-700">{{ stats.worstMatchDay.points|number_format(2) }}b
-                                <span class="text-xs text-gray-400">({{ stats.worstMatchDay.date|date('d.m.') }})</span>
+                            <span class="text-sm text-gray-500 dark:text-gray-400">Nejhorší den</span>
+                            <span class="font-semibold text-red-700 dark:text-red-400">{{ stats.worstMatchDay.points|number_format(2) }}b
+                                <span class="text-xs text-gray-400 dark:text-gray-500">({{ stats.worstMatchDay.date|date('d.m.') }})</span>
                             </span>
                         </div>
                     {% endif %}
@@ -72,15 +72,15 @@
 
             {# Special bets #}
             {% if specialBets|length > 0 %}
-                <div class="rounded-xl bg-white shadow">
-                    <div class="border-b border-gray-200 bg-[#0f172a] px-6 py-4">
+                <div class="rounded-xl bg-white shadow dark:bg-[#1e293b] dark:shadow-gray-900/30">
+                    <div class="border-b border-gray-200 bg-[#0f172a] px-6 py-4 dark:border-gray-700">
                         <h2 class="text-lg font-semibold text-white">⭐ Speciální tipy</h2>
                     </div>
-                    <div class="divide-y divide-gray-100">
+                    <div class="divide-y divide-gray-100 dark:divide-gray-700">
                         {% for ruleId, bet in specialBets %}
                             <div class="flex items-center justify-between px-6 py-3">
-                                <span class="text-sm text-gray-500">{{ bet.rule.name }}</span>
-                                <span class="text-sm font-medium">
+                                <span class="text-sm text-gray-500 dark:text-gray-400">{{ bet.rule.name }}</span>
+                                <span class="text-sm font-medium dark:text-gray-100">
                                     {% if bet.teamValue %}
                                         {{ bet.teamValue.flagEmoji }} {{ bet.teamValue.code }}
                                     {% elseif bet.stringValue %}
@@ -104,18 +104,18 @@
                         {{ phaseValue|phase_label }}
                     </h3>
                 </div>
-                <div class="mb-4 overflow-hidden rounded-xl bg-white shadow">
-                    <div class="divide-y divide-gray-100">
+                <div class="mb-4 overflow-hidden rounded-xl bg-white shadow dark:bg-[#1e293b] dark:shadow-gray-900/30">
+                    <div class="divide-y divide-gray-100 dark:divide-gray-700">
                         {% for game in games %}
                             {% set prediction = userPredictions[game.id] ?? null %}
-                            <a href="{{ path('match_detail', {id: game.id}) }}" class="flex items-center gap-3 px-4 py-2.5 text-sm transition hover:bg-gray-50 sm:px-6">
-                                <span class="w-10 shrink-0 text-xs text-gray-400">{{ game.playedAt|date('d.m.') }}</span>
+                            <a href="{{ path('match_detail', {id: game.id}) }}" class="flex items-center gap-3 px-4 py-2.5 text-sm transition hover:bg-gray-50 dark:hover:bg-white/5 dark:text-gray-100 sm:px-6">
+                                <span class="w-10 shrink-0 text-xs text-gray-400 dark:text-gray-500">{{ game.playedAt|date('d.m.') }}</span>
                                 <div class="flex min-w-0 flex-1 items-center gap-2">
                                     <span class="w-16 text-right text-xs sm:w-20">{{ game.homeTeam.flagEmoji }} {{ game.homeTeam.code }}</span>
                                     {% if game.isFinished %}
                                         <span class="w-10 text-center text-xs font-bold tabular-nums">{{ game.homeScore }}:{{ game.awayScore }}</span>
                                     {% else %}
-                                        <span class="w-10 text-center text-xs text-gray-400">vs</span>
+                                        <span class="w-10 text-center text-xs text-gray-400 dark:text-gray-500">vs</span>
                                     {% endif %}
                                     <span class="w-16 text-xs sm:w-20">{{ game.awayTeam.flagEmoji }} {{ game.awayTeam.code }}</span>
                                 </div>
@@ -123,20 +123,20 @@
                                     {% if prediction %}
                                         {% if game.isFinished %}
                                             {% if prediction.isExactScore(game) %}
-                                                {% set cls = 'bg-amber-100 text-amber-800 border-amber-300' %}
+                                                {% set cls = 'bg-amber-100 text-amber-800 border-amber-300 dark:bg-amber-900/30 dark:text-amber-300 dark:border-amber-700' %}
                                             {% elseif prediction.isCorrectWinner(game) %}
-                                                {% set cls = 'bg-green-100 text-green-800 border-green-300' %}
+                                                {% set cls = 'bg-green-100 text-green-800 border-green-300 dark:bg-green-900/30 dark:text-green-300 dark:border-green-700' %}
                                             {% else %}
-                                                {% set cls = 'bg-red-100 text-red-800 border-red-300' %}
+                                                {% set cls = 'bg-red-100 text-red-800 border-red-300 dark:bg-red-900/30 dark:text-red-300 dark:border-red-700' %}
                                             {% endif %}
                                         {% else %}
-                                            {% set cls = 'bg-blue-50 text-blue-700 border-blue-200' %}
+                                            {% set cls = 'bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-900/30 dark:text-blue-300 dark:border-blue-700' %}
                                         {% endif %}
                                         <span class="inline-block rounded border px-2 py-0.5 text-xs font-medium tabular-nums {{ cls }}">
                                             {{ prediction.homeScore }}:{{ prediction.awayScore }}
                                         </span>
                                     {% else %}
-                                        <span class="text-xs text-gray-300">—</span>
+                                        <span class="text-xs text-gray-300 dark:text-gray-600">—</span>
                                     {% endif %}
                                 </div>
                             </a>

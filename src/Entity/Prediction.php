@@ -14,8 +14,8 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Entity(repositoryClass: PredictionRepository::class)]
 #[ORM\Table(name: 'prediction')]
 #[ORM\UniqueConstraint(name: 'uniq_prediction_user_game', columns: ['user_id', 'game_id'])]
-#[ORM\Index(columns: ['user_id'], name: 'idx_prediction_user')]
-#[ORM\Index(columns: ['game_id'], name: 'idx_prediction_game')]
+#[ORM\Index(name: 'idx_prediction_user', columns: ['user_id'])]
+#[ORM\Index(name: 'idx_prediction_game', columns: ['game_id'])]
 #[UniqueEntity(fields: ['user', 'game'])]
 class Prediction
 {
@@ -153,7 +153,6 @@ class Prediction
         $actualWinner = $game->getWinner();
         $predictedWinner = $this->getPredictedWinner();
 
-        // Both draw
         if (null === $actualWinner && null === $predictedWinner) {
             return $game->getHomeScore() !== null;
         }

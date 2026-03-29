@@ -5,10 +5,10 @@
 {% block admin_body %}
     <div class="mx-auto max-w-lg">
         <div class="mb-4">
-            <a href="{{ path('admin_matches') }}" class="text-sm text-gray-500 hover:text-gray-700">← Zpět na zápasy</a>
+            <a href="{{ path('admin_matches') }}" class="text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-white">← Zpět na zápasy</a>
         </div>
 
-        <div class="overflow-hidden rounded-xl bg-white shadow">
+        <div class="overflow-hidden rounded-xl bg-white shadow dark:bg-[#1e293b] dark:shadow-gray-900/30">
             <div class="bg-[#0f172a] px-6 py-4">
                 <h1 class="text-lg font-semibold text-white">Zadat výsledek</h1>
                 <p class="mt-1 text-xs text-gray-400">{{ game.playedAt|date('d.m.Y H:i') }}</p>
@@ -17,29 +17,29 @@
                 <div class="mb-6 flex items-center justify-center gap-6 text-center">
                     <div>
                         <div class="text-3xl">{{ game.homeTeam.flagEmoji }}</div>
-                        <div class="mt-1 text-sm font-bold">{{ game.homeTeam.code }}</div>
+                        <div class="mt-1 text-sm font-bold dark:text-white">{{ game.homeTeam.code }}</div>
                     </div>
-                    <div class="text-xl font-bold text-gray-300">vs</div>
+                    <div class="text-xl font-bold text-gray-300 dark:text-gray-500">vs</div>
                     <div>
                         <div class="text-3xl">{{ game.awayTeam.flagEmoji }}</div>
-                        <div class="mt-1 text-sm font-bold">{{ game.awayTeam.code }}</div>
+                        <div class="mt-1 text-sm font-bold dark:text-white">{{ game.awayTeam.code }}</div>
                     </div>
                 </div>
 
                 {{ form_start(form) }}
                     <div class="flex items-end justify-center gap-4">
                         <div class="text-center">
-                            {{ form_label(form.homeScore, null, {label_attr: {class: 'block text-sm font-medium text-gray-700 mb-1'}}) }}
-                            {{ form_widget(form.homeScore, {attr: {class: 'w-20 rounded-lg border border-gray-300 px-3 py-2 text-center text-lg font-bold focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20'}}) }}
+                            {{ form_label(form.homeScore, null, {label_attr: {class: 'block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300'}}) }}
+                            {{ form_widget(form.homeScore, {attr: {class: 'w-20 rounded-lg border border-gray-300 px-3 py-2 text-center text-lg font-bold focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 dark:bg-[#0f172a] dark:border-gray-600 dark:text-white'}}) }}
                         </div>
-                        <div class="pb-2 text-xl font-bold text-gray-400">:</div>
+                        <div class="pb-2 text-xl font-bold text-gray-400 dark:text-gray-500">:</div>
                         <div class="text-center">
-                            {{ form_label(form.awayScore, null, {label_attr: {class: 'block text-sm font-medium text-gray-700 mb-1'}}) }}
-                            {{ form_widget(form.awayScore, {attr: {class: 'w-20 rounded-lg border border-gray-300 px-3 py-2 text-center text-lg font-bold focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20'}}) }}
+                            {{ form_label(form.awayScore, null, {label_attr: {class: 'block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300'}}) }}
+                            {{ form_widget(form.awayScore, {attr: {class: 'w-20 rounded-lg border border-gray-300 px-3 py-2 text-center text-lg font-bold focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 dark:bg-[#0f172a] dark:border-gray-600 dark:text-white'}}) }}
                         </div>
                     </div>
                     <div class="mt-6 text-center">
-                        {{ form_widget(form.save, {attr: {class: 'rounded-lg bg-blue-600 px-6 py-2.5 font-semibold text-white hover:bg-blue-700'}}) }}
+                        {{ form_widget(form.save, {attr: {class: 'rounded-lg bg-blue-600 px-6 py-2.5 font-semibold text-white hover:bg-blue-700 dark:bg-[#38bdf8] dark:text-[#0f172a] dark:hover:bg-[#7dd3fc]'}}) }}
                     </div>
                 {{ form_end(form) }}
             </div>

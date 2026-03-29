@@ -118,21 +118,4 @@ class Tournament
     {
         return $this->matches;
     }
-
-    public function addMatch(Game $match): self
-    {
-        if (!$this->matches->contains($match)) {
-            $this->matches->add($match);
-            $match->setTournament($this);
-        }
-
-        return $this;
-    }
-
-    public function removeMatch(Game $match): self
-    {
-        $this->matches->removeElement($match);
-
-        return $this;
-    }
 }

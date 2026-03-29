@@ -59,7 +59,6 @@ class GameRepository extends ServiceEntityRepository
             $grouped[$game->getPhase()->value][] = $game;
         }
 
-        // Ensure phase order matches enum order
         $ordered = [];
         foreach (TournamentPhase::cases() as $phase) {
             if (isset($grouped[$phase->value])) {

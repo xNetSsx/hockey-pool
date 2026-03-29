@@ -10,7 +10,7 @@ use App\Entity\SpecialBetRule;
 use App\Entity\Team;
 use App\Entity\Tournament;
 use App\Entity\User;
-use App\Enum\BetValueType;
+use App\Enum\TournamentPhase;
 use App\Enum\TournamentStatus;
 use App\Form\Admin\BulkGameType;
 use App\Form\Admin\GameType;
@@ -34,7 +34,6 @@ use App\Service\Manager\TournamentManager;
 use App\Service\Manager\UserManager;
 use App\Service\Provider\ActiveTournamentProvider;
 use App\Service\Resolver\TournamentResolver;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -44,14 +43,12 @@ use Symfony\Component\Security\Http\Attribute\IsCsrfTokenValid;
 #[Route('/admin')]
 class AdminController extends AbstractController
 {
-    /** Dashboard. */
     #[Route('', name: 'admin_dashboard')]
     public function dashboard(): Response
     {
         return $this->render('admin/dashboard.html.twig');
     }
 
-    /** Tournaments. */
     #[Route('/tournaments', name: 'admin_tournaments')]
     public function tournaments(
         TournamentRepository $repo,
@@ -71,7 +68,6 @@ class AdminController extends AbstractController
             }
         }
 
-        // Check which tournaments have rules configured
         $hasRuleSet = [];
         $hasSpecialRules = [];
 
@@ -161,16 +157,12 @@ class AdminController extends AbstractController
         ]);
     }
 
-    /**
-     * Clones rules from the most recent tournament that has them.
-     */
     #[Route('/tournaments/{id}/clone-from-last', name: 'admin_tournament_clone', requirements: ['id' => '\d+'])]
     public function tournamentClone(
         Tournament $tournament,
         TournamentRepository $tournamentRepo,
         TournamentManager $tournamentManager,
     ): Response {
-        // Find the most recent tournament (by year) that has rules, excluding current
         $source = $tournamentRepo->findLatestWithRules($tournament);
 
         if (null === $source) {
@@ -197,7 +189,6 @@ class AdminController extends AbstractController
         return $this->redirectToRoute('admin_tournaments');
     }
 
-    /** Teams. */
     #[Route('/teams', name: 'admin_teams')]
     public function teams(TeamRepository $repo): Response
     {
@@ -247,7 +238,6 @@ class AdminController extends AbstractController
         ]);
     }
 
-    /** Users. */
     #[Route('/users', name: 'admin_users')]
     public function users(UserRepository $repo): Response
     {
@@ -259,17 +249,11 @@ class AdminController extends AbstractController
     #[Route('/users/new', name: 'admin_user_new')]
     public function userNew(Request $request, UserManager $manager): Response
     {
-        $form = $this->createForm(UserType::class, null, ['is_new' => true]);
+        $user = new User();
+        $form = $this->createForm(UserType::class, $user, ['is_new' => true]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $user = new User();
-            /** @var string $username */
-            $username = $form->get('username')->getData();
-            $user->setUsername($username);
-            /** @var string $email */
-            $email = $form->get('email')->getData();
-            $user->setEmail($email);
             /** @var bool $admin */
             $admin = $form->get('admin')->getData();
             $user->setRoles($admin ? ['ROLE_USER', 'ROLE_ADMIN'] : ['ROLE_USER']);
@@ -293,20 +277,11 @@ class AdminController extends AbstractController
     #[Route('/users/{id}/edit', name: 'admin_user_edit', requirements: ['id' => '\d+'])]
     public function userEdit(User $user, Request $request, UserManager $manager): Response
     {
-        $form = $this->createForm(UserType::class, [
-            'username' => $user->getUsername(),
-            'email' => $user->getEmail(),
-            'admin' => $user->hasRole('ROLE_ADMIN'),
-        ]);
+        $form = $this->createForm(UserType::class, $user);
+        $form->get('admin')->setData($user->hasRole('ROLE_ADMIN'));
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            /** @var string $username */
-            $username = $form->get('username')->getData();
-            $user->setUsername($username);
-            /** @var string $email */
-            $email = $form->get('email')->getData();
-            $user->setEmail($email);
             /** @var bool $admin */
             $admin = $form->get('admin')->getData();
             $user->setRoles($admin ? ['ROLE_USER', 'ROLE_ADMIN'] : ['ROLE_USER']);
@@ -330,7 +305,6 @@ class AdminController extends AbstractController
         ]);
     }
 
-    /** Matches. */
     #[Route('/matches', name: 'admin_matches')]
     public function matches(
         Request $request,
@@ -410,10 +384,8 @@ class AdminController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            /** @var array{tournament: Tournament, phase: \App\Enum\TournamentPhase, games: list<array{homeTeam: Team|null, awayTeam: Team|null, playedAt: \DateTime|null}>} $data */
+            /** @var array{tournament: Tournament, phase: TournamentPhase, games: list<array{homeTeam: Team|null, awayTeam: Team|null, playedAt: \DateTime|null}>} $data */
             $data = $form->getData();
-            $tournament = $data['tournament'];
-            $phase = $data['phase'];
             $games = [];
 
             foreach ($data['games'] as $row) {
@@ -421,13 +393,7 @@ class AdminController extends AbstractController
                     continue;
                 }
 
-                $game = new Game();
-                $game->setTournament($tournament);
-                $game->setPhase($phase);
-                $game->setHomeTeam($row['homeTeam']);
-                $game->setAwayTeam($row['awayTeam']);
-                $game->setPlayedAt($row['playedAt']);
-                $games[] = $game;
+                $games[] = Game::create($data['tournament'], $data['phase'], $row['homeTeam'], $row['awayTeam'], $row['playedAt']);
             }
 
             if (count($games) > 0) {
@@ -452,10 +418,7 @@ class AdminController extends AbstractController
         GameManager $gameManager,
         TournamentResolver $tournamentResolver,
     ): Response {
-        $form = $this->createForm(MatchResultType::class, [
-            'homeScore' => $game->getHomeScore(),
-            'awayScore' => $game->getAwayScore(),
-        ], [
+        $form = $this->createForm(MatchResultType::class, $game, [
             'home_team_label' => $game->getHomeTeam()->getLabel(),
             'away_team_label' => $game->getAwayTeam()->getLabel(),
         ]);
@@ -463,20 +426,15 @@ class AdminController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            /** @var array{homeScore: int, awayScore: int} $data */
-            $data = $form->getData();
-            $game->setHomeScore($data['homeScore']);
-            $game->setAwayScore($data['awayScore']);
             $game->setIsFinished(true);
             $gameManager->save($game);
-
             $tournamentResolver->resolveMatch($game);
 
             $this->addFlash('success', sprintf(
                 'Výsledek: %s %d:%d %s — body přepočteny.',
                 $game->getHomeTeam()->getCode(),
-                $data['homeScore'],
-                $data['awayScore'],
+                $game->getHomeScore(),
+                $game->getAwayScore(),
                 $game->getAwayTeam()->getCode(),
             ));
 
@@ -489,7 +447,6 @@ class AdminController extends AbstractController
         ]);
     }
 
-    /** Special Bet Rules. */
     #[Route('/rules', name: 'admin_rules')]
     public function rules(
         ActiveTournamentProvider $activeTournamentProvider,
@@ -545,15 +502,35 @@ class AdminController extends AbstractController
         ]);
     }
 
-    #[Route('/special-results', name: 'admin_special_results')]
+    #[Route('/special-results', name: 'admin_special_results', methods: ['GET'])]
     public function specialResults(
+        ActiveTournamentProvider $activeTournamentProvider,
+        SpecialBetRuleRepository $ruleRepo,
+        TeamRepository $teamRepository,
+    ): Response {
+        $tournament = $activeTournamentProvider->getActiveTournament();
+
+        if (null === $tournament) {
+            $this->addFlash('error', 'Žádný aktivní turnaj.');
+
+            return $this->redirectToRoute('admin_dashboard');
+        }
+
+        return $this->render('admin/special_results.html.twig', [
+            'tournament' => $tournament,
+            'rules' => $ruleRepo->findByTournament($tournament),
+            'teams' => $teamRepository->findBy([], ['name' => 'ASC']),
+        ]);
+    }
+
+    #[Route('/special-results', name: 'admin_special_results_save', methods: ['POST'])]
+    #[IsCsrfTokenValid('special_results')]
+    public function specialResultsSave(
         Request $request,
         ActiveTournamentProvider $activeTournamentProvider,
         SpecialBetRuleRepository $ruleRepo,
         SpecialBetRuleManager $ruleManager,
-        TeamRepository $teamRepository,
         TournamentResolver $tournamentResolver,
-        EntityManagerInterface $em,
     ): Response {
         $tournament = $activeTournamentProvider->getActiveTournament();
 
@@ -564,40 +541,20 @@ class AdminController extends AbstractController
         }
 
         $rules = $ruleRepo->findByTournament($tournament);
-
-        if ($request->isMethod('POST') && $this->isCsrfTokenValid('special_results', $request->getPayload()->getString('_token'))) {
-            foreach ($rules as $rule) {
-                $rawValue = $request->getPayload()->getString('rule_' . $rule->getId());
-
-                $rule->setActualTeamValue(null);
-                $rule->setActualStringValue(null);
-                $rule->setActualIntValue(null);
-
-                if ('' !== $rawValue) {
-                    match ($rule->getValueType()) {
-                        BetValueType::Team => $rule->setActualTeamValue($em->getReference(Team::class, (int) $rawValue)),
-                        BetValueType::String => $rule->setActualStringValue($rawValue),
-                        BetValueType::Integer => $rule->setActualIntValue((int) $rawValue),
-                    };
-                }
-            }
-
-            $em->flush();
-            $tournamentResolver->resolveSpecialBets($tournament);
-
-            $this->addFlash('success', 'Výsledky uloženy a speciální tipy přepočteny.');
-
-            return $this->redirectToRoute('admin_special_results');
+        $rawValues = [];
+        foreach ($rules as $rule) {
+            $ruleId = $rule->getId();
+            $rawValues[$ruleId] = $request->getPayload()->getString('rule_' . $ruleId);
         }
 
-        return $this->render('admin/special_results.html.twig', [
-            'tournament' => $tournament,
-            'rules' => $rules,
-            'teams' => $teamRepository->findBy([], ['name' => 'ASC']),
-        ]);
+        $ruleManager->updateActualValues($rules, $rawValues);
+        $tournamentResolver->resolveSpecialBets($tournament);
+
+        $this->addFlash('success', 'Výsledky uloženy a speciální tipy přepočteny.');
+
+        return $this->redirectToRoute('admin_special_results');
     }
 
-    /** Recalculate. */
     #[Route('/recalculate', name: 'admin_recalculate', methods: ['POST'])]
     #[IsCsrfTokenValid('recalculate')]
     public function recalculate(

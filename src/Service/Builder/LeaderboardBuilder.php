@@ -7,7 +7,7 @@ namespace App\Service\Builder;
 use App\Entity\Tournament;
 use App\Entity\User;
 use App\Repository\PointEntryRepository;
-use Doctrine\ORM\EntityManagerInterface;
+use App\Repository\UserRepository;
 
 /**
  * Builds the tournament leaderboard with ranking.
@@ -15,7 +15,7 @@ use Doctrine\ORM\EntityManagerInterface;
 final readonly class LeaderboardBuilder
 {
     public function __construct(
-        private EntityManagerInterface $em,
+        private UserRepository $userRepository,
         private PointEntryRepository $pointEntryRepository,
     ) {
     }
@@ -26,6 +26,9 @@ final readonly class LeaderboardBuilder
     public function build(Tournament $tournament): array
     {
         $rows = $this->pointEntryRepository->getPointsGroupedByUser($tournament);
+
+        $userIds = array_column($rows, 'userId');
+        $users = $this->userRepository->findByIds($userIds);
 
         $leaderboard = [];
         $rank = 0;
@@ -41,11 +44,12 @@ final readonly class LeaderboardBuilder
                 $lastPoints = $points;
             }
 
-            /** @var User $user */
-            $user = $this->em->getReference(User::class, $row['userId']);
+            if (!isset($users[$row['userId']])) {
+                continue;
+            }
 
             $leaderboard[] = [
-                'user' => $user,
+                'user' => $users[$row['userId']],
                 'totalPoints' => $points,
                 'rank' => $rank,
             ];

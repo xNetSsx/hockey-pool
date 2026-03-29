@@ -29,9 +29,6 @@ final readonly class TournamentManager
     }
 
     /**
-     * Clones both the RuleSet and all SpecialBetRules from source to target.
-     * Skips if target already has its own.
-     *
      * @return array{ruleSetCloned: bool, rulesCloned: int}
      */
     public function cloneRulesFrom(Tournament $source, Tournament $target): array

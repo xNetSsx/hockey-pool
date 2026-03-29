@@ -4,23 +4,23 @@
 
 {% block body %}
     <div class="mx-auto max-w-lg">
-        <h1 class="mb-6 text-2xl font-bold text-gray-900">⚔️ Porovnat hráče</h1>
+        <h1 class="mb-6 text-2xl font-bold text-gray-900 dark:text-white">⚔️ Porovnat hráče</h1>
 
-        <div class="rounded-xl bg-white p-6 shadow">
+        <div class="rounded-xl bg-white p-6 shadow dark:bg-[#1e293b] dark:shadow-gray-900/30">
             <form method="get" action="{{ path('player_compare') }}">
-                <p class="mb-4 text-sm text-gray-500">Vyber alespoň 2 hráče k porovnání:</p>
+                <p class="mb-4 text-sm text-gray-500 dark:text-gray-400">Vyber alespoň 2 hráče k porovnání:</p>
                 <div class="space-y-2">
                     {% for user in allUsers %}
-                        <label class="flex items-center gap-3 rounded-lg border border-gray-200 px-4 py-2.5 hover:bg-gray-50">
+                        <label class="flex items-center gap-3 rounded-lg border border-gray-200 px-4 py-2.5 hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-white/5">
                             <input type="checkbox" name="users[]" value="{{ user.username }}"
                                    class="h-4 w-4 rounded border-gray-300 text-blue-600">
-                            <span class="text-sm font-medium">{{ user.username }}</span>
+                            <span class="text-sm font-medium dark:text-gray-100">{{ user.username }}</span>
                         </label>
                     {% endfor %}
                 </div>
                 <div class="mt-6 text-center">
                     <button type="submit"
-                            class="rounded-lg bg-blue-600 px-6 py-2.5 font-semibold text-white hover:bg-blue-700">
+                            class="rounded-lg bg-blue-600 px-6 py-2.5 font-semibold text-white hover:bg-blue-700 dark:bg-[#38bdf8] dark:text-[#0f172a] dark:hover:bg-[#7dd3fc]">
                         Porovnat
                     </button>
                 </div>

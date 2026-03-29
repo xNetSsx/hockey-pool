@@ -7,6 +7,7 @@ namespace App\Service\Resolver;
 use App\Entity\PointEntry;
 use App\Entity\SpecialBet;
 use App\Entity\SpecialBetRule;
+use App\Entity\Team;
 use App\Enum\BetScoringType;
 use App\Enum\BetValueType;
 
@@ -16,6 +17,7 @@ use App\Enum\BetValueType;
  * Scoring types:
  *  - exact_match: every user whose value matches the actual gets points
  *  - closest: only the user(s) with the smallest distance to actual get points (integer only)
+ *  - podium: 1 point if team is anywhere in podium, +1 if exact position match
  */
 final class SpecialBetResolver
 {
@@ -24,9 +26,11 @@ final class SpecialBetResolver
      *
      * @param SpecialBetRule $rule
      * @param list<SpecialBet> $bets All user bets for this rule
+     * @param list<Team> $podiumTeams All actual podium teams (for podium scoring only)
+     * @param list<string> $anyMatchPool All actual string values for any_match scoring
      * @return list<PointEntry>
      */
-    public function resolve(SpecialBetRule $rule, array $bets): array
+    public function resolve(SpecialBetRule $rule, array $bets, array $podiumTeams = [], array $anyMatchPool = []): array
     {
         if (!$rule->hasActualValue() || 0 === count($bets)) {
             return [];
@@ -35,6 +39,8 @@ final class SpecialBetResolver
         return match ($rule->getScoringType()) {
             BetScoringType::ExactMatch => $this->resolveExactMatch($rule, $bets),
             BetScoringType::Closest => $this->resolveClosest($rule, $bets),
+            BetScoringType::Podium => $this->resolvePodium($rule, $bets, $podiumTeams),
+            BetScoringType::AnyMatch => $this->resolveAnyMatch($rule, $bets, $anyMatchPool),
         };
     }
 
@@ -51,7 +57,7 @@ final class SpecialBetResolver
 
         foreach ($bets as $bet) {
             if ($this->isMatch($rule, $bet)) {
-                $entries[] = $this->createEntry($bet, $rule, sprintf('%s — správně', $rule->getName()));
+                $entries[] = $this->createEntry($bet, $rule, $rule->getPoints(), sprintf('%s — správně', $rule->getName()));
             }
         }
 
@@ -60,7 +66,6 @@ final class SpecialBetResolver
 
     /**
      * Only the user(s) closest to the actual integer value get points.
-     * Multiple users can tie if they have the same distance.
      *
      * @param SpecialBetRule $rule
      * @param list<SpecialBet> $bets
@@ -78,7 +83,6 @@ final class SpecialBetResolver
             return [];
         }
 
-        // Calculate distances
         $distances = [];
         foreach ($bets as $bet) {
             if ($bet->getIntValue() === null) {
@@ -95,10 +99,8 @@ final class SpecialBetResolver
             return [];
         }
 
-        // Find minimum distance
         $minDistance = min(array_column($distances, 'distance'));
 
-        // Award points to all winners
         $entries = [];
         foreach ($distances as $row) {
             if ($row['distance'] === $minDistance) {
@@ -106,7 +108,75 @@ final class SpecialBetResolver
                     ? sprintf('%s — přesně (%d)', $rule->getName(), $actual)
                     : sprintf('%s — nejblíž (tip: %d, skutečnost: %d)', $rule->getName(), $row['bet']->getIntValue(), $actual);
 
-                $entries[] = $this->createEntry($row['bet'], $rule, $label);
+                $entries[] = $this->createEntry($row['bet'], $rule, $rule->getPoints(), $label);
+            }
+        }
+
+        return $entries;
+    }
+
+    /**
+     * Podium scoring: 1 point if team is anywhere in top 3, +1 if exact position.
+     *
+     * @param SpecialBetRule $rule
+     * @param list<SpecialBet> $bets
+     * @param list<Team> $podiumTeams All actual podium teams
+     * @return list<PointEntry>
+     */
+    private function resolvePodium(SpecialBetRule $rule, array $bets, array $podiumTeams): array
+    {
+        $actualTeam = $rule->getActualTeamValue();
+
+        if (null === $actualTeam) {
+            return [];
+        }
+
+        $podiumTeamIds = array_map(static fn (Team $t) => $t->getId(), $podiumTeams);
+
+        $entries = [];
+        foreach ($bets as $bet) {
+            $betTeam = $bet->getTeamValue();
+            if (null === $betTeam) {
+                continue;
+            }
+
+            $betTeamId = $betTeam->getId();
+            $isExactPosition = $betTeamId === $actualTeam->getId();
+            $isInPodium = in_array($betTeamId, $podiumTeamIds, true);
+
+            if (!$isInPodium) {
+                continue;
+            }
+
+            if ($isExactPosition) {
+                $entries[] = $this->createEntry($bet, $rule, 3.0, sprintf('%s — správná pozice (1+2)', $rule->getName()));
+            } else {
+                $entries[] = $this->createEntry($bet, $rule, 1.0, sprintf('%s — tým v top 3', $rule->getName()));
+            }
+        }
+
+        return $entries;
+    }
+
+    /**
+     * AnyMatch: award points if the bet value appears anywhere in the pool of actual values.
+     *
+     * @param SpecialBetRule $rule
+     * @param list<SpecialBet> $bets
+     * @param list<string> $anyMatchPool
+     * @return list<PointEntry>
+     */
+    private function resolveAnyMatch(SpecialBetRule $rule, array $bets, array $anyMatchPool): array
+    {
+        $entries = [];
+        foreach ($bets as $bet) {
+            $betValue = $bet->getStringValue();
+            if (null === $betValue) {
+                continue;
+            }
+
+            if (in_array($betValue, $anyMatchPool, true)) {
+                $entries[] = $this->createEntry($bet, $rule, $rule->getPoints(), sprintf('%s — správně (%s)', $rule->getName(), $betValue));
             }
         }
 
@@ -128,13 +198,13 @@ final class SpecialBetResolver
         };
     }
 
-    private function createEntry(SpecialBet $bet, SpecialBetRule $rule, string $reason): PointEntry
+    private function createEntry(SpecialBet $bet, SpecialBetRule $rule, float $points, string $reason): PointEntry
     {
         return (new PointEntry())
             ->setUser($bet->getUser())
             ->setTournament($rule->getTournament())
             ->setSpecialBetRule($rule)
-            ->setPoints($rule->getPoints())
+            ->setPoints($points)
             ->setReason($reason);
     }
 }

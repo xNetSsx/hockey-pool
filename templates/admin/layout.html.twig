@@ -11,7 +11,7 @@
         <a href="{{ path('admin_special_results') }}" class="rounded px-3 py-1 text-sm text-gray-300 hover:bg-white/10 hover:text-white {{ app.request.attributes.get('_route') == 'admin_special_results' ? 'bg-white/10 text-white' : '' }}">Výsledky</a>
         <form method="post" action="{{ path('admin_recalculate') }}" class="ml-auto">
             <input type="hidden" name="_token" value="{{ csrf_token('recalculate') }}">
-            <button type="submit" class="rounded bg-amber-600 px-3 py-1 text-sm font-medium text-white hover:bg-amber-700" onclick="return confirm('Přepočítat všechny body?')">
+            <button type="submit" class="rounded bg-amber-600 px-3 py-1 text-sm font-medium text-white hover:bg-amber-700 dark:bg-amber-500 dark:hover:bg-amber-600" onclick="return confirm('Přepočítat všechny body?')">
                 🔄 Přepočítat body
             </button>
         </form>

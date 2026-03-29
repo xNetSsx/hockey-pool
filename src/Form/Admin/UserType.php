@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Form\Admin;
 
+use App\Entity\User;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
@@ -30,11 +31,15 @@ class UserType extends AbstractType
             ->add('admin', CheckboxType::class, [
                 'label' => 'Administrátor (ROLE_ADMIN)',
                 'required' => false,
+                'mapped' => false,
             ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void
     {
-        $resolver->setDefaults(['is_new' => false]);
+        $resolver->setDefaults([
+            'data_class' => User::class,
+            'is_new' => false,
+        ]);
     }
 }

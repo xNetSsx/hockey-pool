@@ -57,6 +57,23 @@ class Game
     #[ORM\Column(options: ['default' => false])]
     private bool $isFinished = false;
 
+    public static function create(
+        Tournament $tournament,
+        TournamentPhase $phase,
+        Team $homeTeam,
+        Team $awayTeam,
+        DateTime $playedAt,
+    ): self {
+        $game = new self();
+        $game->tournament = $tournament;
+        $game->phase = $phase;
+        $game->homeTeam = $homeTeam;
+        $game->awayTeam = $awayTeam;
+        $game->playedAt = $playedAt;
+
+        return $game;
+    }
+
     public function getId(): ?int
     {
         return $this->id;
@@ -175,20 +192,4 @@ class Game
         return null;
     }
 
-    public function getLoser(): ?Team
-    {
-        if ($this->homeScore === null || $this->awayScore === null) {
-            return null;
-        }
-
-        if ($this->homeScore > $this->awayScore) {
-            return $this->awayTeam;
-        }
-
-        if ($this->awayScore > $this->homeScore) {
-            return $this->homeTeam;
-        }
-
-        return null;
-    }
 }

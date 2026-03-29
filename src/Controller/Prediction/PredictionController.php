@@ -6,10 +6,7 @@ namespace App\Controller\Prediction;
 
 use App\Entity\Game;
 use App\Entity\Prediction;
-use App\Entity\SpecialBet;
-use App\Entity\Team;
 use App\Entity\User;
-use App\Enum\BetValueType;
 use App\Form\PredictionType;
 use App\Repository\GameRepository;
 use App\Repository\PredictionRepository;
@@ -21,11 +18,11 @@ use App\Service\Manager\PredictionManager;
 use App\Service\Manager\SpecialBetManager;
 use App\Service\Provider\ActiveTournamentProvider;
 use DateTime;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsCsrfTokenValid;
 
 class PredictionController extends AbstractController
 {
@@ -117,16 +114,13 @@ class PredictionController extends AbstractController
         ]);
     }
 
-    #[Route('/predictions/special', name: 'prediction_special')]
+    #[Route('/predictions/special', name: 'prediction_special', methods: ['GET'])]
     public function special(
-        Request $request,
         ActiveTournamentProvider $activeTournamentProvider,
         GameRepository $gameRepository,
         SpecialBetRuleRepository $ruleRepository,
         SpecialBetRepository $specialBetRepository,
-        SpecialBetManager $specialBetManager,
         TeamRepository $teamRepository,
-        EntityManagerInterface $em,
     ): Response {
         $tournament = $activeTournamentProvider->getActiveTournament();
 
@@ -140,61 +134,53 @@ class PredictionController extends AbstractController
         $firstMatchDate = $gameRepository->findFirstMatchDate($tournament);
         $isLocked = null !== $firstMatchDate && $firstMatchDate <= new DateTime() && !$this->isGranted('ROLE_ADMIN');
 
-        $rules = $ruleRepository->findByTournament($tournament);
-        $existingBets = $specialBetRepository->findByUserIndexedByRule($user, $tournament);
-
-        if ($request->isMethod('POST') && !$isLocked) {
-            $submittedToken = $request->getPayload()->getString('_token');
-
-            if ($this->isCsrfTokenValid('special_bets', $submittedToken)) {
-                $bets = [];
-
-                foreach ($rules as $rule) {
-                    $ruleId = $rule->getId();
-                    $rawValue = $request->getPayload()->getString('rule_' . $ruleId);
-
-                    if ('' === $rawValue) {
-                        continue;
-                    }
-
-                    $bet = $existingBets[$ruleId] ?? null;
-
-                    if (null === $bet) {
-                        $bet = new SpecialBet();
-                        $bet->setUser($user);
-                        $bet->setRule($rule);
-                    }
-
-                    // Reset all values
-                    $bet->setTeamValue(null);
-                    $bet->setStringValue(null);
-                    $bet->setIntValue(null);
-
-                    match ($rule->getValueType()) {
-                        BetValueType::Team => $bet->setTeamValue($em->getReference(Team::class, (int) $rawValue)),
-                        BetValueType::String => $bet->setStringValue($rawValue),
-                        BetValueType::Integer => $bet->setIntValue((int) $rawValue),
-                    };
-
-                    $bets[] = $bet;
-                }
-
-                if (count($bets) > 0) {
-                    $specialBetManager->saveAll($bets);
-                }
-
-                $this->addFlash('success', 'Speciální tipy uloženy.');
-
-                return $this->redirectToRoute('prediction_special');
-            }
-        }
-
         return $this->render('prediction/special.html.twig', [
             'tournament' => $tournament,
-            'rules' => $rules,
-            'existingBets' => $existingBets,
+            'rules' => $ruleRepository->findByTournament($tournament),
+            'existingBets' => $specialBetRepository->findByUserIndexedByRule($user, $tournament),
             'isLocked' => $isLocked,
             'teams' => $teamRepository->findBy([], ['name' => 'ASC']),
         ]);
+    }
+
+    #[Route('/predictions/special', name: 'prediction_special_save', methods: ['POST'])]
+    #[IsCsrfTokenValid('special_bets')]
+    public function specialSave(
+        Request $request,
+        ActiveTournamentProvider $activeTournamentProvider,
+        GameRepository $gameRepository,
+        SpecialBetRuleRepository $ruleRepository,
+        SpecialBetRepository $specialBetRepository,
+        SpecialBetManager $specialBetManager,
+    ): Response {
+        $tournament = $activeTournamentProvider->getActiveTournament();
+
+        if (null === $tournament) {
+            return $this->redirectToRoute('prediction_special');
+        }
+
+        /** @var User $user */
+        $user = $this->getUser();
+
+        $firstMatchDate = $gameRepository->findFirstMatchDate($tournament);
+        if (null !== $firstMatchDate && $firstMatchDate <= new DateTime() && !$this->isGranted('ROLE_ADMIN')) {
+            $this->addFlash('error', 'Speciální tipy jsou uzamčeny.');
+
+            return $this->redirectToRoute('prediction_special');
+        }
+
+        $rules = $ruleRepository->findByTournament($tournament);
+        $existingBets = $specialBetRepository->findByUserIndexedByRule($user, $tournament);
+
+        $rawValues = [];
+        foreach ($rules as $rule) {
+            $ruleId = $rule->getId();
+            $rawValues[$ruleId] = $request->getPayload()->getString('rule_' . $ruleId);
+        }
+
+        $specialBetManager->updateBets($user, $rules, $existingBets, $rawValues);
+        $this->addFlash('success', 'Speciální tipy uloženy.');
+
+        return $this->redirectToRoute('prediction_special');
     }
 }

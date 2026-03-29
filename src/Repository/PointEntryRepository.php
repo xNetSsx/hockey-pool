@@ -8,6 +8,7 @@ use App\Entity\Game;
 use App\Entity\PointEntry;
 use App\Entity\Tournament;
 use App\Entity\User;
+use DateTimeInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -19,37 +20,26 @@ class PointEntryRepository extends ServiceEntityRepository
         parent::__construct($registry, PointEntry::class);
     }
 
-    public function deleteByGame(Game $game): void
+    /**
+     * @return list<PointEntry>
+     */
+    public function findByGame(Game $game): array
     {
-        $this->createQueryBuilder('pe')
-            ->delete()
-            ->where('pe.game = :game')
-            ->setParameter('game', $game)
-            ->getQuery()
-            ->execute();
+        return $this->findBy(['game' => $game]);
     }
 
-    public function deleteSpecialBetEntries(Tournament $tournament): void
+    /**
+     * @return list<PointEntry>
+     */
+    public function findSpecialBetEntries(Tournament $tournament): array
     {
-        $this->createQueryBuilder('pe')
-            ->delete()
+        /** @var list<PointEntry> */
+        return $this->createQueryBuilder('pe')
             ->where('pe.tournament = :tournament')
             ->andWhere('pe.game IS NULL')
             ->setParameter('tournament', $tournament)
             ->getQuery()
-            ->execute();
-    }
-
-    public function sumPointsByUser(User $user, Tournament $tournament): float
-    {
-        return (float) $this->createQueryBuilder('pe')
-            ->select('COALESCE(SUM(pe.points), 0)')
-            ->where('pe.user = :user')
-            ->andWhere('pe.tournament = :tournament')
-            ->setParameter('user', $user)
-            ->setParameter('tournament', $tournament)
-            ->getQuery()
-            ->getSingleScalarResult();
+            ->getResult();
     }
 
     /**
@@ -71,14 +61,6 @@ class PointEntryRepository extends ServiceEntityRepository
             'userId' => (int) $row['userId'],
             'totalPoints' => (float) $row['totalPoints'],
         ], $rows);
-    }
-
-    /**
-     * @return list<PointEntry>
-     */
-    public function findByGame(Game $game): array
-    {
-        return $this->findBy(['game' => $game]);
     }
 
     /**
@@ -113,7 +95,7 @@ class PointEntryRepository extends ServiceEntityRepository
      */
     public function getTimelineData(Tournament $tournament): array
     {
-        /** @var list<array{userId: int|string, username: string, gameId: int|string, playedAt: \DateTimeInterface, homeCode: string, awayCode: string, total: float|string}> $rows */
+        /** @var list<array{userId: int|string, username: string, gameId: int|string, playedAt: DateTimeInterface, homeCode: string, awayCode: string, total: float|string}> $rows */
         $rows = $this->createQueryBuilder('pe')
             ->select(
                 'IDENTITY(pe.user) as userId',
@@ -154,14 +136,14 @@ class PointEntryRepository extends ServiceEntityRepository
      */
     public function findHighestMatchScore(Tournament $tournament): ?array
     {
-        /** @var array{userId: int|string, gameId: int|string, total: float|string}|null $row */
+        /** @var array{username: string, gameId: int|string, total: float|string}|null $row */
         $row = $this->createQueryBuilder('pe')
-            ->select('IDENTITY(pe.user) as userId, IDENTITY(pe.game) as gameId, SUM(pe.points) as total')
+            ->select('u.username, IDENTITY(pe.game) as gameId, SUM(pe.points) as total')
             ->join('pe.user', 'u')
             ->where('pe.tournament = :tournament')
             ->andWhere('pe.game IS NOT NULL')
             ->setParameter('tournament', $tournament)
-            ->groupBy('pe.user, pe.game')
+            ->groupBy('pe.user, u.username, pe.game')
             ->orderBy('total', 'DESC')
             ->setMaxResults(1)
             ->getQuery()
@@ -171,11 +153,8 @@ class PointEntryRepository extends ServiceEntityRepository
             return null;
         }
 
-        /** @var User $user */
-        $user = $this->getEntityManager()->find(User::class, (int) $row['userId']);
-
         return [
-            'username' => $user->getUsername(),
+            'username' => $row['username'],
             'points' => (float) $row['total'],
             'gameId' => (int) $row['gameId'],
         ];
@@ -188,14 +167,15 @@ class PointEntryRepository extends ServiceEntityRepository
      */
     public function findMostExactPredictions(Tournament $tournament): ?array
     {
-        /** @var array{userId: int|string, cnt: int|string}|null $row */
+        /** @var array{username: string, cnt: int|string}|null $row */
         $row = $this->createQueryBuilder('pe')
-            ->select('IDENTITY(pe.user) as userId, COUNT(pe.id) as cnt')
+            ->select('u.username, COUNT(pe.id) as cnt')
+            ->join('pe.user', 'u')
             ->where('pe.tournament = :tournament')
             ->andWhere('pe.reason = :reason')
             ->setParameter('tournament', $tournament)
             ->setParameter('reason', 'Exact score bonus')
-            ->groupBy('pe.user')
+            ->groupBy('pe.user, u.username')
             ->orderBy('cnt', 'DESC')
             ->setMaxResults(1)
             ->getQuery()
@@ -205,11 +185,8 @@ class PointEntryRepository extends ServiceEntityRepository
             return null;
         }
 
-        /** @var User $user */
-        $user = $this->getEntityManager()->find(User::class, (int) $row['userId']);
-
         return [
-            'username' => $user->getUsername(),
+            'username' => $row['username'],
             'count' => (int) $row['cnt'],
         ];
     }

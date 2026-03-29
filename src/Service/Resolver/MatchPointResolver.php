@@ -23,6 +23,8 @@ final class MatchPointResolver
     /**
      * @param Game $game
      * @param list<Prediction> $predictions
+     * @param RuleSet|null $ruleSet
+     *
      * @return list<PointEntry>
      */
     public function resolve(Game $game, array $predictions, ?RuleSet $ruleSet = null): array

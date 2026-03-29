@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller\Tournament;
 
+use App\Enum\TournamentStatus;
 use App\Repository\TournamentRepository;
 use App\Service\Provider\ActiveTournamentProvider;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -15,8 +16,22 @@ class TournamentController extends AbstractController
     #[Route('/tournaments', name: 'tournament_archive')]
     public function archive(TournamentRepository $repo): Response
     {
+        $all = $repo->findBy([], ['year' => 'DESC']);
+
+        $current = [];
+        $archived = [];
+
+        foreach ($all as $tournament) {
+            if ($tournament->getStatus() === TournamentStatus::Finished) {
+                $archived[] = $tournament;
+            } else {
+                $current[] = $tournament;
+            }
+        }
+
         return $this->render('tournament/archive.html.twig', [
-            'tournaments' => $repo->findBy([], ['year' => 'DESC']),
+            'current' => $current,
+            'archived' => $archived,
         ]);
     }
 

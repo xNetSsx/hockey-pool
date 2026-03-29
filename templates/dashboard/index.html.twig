@@ -28,15 +28,15 @@
 
     {# Missing predictions banner #}
     {% if prediction_status and prediction_status.missingCount > 0 %}
-        <div class="mb-6 flex flex-col items-start justify-between gap-3 rounded-xl border border-amber-200 bg-amber-50 px-6 py-4 sm:flex-row sm:items-center">
+        <div class="mb-6 flex flex-col items-start justify-between gap-3 rounded-xl border border-amber-200 bg-amber-50 px-6 py-4 sm:flex-row sm:items-center dark:border-amber-700 dark:bg-amber-900/30">
             <div class="flex items-center gap-3">
                 <span class="text-2xl">⚠️</span>
                 <div>
-                    <p class="text-sm font-medium text-amber-900">
+                    <p class="text-sm font-medium text-amber-900 dark:text-amber-200">
                         Máš {{ prediction_status.missingCount }} {{ prediction_status.missingCount == 1 ? 'neodtipovaný zápas' : (prediction_status.missingCount < 5 ? 'neodtipované zápasy' : 'neodtipovaných zápasů') }}!
                     </p>
                     {% if prediction_status.nextMatch %}
-                        <p class="mt-0.5 text-xs text-amber-700">
+                        <p class="mt-0.5 text-xs text-amber-700 dark:text-amber-300">
                             Další zápas: {{ prediction_status.nextMatch.homeTeam.flagEmoji }} {{ prediction_status.nextMatch.homeTeam.code }}
                             vs {{ prediction_status.nextMatch.awayTeam.flagEmoji }} {{ prediction_status.nextMatch.awayTeam.code }}
                             — {{ prediction_status.nextMatch.playedAt|date('d.m. H:i') }}
@@ -53,14 +53,14 @@
     <div class="grid gap-6 lg:grid-cols-3">
         {# Leaderboard — spans 2 columns on large screens #}
         <div class="lg:col-span-2">
-            <div class="overflow-hidden rounded-xl bg-white shadow">
-                <div class="border-b border-gray-200 bg-[#0f172a] px-6 py-4">
+            <div class="overflow-hidden rounded-xl bg-white shadow dark:bg-[#1e293b] dark:shadow-gray-900/30">
+                <div class="border-b border-gray-200 bg-[#0f172a] px-6 py-4 dark:border-gray-700">
                     <h2 class="text-lg font-semibold text-white">Žebříček</h2>
                 </div>
                 <div class="overflow-x-auto">
                     <table class="w-full text-sm">
                         <thead>
-                            <tr class="border-b border-gray-100 bg-gray-50 text-left text-xs uppercase tracking-wider text-gray-500">
+                            <tr class="border-b border-gray-100 bg-gray-50 text-left text-xs uppercase tracking-wider text-gray-500 dark:border-gray-700 dark:bg-[#0f172a] dark:text-gray-400">
                                 <th class="px-6 py-3 w-12">#</th>
                                 <th class="px-6 py-3">Hráč</th>
                                 <th class="px-6 py-3 text-right">Body</th>
@@ -72,7 +72,7 @@
                             {% for row in leaderboard %}
                                 {% set isCurrentUser = currentUser and currentUser.id == row.user.id %}
                                 {% set diff = previousPoints is not null ? previousPoints - row.totalPoints : 0 %}
-                                <tr class="{{ isCurrentUser ? 'bg-[#38bdf8]/10 font-semibold' : '' }} {{ loop.index is odd and not isCurrentUser ? 'bg-white' : (not isCurrentUser ? 'bg-gray-50' : '') }} border-b border-gray-100 last:border-0">
+                                <tr class="{{ isCurrentUser ? 'bg-[#38bdf8]/10 font-semibold' : '' }} {{ loop.index is odd and not isCurrentUser ? 'bg-white dark:bg-[#1e293b]' : (not isCurrentUser ? 'bg-gray-50 dark:bg-[#0f172a]/50' : '') }} border-b border-gray-100 last:border-0 dark:border-gray-700 dark:text-gray-100">
                                     <td class="px-6 py-3">
                                         {% if row.rank <= 3 %}
                                             <span class="text-base">{{ row.rank == 1 ? '🥇' : (row.rank == 2 ? '🥈' : '🥉') }}</span>
@@ -81,7 +81,7 @@
                                         {% endif %}
                                     </td>
                                     <td class="px-6 py-3">
-                                        <a href="{{ path('player_profile', {username: row.user.username}) }}" class="hover:text-[#38bdf8]">
+                                        <a href="{{ path('player_profile', {username: row.user.username}) }}" class="hover:text-[#38bdf8] dark:text-gray-100">
                                             {{ row.user.username }}
                                         </a>
                                         {% if isCurrentUser %}
@@ -106,8 +106,8 @@
 
             {# Points progression chart #}
             {% if timeline.labels|length > 0 %}
-                <div class="mt-6 rounded-xl bg-white p-6 shadow">
-                    <h2 class="mb-4 text-lg font-semibold text-gray-900">Průběh bodů</h2>
+                <div class="mt-6 rounded-xl bg-white p-6 shadow dark:bg-[#1e293b] dark:shadow-gray-900/30">
+                    <h2 class="mb-4 text-lg font-semibold text-gray-900 dark:text-white">Průběh bodů</h2>
                     <div class="relative" style="height: 350px;">
                         <canvas id="points-chart"></canvas>
                     </div>
@@ -118,28 +118,28 @@
         {# Right sidebar #}
         <div class="space-y-6">
             {# Quick stats #}
-            <div class="rounded-xl bg-white shadow">
-                <div class="border-b border-gray-200 bg-[#0f172a] px-6 py-4">
+            <div class="rounded-xl bg-white shadow dark:bg-[#1e293b] dark:shadow-gray-900/30">
+                <div class="border-b border-gray-200 bg-[#0f172a] px-6 py-4 dark:border-gray-700">
                     <h2 class="text-lg font-semibold text-white">Statistiky</h2>
                 </div>
-                <div class="divide-y divide-gray-100">
+                <div class="divide-y divide-gray-100 dark:divide-gray-700">
                     <div class="flex items-center justify-between px-6 py-4">
-                        <span class="text-sm text-gray-500">Odehráno zápasů</span>
-                        <span class="font-semibold">{{ matchesPlayed }}/{{ matchesTotal }}</span>
+                        <span class="text-sm text-gray-500 dark:text-gray-400">Odehráno zápasů</span>
+                        <span class="font-semibold dark:text-gray-100">{{ matchesPlayed }}/{{ matchesTotal }}</span>
                     </div>
                     {% if highestMatchScore %}
                         <div class="flex items-center justify-between px-6 py-4">
-                            <span class="text-sm text-gray-500">Nejvíc bodů za zápas</span>
-                            <span class="font-semibold">{{ highestMatchScore.points|number_format(2) }}
-                                <span class="text-xs text-gray-400">({{ highestMatchScore.username }})</span>
+                            <span class="text-sm text-gray-500 dark:text-gray-400">Nejvíc bodů za zápas</span>
+                            <span class="font-semibold dark:text-gray-100">{{ highestMatchScore.points|number_format(2) }}
+                                <span class="text-xs text-gray-400 dark:text-gray-500">({{ highestMatchScore.username }})</span>
                             </span>
                         </div>
                     {% endif %}
                     {% if mostExactPredictions %}
                         <div class="flex items-center justify-between px-6 py-4">
-                            <span class="text-sm text-gray-500">Nejvíc přesných tipů</span>
-                            <span class="font-semibold">{{ mostExactPredictions.count }}×
-                                <span class="text-xs text-gray-400">({{ mostExactPredictions.username }})</span>
+                            <span class="text-sm text-gray-500 dark:text-gray-400">Nejvíc přesných tipů</span>
+                            <span class="font-semibold dark:text-gray-100">{{ mostExactPredictions.count }}×
+                                <span class="text-xs text-gray-400 dark:text-gray-500">({{ mostExactPredictions.username }})</span>
                             </span>
                         </div>
                     {% endif %}
@@ -148,20 +148,20 @@
 
             {# Upcoming matches or final results #}
             {% if not isFinished and upcomingMatches|length > 0 %}
-                <div class="rounded-xl bg-white shadow">
-                    <div class="border-b border-gray-200 bg-[#0f172a] px-6 py-4">
+                <div class="rounded-xl bg-white shadow dark:bg-[#1e293b] dark:shadow-gray-900/30">
+                    <div class="border-b border-gray-200 bg-[#0f172a] px-6 py-4 dark:border-gray-700">
                         <h2 class="text-lg font-semibold text-white">Nadcházející zápasy</h2>
                     </div>
-                    <div class="divide-y divide-gray-100">
+                    <div class="divide-y divide-gray-100 dark:divide-gray-700">
                         {% for game in upcomingMatches %}
                             <div class="px-6 py-3">
                                 <div class="flex items-center justify-between">
-                                    <div class="flex items-center gap-2 text-sm">
+                                    <div class="flex items-center gap-2 text-sm dark:text-gray-100">
                                         <span>{{ game.homeTeam.flagEmoji }} {{ game.homeTeam.code }}</span>
-                                        <span class="text-gray-400">vs</span>
-                                        <span>{{ game.awayTeam.flagEmoji }} {{ game.awayTeam.code }}</span>
+                                        <span class="text-gray-400 dark:text-gray-500">vs</span>
+                                        <span class="dark:text-gray-100">{{ game.awayTeam.flagEmoji }} {{ game.awayTeam.code }}</span>
                                     </div>
-                                    <span class="text-xs text-gray-400">
+                                    <span class="text-xs text-gray-400 dark:text-gray-500">
                                         {{ game.playedAt|date('d.m. H:i') }}
                                     </span>
                                 </div>
@@ -188,6 +188,11 @@
         <script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
         <script>
             (function () {
+                const isDark = document.documentElement.classList.contains('dark');
+                const gridColor = isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)';
+                const tickColor = isDark ? '#9ca3af' : '#6b7280';
+                const legendColor = isDark ? '#d1d5db' : '#374151';
+
                 const COLORS = [
                     '#3b82f6', '#ef4444', '#10b981', '#f59e0b', '#8b5cf6',
                     '#ec4899', '#06b6d4', '#f97316', '#6366f1', '#14b8a6',
@@ -229,6 +234,7 @@
                                     usePointStyle: true,
                                     padding: 16,
                                     font: { size: 11 },
+                                    color: legendColor,
                                 },
                             },
                             tooltip: {
@@ -244,6 +250,7 @@
                                 ticks: {
                                     font: { size: 9 },
                                     maxRotation: 45,
+                                    color: tickColor,
                                 },
                                 grid: { display: false },
                             },
@@ -251,11 +258,16 @@
                                 beginAtZero: true,
                                 ticks: {
                                     font: { size: 11 },
+                                    color: tickColor,
+                                },
+                                grid: {
+                                    color: gridColor,
                                 },
                                 title: {
                                     display: true,
                                     text: 'Body',
                                     font: { size: 12 },
+                                    color: tickColor,
                                 },
                             },
                         },

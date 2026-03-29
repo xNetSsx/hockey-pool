@@ -23,7 +23,7 @@ class RecalculatePointsCommand extends Command
 {
     public function __construct(
         private readonly TournamentResolver $tournamentResolver,
-        private readonly LeaderboardBuilder $leaderboardService,
+        private readonly LeaderboardBuilder $leaderboardBuilder,
         private readonly TournamentRepository $tournamentRepository,
     ) {
         parent::__construct();
@@ -92,7 +92,7 @@ class RecalculatePointsCommand extends Command
 
     private function printLeaderboard(\App\Entity\Tournament $tournament, SymfonyStyle $io): void
     {
-        $leaderboard = $this->leaderboardService->build($tournament);
+        $leaderboard = $this->leaderboardBuilder->build($tournament);
 
         $io->table(
             ['#', 'Hráč', 'Body'],

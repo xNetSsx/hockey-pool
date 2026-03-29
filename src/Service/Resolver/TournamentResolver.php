@@ -6,21 +6,21 @@ namespace App\Service\Resolver;
 
 use App\Entity\Game;
 use App\Entity\Tournament;
+use App\Enum\BetScoringType;
+use App\Repository\PointEntryRepository;
 use App\Repository\PredictionRepository;
 use App\Repository\RuleSetRepository;
 use App\Repository\SpecialBetRepository;
 use App\Repository\SpecialBetRuleRepository;
 use App\Service\Manager\PointEntryManager;
 
-/**
- * Orchestrator that coordinates resolvers and persistence for a full tournament recalculation.
- */
 final readonly class TournamentResolver
 {
     public function __construct(
         private MatchPointResolver $matchPointResolver,
         private SpecialBetResolver $specialBetResolver,
         private PointEntryManager $pointEntryManager,
+        private PointEntryRepository $pointEntryRepository,
         private PredictionRepository $predictionRepository,
         private SpecialBetRepository $specialBetRepository,
         private SpecialBetRuleRepository $specialBetRuleRepository,
@@ -33,7 +33,7 @@ final readonly class TournamentResolver
      */
     public function resolveMatch(Game $game): void
     {
-        $this->pointEntryManager->deleteByGame($game);
+        $this->pointEntryManager->removeAll($this->pointEntryRepository->findByGame($game));
 
         $ruleSet = $this->ruleSetRepository->findByTournament($game->getTournament());
         $predictions = $this->predictionRepository->findByGame($game);
@@ -70,7 +70,7 @@ final readonly class TournamentResolver
                 continue;
             }
 
-            $this->pointEntryManager->deleteByGame($game);
+            $this->pointEntryManager->removeAll($this->pointEntryRepository->findByGame($game));
 
             $predictions = $this->predictionRepository->findByGame($game);
             $entries = $this->matchPointResolver->resolve($game, $predictions, $ruleSet);
@@ -83,9 +83,23 @@ final readonly class TournamentResolver
 
     private function resolveAllSpecialBets(Tournament $tournament): void
     {
-        $this->pointEntryManager->deleteSpecialBetEntries($tournament);
+        $this->pointEntryManager->removeAll($this->pointEntryRepository->findSpecialBetEntries($tournament));
 
         $rules = $this->specialBetRuleRepository->findByTournament($tournament);
+
+        // Collect podium teams for podium scoring
+        $podiumTeams = [];
+        // Collect string values for any_match scoring
+        $anyMatchPool = [];
+        foreach ($rules as $rule) {
+            if ($rule->getScoringType() === BetScoringType::Podium && $rule->getActualTeamValue() !== null) {
+                $podiumTeams[] = $rule->getActualTeamValue();
+            }
+            if ($rule->getScoringType() === BetScoringType::AnyMatch && $rule->getActualStringValue() !== null) {
+                $anyMatchPool[] = $rule->getActualStringValue();
+            }
+        }
+
         $allEntries = [];
 
         foreach ($rules as $rule) {
@@ -94,7 +108,7 @@ final readonly class TournamentResolver
             }
 
             $bets = $this->specialBetRepository->findByRule($rule);
-            $entries = $this->specialBetResolver->resolve($rule, $bets);
+            $entries = $this->specialBetResolver->resolve($rule, $bets, $podiumTeams, $anyMatchPool);
             array_push($allEntries, ...$entries);
         }
 

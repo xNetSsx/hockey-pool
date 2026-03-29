@@ -5,8 +5,8 @@
 {% block body %}
     <div class="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-            <h1 class="text-2xl font-bold text-gray-900">🎯 Moje tipy</h1>
-            <p class="mt-1 text-sm text-gray-500">{{ tournament.name }}</p>
+            <h1 class="text-2xl font-bold text-gray-900 dark:text-white">🎯 Moje tipy</h1>
+            <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">{{ tournament.name }}</p>
         </div>
         <a href="{{ path('prediction_special') }}"
            class="inline-flex items-center rounded-lg bg-[#0f172a] px-4 py-2 text-sm font-medium text-white hover:bg-[#1e293b]">
@@ -21,8 +21,8 @@
             </h2>
         </div>
 
-        <div class="mb-6 overflow-hidden rounded-xl bg-white shadow">
-            <div class="divide-y divide-gray-100">
+        <div class="mb-6 overflow-hidden rounded-xl bg-white shadow dark:bg-[#1e293b] dark:shadow-gray-900/30">
+            <div class="divide-y divide-gray-100 dark:divide-gray-700">
                 {% set lastDate = null %}
                 {% for game in games %}
                     {% set gameDate = game.playedAt|date('Y-m-d') %}
@@ -31,17 +31,17 @@
 
                     {# Date separator #}
                     {% if gameDate != lastDate %}
-                        <div class="bg-gray-50 px-6 py-2">
-                            <span class="text-xs font-medium uppercase tracking-wider text-gray-500">
+                        <div class="bg-gray-50 px-6 py-2 dark:bg-[#0f172a]/50">
+                            <span class="text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
                                 {{ game.playedAt|date('d.m.Y') }}
                             </span>
                         </div>
                         {% set lastDate = gameDate %}
                     {% endif %}
 
-                    <div class="flex items-center gap-3 px-4 py-3 sm:gap-4 sm:px-6">
+                    <div class="flex items-center gap-3 px-4 py-3 sm:gap-4 sm:px-6 dark:text-gray-100">
                         {# Time #}
-                        <div class="w-10 shrink-0 text-center text-xs text-gray-400 sm:w-12">
+                        <div class="w-10 shrink-0 text-center text-xs text-gray-400 sm:w-12 dark:text-gray-500">
                             {{ game.playedAt|date('H:i') }}
                         </div>
 
@@ -58,7 +58,7 @@
                                         {{ game.homeScore }}:{{ game.awayScore }}
                                     </span>
                                 {% else %}
-                                    <span class="text-xs text-gray-400">vs</span>
+                                    <span class="text-xs text-gray-400 dark:text-gray-500">vs</span>
                                 {% endif %}
                             </div>
 
@@ -73,14 +73,14 @@
                             {% if prediction %}
                                 {% if game.isFinished %}
                                     {% if prediction.isExactScore(game) %}
-                                        {% set badgeClass = 'bg-amber-100 text-amber-800 border-amber-300' %}
+                                        {% set badgeClass = 'bg-amber-100 text-amber-800 border-amber-300 dark:bg-amber-900/30 dark:text-amber-300 dark:border-amber-700' %}
                                     {% elseif prediction.isCorrectWinner(game) %}
-                                        {% set badgeClass = 'bg-green-100 text-green-800 border-green-300' %}
+                                        {% set badgeClass = 'bg-green-100 text-green-800 border-green-300 dark:bg-green-900/30 dark:text-green-300 dark:border-green-700' %}
                                     {% else %}
-                                        {% set badgeClass = 'bg-red-100 text-red-800 border-red-300' %}
+                                        {% set badgeClass = 'bg-red-100 text-red-800 border-red-300 dark:bg-red-900/30 dark:text-red-300 dark:border-red-700' %}
                                     {% endif %}
                                 {% else %}
-                                    {% set badgeClass = 'bg-blue-50 text-blue-700 border-blue-200' %}
+                                    {% set badgeClass = 'bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-900/30 dark:text-blue-300 dark:border-blue-700' %}
                                 {% endif %}
                                 <span class="inline-block rounded border px-2 py-0.5 text-xs font-medium tabular-nums {{ badgeClass }}">
                                     {{ prediction.homeScore }}:{{ prediction.awayScore }}
@@ -93,7 +93,7 @@
                                     {{ prediction ? 'Změnit' : 'Tipovat' }}
                                 </a>
                             {% elseif not prediction %}
-                                <span class="rounded bg-gray-100 px-3 py-1 text-xs text-gray-400">🔒</span>
+                                <span class="rounded bg-gray-100 px-3 py-1 text-xs text-gray-400 dark:bg-gray-700 dark:text-gray-500">🔒</span>
                             {% endif %}
                         </div>
                     </div>

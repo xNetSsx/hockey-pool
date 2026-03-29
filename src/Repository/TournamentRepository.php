@@ -7,6 +7,8 @@ namespace App\Repository;
 use App\Entity\Tournament;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use App\Entity\RuleSet;
+use App\Entity\SpecialBetRule;
 
 /** @extends ServiceEntityRepository<Tournament> */
 class TournamentRepository extends ServiceEntityRepository
@@ -16,16 +18,12 @@ class TournamentRepository extends ServiceEntityRepository
         parent::__construct($registry, Tournament::class);
     }
 
-    /**
-     * Finds the most recent tournament (by year) that has a RuleSet or SpecialBetRules,
-     * excluding the given tournament.
-     */
     public function findLatestWithRules(Tournament $exclude): ?Tournament
     {
         /** @var Tournament|null */
         return $this->createQueryBuilder('t')
-            ->leftJoin('App\Entity\RuleSet', 'rs', 'WITH', 'rs.tournament = t')
-            ->leftJoin('App\Entity\SpecialBetRule', 'sbr', 'WITH', 'sbr.tournament = t')
+            ->leftJoin(RuleSet::class, 'rs', 'WITH', 'rs.tournament = t')
+            ->leftJoin(SpecialBetRule::class, 'sbr', 'WITH', 'sbr.tournament = t')
             ->where('t != :exclude')
             ->andWhere('rs.id IS NOT NULL OR sbr.id IS NOT NULL')
             ->setParameter('exclude', $exclude)
