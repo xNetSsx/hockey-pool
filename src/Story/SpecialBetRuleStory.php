@@ -28,9 +28,9 @@ final class SpecialBetRuleStory extends Story
         $tournament = TournamentStory::get('oh2022');
 
         $rules = [
-            ['name' => 'Zlatá medaile', 'valueType' => BetValueType::Team, 'scoring' => BetScoringType::Podium, 'points' => 3.0, 'sort' => 1, 'actualTeam' => 'FIN'],
-            ['name' => 'Stříbrná medaile', 'valueType' => BetValueType::Team, 'scoring' => BetScoringType::Podium, 'points' => 3.0, 'sort' => 2, 'actualTeam' => 'ROC'],
-            ['name' => 'Bronzová medaile', 'valueType' => BetValueType::Team, 'scoring' => BetScoringType::Podium, 'points' => 3.0, 'sort' => 3, 'actualTeam' => 'SVK'],
+            ['name' => 'Zlatá medaile', 'valueType' => BetValueType::Team, 'scoring' => BetScoringType::ExactMatch, 'points' => 3.0, 'sort' => 1, 'actualTeam' => 'FIN'],
+            ['name' => 'Stříbrná medaile', 'valueType' => BetValueType::Team, 'scoring' => BetScoringType::ExactMatch, 'points' => 3.0, 'sort' => 2, 'actualTeam' => 'RUS'],
+            ['name' => 'Bronzová medaile', 'valueType' => BetValueType::Team, 'scoring' => BetScoringType::ExactMatch, 'points' => 3.0, 'sort' => 3, 'actualTeam' => 'SVK'],
             ['name' => 'Nejlepší Čech #1', 'valueType' => BetValueType::String, 'scoring' => BetScoringType::AnyMatch, 'points' => 2.0, 'sort' => 4, 'actualString' => 'Klok'],
             ['name' => 'Nejlepší Čech #2', 'valueType' => BetValueType::String, 'scoring' => BetScoringType::AnyMatch, 'points' => 2.0, 'sort' => 5, 'actualString' => 'Krejčí'],
             ['name' => 'Nejlepší Čech #3', 'valueType' => BetValueType::String, 'scoring' => BetScoringType::AnyMatch, 'points' => 2.0, 'sort' => 6, 'actualString' => 'Červenka'],
@@ -94,8 +94,8 @@ final class SpecialBetRuleStory extends Story
             ['name' => 'Pořadí skupiny A - 2. místo', 'valueType' => BetValueType::Team, 'scoring' => BetScoringType::ExactMatch, 'points' => 1.0, 'sort' => 8, 'actualTeam' => 'SUI'],
             ['name' => 'Pořadí skupiny A - 3. místo', 'valueType' => BetValueType::Team, 'scoring' => BetScoringType::ExactMatch, 'points' => 1.0, 'sort' => 9, 'actualTeam' => 'CZE'],
             ['name' => 'Pořadí skupiny A - 4. místo', 'valueType' => BetValueType::Team, 'scoring' => BetScoringType::ExactMatch, 'points' => 1.0, 'sort' => 10, 'actualTeam' => 'FIN'],
-            ['name' => 'Pořadí skupiny A - 5. místo', 'valueType' => BetValueType::Team, 'scoring' => BetScoringType::ExactMatch, 'points' => 1.0, 'sort' => 11, 'actualTeam' => 'NOR'],
-            ['name' => 'Pořadí skupiny A - 6. místo', 'valueType' => BetValueType::Team, 'scoring' => BetScoringType::ExactMatch, 'points' => 1.0, 'sort' => 12, 'actualTeam' => 'AUS'],
+            ['name' => 'Pořadí skupiny A - 5. místo', 'valueType' => BetValueType::Team, 'scoring' => BetScoringType::ExactMatch, 'points' => 1.0, 'sort' => 11, 'actualTeam' => 'AUS'],
+            ['name' => 'Pořadí skupiny A - 6. místo', 'valueType' => BetValueType::Team, 'scoring' => BetScoringType::ExactMatch, 'points' => 1.0, 'sort' => 12, 'actualTeam' => 'NOR'],
             ['name' => 'Pořadí skupiny A - 7. místo', 'valueType' => BetValueType::Team, 'scoring' => BetScoringType::ExactMatch, 'points' => 1.0, 'sort' => 13, 'actualTeam' => 'DEN'],
             ['name' => 'Pořadí skupiny A - 8. místo', 'valueType' => BetValueType::Team, 'scoring' => BetScoringType::ExactMatch, 'points' => 1.0, 'sort' => 14, 'actualTeam' => 'GBR'],
             // Group B: 1.SWE, 2.USA, 3.GER, 4.SVK, 5.LAT, 6.KAZ, 7.FRA, 8.POL

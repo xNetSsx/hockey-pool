@@ -24,7 +24,7 @@ final class TeamStory extends Story
         'USA' => ['name' => 'USA', 'flag' => '🇺🇸'],
         'GER' => ['name' => 'Německo', 'flag' => '🇩🇪'],
         'DEN' => ['name' => 'Dánsko', 'flag' => '🇩🇰'],
-        'ROC' => ['name' => 'Ruský olympijský výbor', 'flag' => null],
+        'RUS' => ['name' => 'Rusko', 'flag' => null],
         'GBR' => ['name' => 'Velká Británie', 'flag' => '🇬🇧'],
         'NOR' => ['name' => 'Norsko', 'flag' => '🇳🇴'],
         'AUS' => ['name' => 'Rakousko', 'flag' => '🇦🇹'],

@@ -2991,25 +2991,25 @@ INSERT INTO prediction (id, user_id, game_id, home_score, away_score, created_at
 INSERT INTO prediction (id, user_id, game_id, home_score, away_score, created_at, updated_at) VALUES (2349, 8, 284, 3, 1, '2024-01-01 00:00:00', NULL);
 INSERT INTO prediction (id, user_id, game_id, home_score, away_score, created_at, updated_at) VALUES (2350, 12, 284, 2, 3, '2024-01-01 00:00:00', NULL);
 INSERT INTO prediction (id, user_id, game_id, home_score, away_score, created_at, updated_at) VALUES (2351, 16, 284, 2, 4, '2024-01-01 00:00:00', NULL);
-INSERT INTO special_bet_rule (id, tournament_id, name, value_type, scoring_type, points, sort_order, actual_team_value_id, actual_string_value, actual_int_value) VALUES (25, 5, 'Medaile - 1. místo', 'team', 'podium', 2.0, 0, 8, NULL, NULL);
+INSERT INTO special_bet_rule (id, tournament_id, name, value_type, scoring_type, points, sort_order, actual_team_value_id, actual_string_value, actual_int_value) VALUES (25, 5, 'Medaile - 1. místo', 'team', 'exact_match', 2.0, 0, 8, NULL, NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (226, 11, 25, 19, NULL, NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (227, 14, 25, 8, NULL, NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (228, 8, 25, 8, NULL, NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (229, 12, 25, 19, NULL, NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (230, 16, 25, 19, NULL, NULL);
-INSERT INTO special_bet_rule (id, tournament_id, name, value_type, scoring_type, points, sort_order, actual_team_value_id, actual_string_value, actual_int_value) VALUES (26, 5, 'Medaile - 2. místo', 'team', 'podium', 2.0, 1, 18, NULL, NULL);
+INSERT INTO special_bet_rule (id, tournament_id, name, value_type, scoring_type, points, sort_order, actual_team_value_id, actual_string_value, actual_int_value) VALUES (26, 5, 'Medaile - 2. místo', 'team', 'exact_match', 2.0, 1, 19, NULL, NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (231, 11, 26, 6, NULL, NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (232, 14, 26, 4, NULL, NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (233, 8, 26, 19, NULL, NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (234, 12, 26, 24, NULL, NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (235, 16, 26, 23, NULL, NULL);
-INSERT INTO special_bet_rule (id, tournament_id, name, value_type, scoring_type, points, sort_order, actual_team_value_id, actual_string_value, actual_int_value) VALUES (27, 5, 'Medaile - 3. místo', 'team', 'podium', 2.0, 2, 22, NULL, NULL);
+INSERT INTO special_bet_rule (id, tournament_id, name, value_type, scoring_type, points, sort_order, actual_team_value_id, actual_string_value, actual_int_value) VALUES (27, 5, 'Medaile - 3. místo', 'team', 'exact_match', 2.0, 2, 22, NULL, NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (236, 11, 27, 8, NULL, NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (237, 14, 27, 6, NULL, NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (238, 8, 27, 6, NULL, NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (239, 12, 27, 6, NULL, NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (240, 16, 27, 6, NULL, NULL);
-INSERT INTO special_bet_rule (id, tournament_id, name, value_type, scoring_type, points, sort_order, actual_team_value_id, actual_string_value, actual_int_value) VALUES (28, 5, 'Nejlepší Čech #1', 'string', 'any_match', 2.0, 3, NULL, 'Červenka', NULL);
+INSERT INTO special_bet_rule (id, tournament_id, name, value_type, scoring_type, points, sort_order, actual_team_value_id, actual_string_value, actual_int_value) VALUES (28, 5, 'Nejlepší Čech #1', 'string', 'any_match', 2.0, 3, NULL, 'Klok', NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (241, 11, 28, NULL, 'Kovář', NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (242, 14, 28, NULL, 'Kovář', NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (243, 8, 28, NULL, 'Kovář', NULL);
@@ -3021,7 +3021,7 @@ INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (248, 8, 29, NULL, 'Krejčí', NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (249, 12, 29, NULL, 'Krejčí', NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (250, 16, 29, NULL, 'Krejčí', NULL);
-INSERT INTO special_bet_rule (id, tournament_id, name, value_type, scoring_type, points, sort_order, actual_team_value_id, actual_string_value, actual_int_value) VALUES (30, 5, 'Nejlepší Čech #3', 'string', 'any_match', 2.0, 5, NULL, 'Vrána', NULL);
+INSERT INTO special_bet_rule (id, tournament_id, name, value_type, scoring_type, points, sort_order, actual_team_value_id, actual_string_value, actual_int_value) VALUES (30, 5, 'Nejlepší Čech #3', 'string', 'any_match', 2.0, 5, NULL, 'Červenka', NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (251, 11, 30, NULL, 'Červenka', NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (252, 14, 30, NULL, 'Červenka', NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (253, 8, 30, NULL, 'Červenka', NULL);
@@ -3642,7 +3642,7 @@ INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (277, 15, 33, 8, NULL, NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (278, 6, 33, 23, NULL, NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (279, 10, 33, 4, NULL, NULL);
-INSERT INTO special_bet_rule (id, tournament_id, name, value_type, scoring_type, points, sort_order, actual_team_value_id, actual_string_value, actual_int_value) VALUES (34, 6, 'Nejlepší Čech #1', 'string', 'any_match', 2.0, 3, NULL, 'Červenka', NULL);
+INSERT INTO special_bet_rule (id, tournament_id, name, value_type, scoring_type, points, sort_order, actual_team_value_id, actual_string_value, actual_int_value) VALUES (34, 6, 'Nejlepší Čech #1', 'string', 'any_match', 2.0, 3, NULL, 'Krejčí', NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (280, 11, 34, NULL, 'Krejčí', NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (281, 14, 34, NULL, 'Červenka', NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (282, 8, 34, NULL, 'Krejčí', NULL);
@@ -3651,7 +3651,7 @@ INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (285, 15, 34, NULL, 'Červenka', NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (286, 6, 34, NULL, 'Červenka', NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (287, 10, 34, NULL, 'Krejčí', NULL);
-INSERT INTO special_bet_rule (id, tournament_id, name, value_type, scoring_type, points, sort_order, actual_team_value_id, actual_string_value, actual_int_value) VALUES (35, 6, 'Nejlepší Čech #2', 'string', 'any_match', 2.0, 4, NULL, 'Krejčí', NULL);
+INSERT INTO special_bet_rule (id, tournament_id, name, value_type, scoring_type, points, sort_order, actual_team_value_id, actual_string_value, actual_int_value) VALUES (35, 6, 'Nejlepší Čech #2', 'string', 'any_match', 2.0, 4, NULL, 'Červenka', NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (288, 11, 35, NULL, 'Hertl', NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (289, 14, 35, NULL, 'Krejčí', NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (290, 8, 35, NULL, 'Hertl', NULL);
@@ -3660,7 +3660,7 @@ INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (293, 15, 35, NULL, 'Hertl', NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (294, 6, 35, NULL, 'Hertl', NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (295, 10, 35, NULL, 'Hertl', NULL);
-INSERT INTO special_bet_rule (id, tournament_id, name, value_type, scoring_type, points, sort_order, actual_team_value_id, actual_string_value, actual_int_value) VALUES (36, 6, 'Nejlepší Čech #3', 'string', 'any_match', 2.0, 5, NULL, 'Hertl', NULL);
+INSERT INTO special_bet_rule (id, tournament_id, name, value_type, scoring_type, points, sort_order, actual_team_value_id, actual_string_value, actual_int_value) VALUES (36, 6, 'Nejlepší Čech #3', 'string', 'any_match', 2.0, 5, NULL, 'Vejmelka', NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (296, 11, 36, NULL, 'Vrána', NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (297, 14, 36, NULL, 'Vrána', NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (298, 8, 36, NULL, 'Vrána', NULL);
@@ -4399,7 +4399,7 @@ INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (370, 6, 44, NULL, 'Kubalík', NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (371, 10, 44, NULL, 'Kundrátek', NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (372, 5, 44, NULL, 'Špaček', NULL);
-INSERT INTO special_bet_rule (id, tournament_id, name, value_type, scoring_type, points, sort_order, actual_team_value_id, actual_string_value, actual_int_value) VALUES (45, 7, 'Nejlepší Čech #3', 'string', 'any_match', 2.0, 5, NULL, 'Špaček', NULL);
+INSERT INTO special_bet_rule (id, tournament_id, name, value_type, scoring_type, points, sort_order, actual_team_value_id, actual_string_value, actual_int_value) VALUES (45, 7, 'Nejlepší Čech #3', 'string', 'any_match', 2.0, 5, NULL, 'Kempný', NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (373, 11, 45, NULL, 'Chytil', NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (374, 14, 45, NULL, 'Chytil', NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (375, 8, 45, NULL, 'Špaček', NULL);
@@ -4409,7 +4409,7 @@ INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (379, 6, 45, NULL, 'Chytil', NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (380, 10, 45, NULL, 'Smejkal', NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (381, 5, 45, NULL, 'Chytil', NULL);
-INSERT INTO special_bet_rule (id, tournament_id, name, value_type, scoring_type, points, sort_order, actual_team_value_id, actual_string_value, actual_int_value) VALUES (46, 7, 'Počet gólů české reprezentace', 'integer', 'closest', 2.0, 6, NULL, NULL, 28);
+INSERT INTO special_bet_rule (id, tournament_id, name, value_type, scoring_type, points, sort_order, actual_team_value_id, actual_string_value, actual_int_value) VALUES (46, 7, 'Počet gólů české reprezentace', 'integer', 'closest', 2.0, 6, NULL, NULL, 22);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (382, 11, 46, NULL, NULL, 28);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (383, 14, 46, NULL, NULL, 33);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (384, 8, 46, NULL, NULL, 25);
@@ -4419,7 +4419,7 @@ INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (388, 6, 46, NULL, NULL, 29);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (389, 10, 46, NULL, NULL, 26);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (390, 5, 46, NULL, NULL, 33);
-INSERT INTO special_bet_rule (id, tournament_id, name, value_type, scoring_type, points, sort_order, actual_team_value_id, actual_string_value, actual_int_value) VALUES (47, 7, 'Počet zápasů rozhodnutých na nájezdy', 'integer', 'closest', 2.0, 7, NULL, NULL, NULL);
+INSERT INTO special_bet_rule (id, tournament_id, name, value_type, scoring_type, points, sort_order, actual_team_value_id, actual_string_value, actual_int_value) VALUES (47, 7, 'Počet zápasů rozhodnutých na nájezdy', 'integer', 'closest', 2.0, 7, NULL, NULL, 6);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (391, 11, 47, NULL, NULL, 7);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (392, 14, 47, NULL, NULL, 11);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (393, 8, 47, NULL, NULL, 8);
@@ -5409,7 +5409,7 @@ INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (635, 10, 71, 17, NULL, NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (636, 5, 71, 17, NULL, NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (637, 9, 71, 17, NULL, NULL);
-INSERT INTO special_bet_rule (id, tournament_id, name, value_type, scoring_type, points, sort_order, actual_team_value_id, actual_string_value, actual_int_value) VALUES (72, 8, 'Počet gólů české reprezentace', 'integer', 'closest', 2.0, 22, NULL, NULL, 42);
+INSERT INTO special_bet_rule (id, tournament_id, name, value_type, scoring_type, points, sort_order, actual_team_value_id, actual_string_value, actual_int_value) VALUES (72, 8, 'Počet gólů české reprezentace', 'integer', 'closest', 2.0, 22, NULL, NULL, 37);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (638, 11, 72, NULL, NULL, 25);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (639, 14, 72, NULL, NULL, 32);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (640, 8, 72, NULL, NULL, 22);
@@ -6290,7 +6290,7 @@ INSERT INTO prediction (id, user_id, game_id, home_score, away_score, created_at
 INSERT INTO prediction (id, user_id, game_id, home_score, away_score, created_at, updated_at) VALUES (4845, 3, 540, 2, 5, '2024-01-01 00:00:00', NULL);
 INSERT INTO prediction (id, user_id, game_id, home_score, away_score, created_at, updated_at) VALUES (4846, 4, 540, 4, 3, '2024-01-01 00:00:00', NULL);
 INSERT INTO prediction (id, user_id, game_id, home_score, away_score, created_at, updated_at) VALUES (4847, 1, 540, 0, 0, '2024-01-01 00:00:00', NULL);
-INSERT INTO special_bet_rule (id, tournament_id, name, value_type, scoring_type, points, sort_order, actual_team_value_id, actual_string_value, actual_int_value) VALUES (75, 9, 'Medaile - 1. místo', 'team', 'podium', 2.0, 0, 8, NULL, NULL);
+INSERT INTO special_bet_rule (id, tournament_id, name, value_type, scoring_type, points, sort_order, actual_team_value_id, actual_string_value, actual_int_value) VALUES (75, 9, 'Medaile - 1. místo', 'team', 'podium', 2.0, 0, 24, NULL, NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (668, 11, 75, 23, NULL, NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (669, 14, 75, 6, NULL, NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (670, 8, 75, 4, NULL, NULL);
@@ -6303,7 +6303,7 @@ INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (677, 3, 75, 6, NULL, NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (678, 4, 75, 4, NULL, NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (679, 1, 75, 4, NULL, NULL);
-INSERT INTO special_bet_rule (id, tournament_id, name, value_type, scoring_type, points, sort_order, actual_team_value_id, actual_string_value, actual_int_value) VALUES (76, 9, 'Medaile - 2. místo', 'team', 'podium', 2.0, 1, 23, NULL, NULL);
+INSERT INTO special_bet_rule (id, tournament_id, name, value_type, scoring_type, points, sort_order, actual_team_value_id, actual_string_value, actual_int_value) VALUES (76, 9, 'Medaile - 2. místo', 'team', 'podium', 2.0, 1, 21, NULL, NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (680, 11, 76, 4, NULL, NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (681, 14, 76, 4, NULL, NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (682, 8, 76, 23, NULL, NULL);
@@ -6316,7 +6316,7 @@ INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (689, 3, 76, 4, NULL, NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (690, 4, 76, 24, NULL, NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (691, 1, 76, 6, NULL, NULL);
-INSERT INTO special_bet_rule (id, tournament_id, name, value_type, scoring_type, points, sort_order, actual_team_value_id, actual_string_value, actual_int_value) VALUES (77, 9, 'Medaile - 3. místo', 'team', 'podium', 2.0, 2, 4, NULL, NULL);
+INSERT INTO special_bet_rule (id, tournament_id, name, value_type, scoring_type, points, sort_order, actual_team_value_id, actual_string_value, actual_int_value) VALUES (77, 9, 'Medaile - 3. místo', 'team', 'podium', 2.0, 2, 23, NULL, NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (692, 11, 77, 6, NULL, NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (693, 14, 77, 23, NULL, NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (694, 8, 77, 6, NULL, NULL);
@@ -6329,7 +6329,7 @@ INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (701, 3, 77, 23, NULL, NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (702, 4, 77, 6, NULL, NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (703, 1, 77, 23, NULL, NULL);
-INSERT INTO special_bet_rule (id, tournament_id, name, value_type, scoring_type, points, sort_order, actual_team_value_id, actual_string_value, actual_int_value) VALUES (78, 9, 'Nejlepší Čech #1', 'string', 'any_match', 2.0, 3, NULL, 'Červenka', NULL);
+INSERT INTO special_bet_rule (id, tournament_id, name, value_type, scoring_type, points, sort_order, actual_team_value_id, actual_string_value, actual_int_value) VALUES (78, 9, 'Nejlepší Čech #1', 'string', 'any_match', 2.0, 3, NULL, 'Pastrňák', NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (704, 11, 78, NULL, 'Pastrňák', NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (705, 14, 78, NULL, 'Pastrňák', NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (706, 8, 78, NULL, 'Pastrňák', NULL);
@@ -6342,7 +6342,7 @@ INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (713, 3, 78, NULL, 'Pastrňák', NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (714, 4, 78, NULL, 'Pastrňák', NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (715, 1, 78, NULL, 'Pastrňák', NULL);
-INSERT INTO special_bet_rule (id, tournament_id, name, value_type, scoring_type, points, sort_order, actual_team_value_id, actual_string_value, actual_int_value) VALUES (79, 9, 'Nejlepší Čech #2', 'string', 'any_match', 2.0, 4, NULL, 'Kubalík', NULL);
+INSERT INTO special_bet_rule (id, tournament_id, name, value_type, scoring_type, points, sort_order, actual_team_value_id, actual_string_value, actual_int_value) VALUES (79, 9, 'Nejlepší Čech #2', 'string', 'any_match', 2.0, 4, NULL, 'Červenka', NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (716, 11, 79, NULL, 'Nečas', NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (717, 14, 79, NULL, 'Nečas', NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (718, 8, 79, NULL, 'Nečas', NULL);
@@ -6355,7 +6355,7 @@ INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (725, 3, 79, NULL, 'Nečas', NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (726, 4, 79, NULL, 'Špaček', NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (727, 1, 79, NULL, 'Nečas', NULL);
-INSERT INTO special_bet_rule (id, tournament_id, name, value_type, scoring_type, points, sort_order, actual_team_value_id, actual_string_value, actual_int_value) VALUES (80, 9, 'Nejlepší Čech #3', 'string', 'any_match', 2.0, 5, NULL, 'Špaček', NULL);
+INSERT INTO special_bet_rule (id, tournament_id, name, value_type, scoring_type, points, sort_order, actual_team_value_id, actual_string_value, actual_int_value) VALUES (80, 9, 'Nejlepší Čech #3', 'string', 'any_match', 2.0, 5, NULL, 'Sedlák', NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (728, 11, 80, NULL, 'Červenka', NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (729, 14, 80, NULL, 'Červenka', NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (730, 8, 80, NULL, 'Červenka', NULL);
@@ -6407,7 +6407,7 @@ INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (773, 3, 83, 8, NULL, NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (774, 4, 83, 8, NULL, NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (775, 1, 83, 8, NULL, NULL);
-INSERT INTO special_bet_rule (id, tournament_id, name, value_type, scoring_type, points, sort_order, actual_team_value_id, actual_string_value, actual_int_value) VALUES (84, 9, 'Tip na pořadí po základní části - Skupina A - 4. místo', 'team', 'exact_match', 0.5, 9, 15, NULL, NULL);
+INSERT INTO special_bet_rule (id, tournament_id, name, value_type, scoring_type, points, sort_order, actual_team_value_id, actual_string_value, actual_int_value) VALUES (84, 9, 'Tip na pořadí po základní části - Skupina A - 4. místo', 'team', 'exact_match', 0.5, 9, 1, NULL, NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (776, 11, 84, 15, NULL, NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (777, 14, 84, 22, NULL, NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (778, 8, 84, 15, NULL, NULL);
@@ -6420,7 +6420,7 @@ INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (785, 3, 84, 22, NULL, NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (786, 4, 84, 22, NULL, NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (787, 1, 84, 22, NULL, NULL);
-INSERT INTO special_bet_rule (id, tournament_id, name, value_type, scoring_type, points, sort_order, actual_team_value_id, actual_string_value, actual_int_value) VALUES (85, 9, 'Tip na pořadí po základní části - Skupina A - 5. místo', 'team', 'exact_match', 0.5, 10, 22, NULL, NULL);
+INSERT INTO special_bet_rule (id, tournament_id, name, value_type, scoring_type, points, sort_order, actual_team_value_id, actual_string_value, actual_int_value) VALUES (85, 9, 'Tip na pořadí po základní části - Skupina A - 5. místo', 'team', 'exact_match', 0.5, 10, 15, NULL, NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (788, 11, 85, 22, NULL, NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (789, 14, 85, 15, NULL, NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (790, 8, 85, 22, NULL, NULL);
@@ -6433,7 +6433,7 @@ INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (797, 3, 85, 15, NULL, NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (798, 4, 85, 1, NULL, NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (799, 1, 85, 15, NULL, NULL);
-INSERT INTO special_bet_rule (id, tournament_id, name, value_type, scoring_type, points, sort_order, actual_team_value_id, actual_string_value, actual_int_value) VALUES (86, 9, 'Tip na pořadí po základní části - Skupina A - 6. místo', 'team', 'exact_match', 0.5, 11, 1, NULL, NULL);
+INSERT INTO special_bet_rule (id, tournament_id, name, value_type, scoring_type, points, sort_order, actual_team_value_id, actual_string_value, actual_int_value) VALUES (86, 9, 'Tip na pořadí po základní části - Skupina A - 6. místo', 'team', 'exact_match', 0.5, 11, 22, NULL, NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (800, 11, 86, 1, NULL, NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (801, 14, 86, 1, NULL, NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (802, 8, 86, 1, NULL, NULL);
@@ -6446,7 +6446,7 @@ INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (809, 3, 86, 1, NULL, NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (810, 4, 86, 20, NULL, NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (811, 1, 86, 1, NULL, NULL);
-INSERT INTO special_bet_rule (id, tournament_id, name, value_type, scoring_type, points, sort_order, actual_team_value_id, actual_string_value, actual_int_value) VALUES (87, 9, 'Tip na pořadí po základní části - Skupina A - 7. místo', 'team', 'exact_match', 0.5, 12, 9, NULL, NULL);
+INSERT INTO special_bet_rule (id, tournament_id, name, value_type, scoring_type, points, sort_order, actual_team_value_id, actual_string_value, actual_int_value) VALUES (87, 9, 'Tip na pořadí po základní části - Skupina A - 7. místo', 'team', 'exact_match', 0.5, 12, 20, NULL, NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (812, 11, 87, 9, NULL, NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (813, 14, 87, 9, NULL, NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (814, 8, 87, 9, NULL, NULL);
@@ -6459,7 +6459,7 @@ INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (821, 3, 87, 9, NULL, NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (822, 4, 87, 15, NULL, NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (823, 1, 87, 9, NULL, NULL);
-INSERT INTO special_bet_rule (id, tournament_id, name, value_type, scoring_type, points, sort_order, actual_team_value_id, actual_string_value, actual_int_value) VALUES (88, 9, 'Tip na pořadí po základní části - Skupina A - 8. místo', 'team', 'exact_match', 0.5, 13, 20, NULL, NULL);
+INSERT INTO special_bet_rule (id, tournament_id, name, value_type, scoring_type, points, sort_order, actual_team_value_id, actual_string_value, actual_int_value) VALUES (88, 9, 'Tip na pořadí po základní části - Skupina A - 8. místo', 'team', 'exact_match', 0.5, 13, 9, NULL, NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (824, 11, 88, 20, NULL, NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (825, 14, 88, 20, NULL, NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (826, 8, 88, 20, NULL, NULL);
@@ -6472,7 +6472,7 @@ INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (833, 3, 88, 20, NULL, NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (834, 4, 88, 9, NULL, NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (835, 1, 88, 20, NULL, NULL);
-INSERT INTO special_bet_rule (id, tournament_id, name, value_type, scoring_type, points, sort_order, actual_team_value_id, actual_string_value, actual_int_value) VALUES (89, 9, 'Tip na pořadí po základní části - Skupina B - 1. místo', 'team', 'exact_match', 0.5, 14, 6, NULL, NULL);
+INSERT INTO special_bet_rule (id, tournament_id, name, value_type, scoring_type, points, sort_order, actual_team_value_id, actual_string_value, actual_int_value) VALUES (89, 9, 'Tip na pořadí po základní části - Skupina B - 1. místo', 'team', 'exact_match', 0.5, 14, 21, NULL, NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (836, 11, 89, 24, NULL, NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (837, 14, 89, 24, NULL, NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (838, 8, 89, 24, NULL, NULL);
@@ -6485,7 +6485,7 @@ INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (845, 3, 89, 6, NULL, NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (846, 4, 89, 24, NULL, NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (847, 1, 89, 6, NULL, NULL);
-INSERT INTO special_bet_rule (id, tournament_id, name, value_type, scoring_type, points, sort_order, actual_team_value_id, actual_string_value, actual_int_value) VALUES (90, 9, 'Tip na pořadí po základní části - Skupina B - 2. místo', 'team', 'exact_match', 0.5, 15, 21, NULL, NULL);
+INSERT INTO special_bet_rule (id, tournament_id, name, value_type, scoring_type, points, sort_order, actual_team_value_id, actual_string_value, actual_int_value) VALUES (90, 9, 'Tip na pořadí po základní části - Skupina B - 2. místo', 'team', 'exact_match', 0.5, 15, 24, NULL, NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (848, 11, 90, 21, NULL, NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (849, 14, 90, 6, NULL, NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (850, 8, 90, 6, NULL, NULL);
@@ -6498,7 +6498,7 @@ INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (857, 3, 90, 24, NULL, NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (858, 4, 90, 6, NULL, NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (859, 1, 90, 24, NULL, NULL);
-INSERT INTO special_bet_rule (id, tournament_id, name, value_type, scoring_type, points, sort_order, actual_team_value_id, actual_string_value, actual_int_value) VALUES (91, 9, 'Tip na pořadí po základní části - Skupina B - 3. místo', 'team', 'exact_match', 0.5, 16, 24, NULL, NULL);
+INSERT INTO special_bet_rule (id, tournament_id, name, value_type, scoring_type, points, sort_order, actual_team_value_id, actual_string_value, actual_int_value) VALUES (91, 9, 'Tip na pořadí po základní části - Skupina B - 3. místo', 'team', 'exact_match', 0.5, 16, 6, NULL, NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (860, 11, 91, 6, NULL, NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (861, 14, 91, 21, NULL, NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (862, 8, 91, 21, NULL, NULL);
@@ -6511,7 +6511,7 @@ INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (869, 3, 91, 21, NULL, NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (870, 4, 91, 21, NULL, NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (871, 1, 91, 21, NULL, NULL);
-INSERT INTO special_bet_rule (id, tournament_id, name, value_type, scoring_type, points, sort_order, actual_team_value_id, actual_string_value, actual_int_value) VALUES (92, 9, 'Tip na pořadí po základní části - Skupina B - 4. místo', 'team', 'exact_match', 0.5, 17, 11, NULL, NULL);
+INSERT INTO special_bet_rule (id, tournament_id, name, value_type, scoring_type, points, sort_order, actual_team_value_id, actual_string_value, actual_int_value) VALUES (92, 9, 'Tip na pořadí po základní části - Skupina B - 4. místo', 'team', 'exact_match', 0.5, 17, 7, NULL, NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (872, 11, 92, 11, NULL, NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (873, 14, 92, 11, NULL, NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (874, 8, 92, 11, NULL, NULL);
@@ -6524,7 +6524,7 @@ INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (881, 3, 92, 11, NULL, NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (882, 4, 92, 16, NULL, NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (883, 1, 92, 11, NULL, NULL);
-INSERT INTO special_bet_rule (id, tournament_id, name, value_type, scoring_type, points, sort_order, actual_team_value_id, actual_string_value, actual_int_value) VALUES (93, 9, 'Tip na pořadí po základní části - Skupina B - 5. místo', 'team', 'exact_match', 0.5, 18, 7, NULL, NULL);
+INSERT INTO special_bet_rule (id, tournament_id, name, value_type, scoring_type, points, sort_order, actual_team_value_id, actual_string_value, actual_int_value) VALUES (93, 9, 'Tip na pořadí po základní části - Skupina B - 5. místo', 'team', 'exact_match', 0.5, 18, 11, NULL, NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (884, 11, 93, 16, NULL, NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (885, 14, 93, 7, NULL, NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (886, 8, 93, 7, NULL, NULL);
@@ -6550,7 +6550,7 @@ INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (905, 3, 94, 16, NULL, NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (906, 4, 94, 14, NULL, NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (907, 1, 94, 7, NULL, NULL);
-INSERT INTO special_bet_rule (id, tournament_id, name, value_type, scoring_type, points, sort_order, actual_team_value_id, actual_string_value, actual_int_value) VALUES (95, 9, 'Tip na pořadí po základní části - Skupina B - 7. místo', 'team', 'exact_match', 0.5, 20, 14, NULL, NULL);
+INSERT INTO special_bet_rule (id, tournament_id, name, value_type, scoring_type, points, sort_order, actual_team_value_id, actual_string_value, actual_int_value) VALUES (95, 9, 'Tip na pořadí po základní části - Skupina B - 7. místo', 'team', 'exact_match', 0.5, 20, 12, NULL, NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (908, 11, 95, 14, NULL, NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (909, 14, 95, 14, NULL, NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (910, 8, 95, 16, NULL, NULL);
@@ -6563,7 +6563,7 @@ INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (917, 3, 95, 14, NULL, NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (918, 4, 95, 11, NULL, NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (919, 1, 95, 14, NULL, NULL);
-INSERT INTO special_bet_rule (id, tournament_id, name, value_type, scoring_type, points, sort_order, actual_team_value_id, actual_string_value, actual_int_value) VALUES (96, 9, 'Tip na pořadí po základní části - Skupina B - 8. místo', 'team', 'exact_match', 0.5, 21, 12, NULL, NULL);
+INSERT INTO special_bet_rule (id, tournament_id, name, value_type, scoring_type, points, sort_order, actual_team_value_id, actual_string_value, actual_int_value) VALUES (96, 9, 'Tip na pořadí po základní části - Skupina B - 8. místo', 'team', 'exact_match', 0.5, 21, 14, NULL, NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (920, 11, 96, 12, NULL, NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (921, 14, 96, 12, NULL, NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (922, 8, 96, 12, NULL, NULL);
@@ -6576,7 +6576,7 @@ INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (929, 3, 96, 12, NULL, NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (930, 4, 96, 12, NULL, NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (931, 1, 96, 12, NULL, NULL);
-INSERT INTO special_bet_rule (id, tournament_id, name, value_type, scoring_type, points, sort_order, actual_team_value_id, actual_string_value, actual_int_value) VALUES (97, 9, 'Počet gólů české reprezentace', 'integer', 'closest', 2.0, 22, NULL, NULL, 30);
+INSERT INTO special_bet_rule (id, tournament_id, name, value_type, scoring_type, points, sort_order, actual_team_value_id, actual_string_value, actual_int_value) VALUES (97, 9, 'Počet gólů české reprezentace', 'integer', 'closest', 2.0, 22, NULL, NULL, 37);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (932, 11, 97, NULL, NULL, 28);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (933, 14, 97, NULL, NULL, 32);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (934, 8, 97, NULL, NULL, 31);
@@ -6589,7 +6589,7 @@ INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (941, 3, 97, NULL, NULL, 31);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (942, 4, 97, NULL, NULL, 21);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (943, 1, 97, NULL, NULL, 48);
-INSERT INTO special_bet_rule (id, tournament_id, name, value_type, scoring_type, points, sort_order, actual_team_value_id, actual_string_value, actual_int_value) VALUES (98, 9, 'Počet remíz po základní hrací době', 'integer', 'closest', 2.0, 23, NULL, NULL, 7);
+INSERT INTO special_bet_rule (id, tournament_id, name, value_type, scoring_type, points, sort_order, actual_team_value_id, actual_string_value, actual_int_value) VALUES (98, 9, 'Počet remíz po základní hrací době', 'integer', 'closest', 2.0, 23, NULL, NULL, 8);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (944, 11, 98, NULL, NULL, 9);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (945, 14, 98, NULL, NULL, 11);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (946, 8, 98, NULL, NULL, 8);
@@ -6946,7 +6946,7 @@ INSERT INTO prediction (id, user_id, game_id, home_score, away_score, created_at
 INSERT INTO prediction (id, user_id, game_id, home_score, away_score, created_at, updated_at) VALUES (5145, 5, 570, 3, 2, '2024-01-01 00:00:00', NULL);
 INSERT INTO prediction (id, user_id, game_id, home_score, away_score, created_at, updated_at) VALUES (5146, 9, 570, 3, 1, '2024-01-01 00:00:00', NULL);
 INSERT INTO prediction (id, user_id, game_id, home_score, away_score, created_at, updated_at) VALUES (5147, 2, 570, 3, 4, '2024-01-01 00:00:00', NULL);
-INSERT INTO special_bet_rule (id, tournament_id, name, value_type, scoring_type, points, sort_order, actual_team_value_id, actual_string_value, actual_int_value) VALUES (99, 10, 'Medaile - 1. místo', 'team', 'podium', 2.0, 0, 8, NULL, NULL);
+INSERT INTO special_bet_rule (id, tournament_id, name, value_type, scoring_type, points, sort_order, actual_team_value_id, actual_string_value, actual_int_value) VALUES (99, 10, 'Medaile - 1. místo', 'team', 'podium', 2.0, 0, 24, NULL, NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (956, 11, 99, 4, NULL, NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (957, 14, 99, 6, NULL, NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (958, 8, 99, 4, NULL, NULL);
@@ -6957,7 +6957,7 @@ INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (963, 5, 99, 4, NULL, NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (964, 9, 99, 4, NULL, NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (965, 2, 99, 6, NULL, NULL);
-INSERT INTO special_bet_rule (id, tournament_id, name, value_type, scoring_type, points, sort_order, actual_team_value_id, actual_string_value, actual_int_value) VALUES (100, 10, 'Medaile - 2. místo', 'team', 'podium', 2.0, 1, 23, NULL, NULL);
+INSERT INTO special_bet_rule (id, tournament_id, name, value_type, scoring_type, points, sort_order, actual_team_value_id, actual_string_value, actual_int_value) VALUES (100, 10, 'Medaile - 2. místo', 'team', 'podium', 2.0, 1, 4, NULL, NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (966, 11, 100, 23, NULL, NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (967, 14, 100, 4, NULL, NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (968, 8, 100, 23, NULL, NULL);
@@ -6968,7 +6968,7 @@ INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (973, 5, 100, 24, NULL, NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (974, 9, 100, 24, NULL, NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (975, 2, 100, 4, NULL, NULL);
-INSERT INTO special_bet_rule (id, tournament_id, name, value_type, scoring_type, points, sort_order, actual_team_value_id, actual_string_value, actual_int_value) VALUES (101, 10, 'Medaile - 3. místo', 'team', 'podium', 2.0, 2, 4, NULL, NULL);
+INSERT INTO special_bet_rule (id, tournament_id, name, value_type, scoring_type, points, sort_order, actual_team_value_id, actual_string_value, actual_int_value) VALUES (101, 10, 'Medaile - 3. místo', 'team', 'podium', 2.0, 2, 8, NULL, NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (976, 11, 101, 24, NULL, NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (977, 14, 101, 23, NULL, NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (978, 8, 101, 6, NULL, NULL);
@@ -6979,7 +6979,7 @@ INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (983, 5, 101, 6, NULL, NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (984, 9, 101, 6, NULL, NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (985, 2, 101, 24, NULL, NULL);
-INSERT INTO special_bet_rule (id, tournament_id, name, value_type, scoring_type, points, sort_order, actual_team_value_id, actual_string_value, actual_int_value) VALUES (102, 10, 'Nejlepší Čech #1', 'string', 'any_match', 2.0, 3, NULL, 'Červenka', NULL);
+INSERT INTO special_bet_rule (id, tournament_id, name, value_type, scoring_type, points, sort_order, actual_team_value_id, actual_string_value, actual_int_value) VALUES (102, 10, 'Nejlepší Čech #1', 'string', 'any_match', 2.0, 3, NULL, 'Pastrňák', NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (986, 11, 102, NULL, 'Pastrňák', NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (987, 14, 102, NULL, 'Pastrňák', NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (988, 8, 102, NULL, 'Pastrňák', NULL);
@@ -6990,7 +6990,7 @@ INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (993, 5, 102, NULL, 'Pastrňák', NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (994, 9, 102, NULL, 'Pastrňák', NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (995, 2, 102, NULL, 'Pastrňák', NULL);
-INSERT INTO special_bet_rule (id, tournament_id, name, value_type, scoring_type, points, sort_order, actual_team_value_id, actual_string_value, actual_int_value) VALUES (103, 10, 'Nejlepší Čech #2', 'string', 'any_match', 2.0, 4, NULL, 'Kubalík', NULL);
+INSERT INTO special_bet_rule (id, tournament_id, name, value_type, scoring_type, points, sort_order, actual_team_value_id, actual_string_value, actual_int_value) VALUES (103, 10, 'Nejlepší Čech #2', 'string', 'any_match', 2.0, 4, NULL, 'Nečas', NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (996, 11, 103, NULL, 'Nečas', NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (997, 14, 103, NULL, 'Nečas', NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (998, 8, 103, NULL, 'Nečas', NULL);
@@ -7001,7 +7001,7 @@ INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (1003, 5, 103, NULL, 'Kubalík', NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (1004, 9, 103, NULL, 'Nečas', NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (1005, 2, 103, NULL, 'Nečas', NULL);
-INSERT INTO special_bet_rule (id, tournament_id, name, value_type, scoring_type, points, sort_order, actual_team_value_id, actual_string_value, actual_int_value) VALUES (104, 10, 'Nejlepší Čech #3', 'string', 'any_match', 2.0, 5, NULL, 'Špaček', NULL);
+INSERT INTO special_bet_rule (id, tournament_id, name, value_type, scoring_type, points, sort_order, actual_team_value_id, actual_string_value, actual_int_value) VALUES (104, 10, 'Nejlepší Čech #3', 'string', 'any_match', 2.0, 5, NULL, 'Červenka', NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (1006, 11, 104, NULL, 'Hertl', NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (1007, 14, 104, NULL, 'Červenka', NULL);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (1008, 8, 104, NULL, 'Červenka', NULL);
@@ -7023,7 +7023,7 @@ INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (1023, 5, 105, NULL, NULL, 14);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (1024, 9, 105, NULL, NULL, 28);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (1025, 2, 105, NULL, NULL, 21);
-INSERT INTO special_bet_rule (id, tournament_id, name, value_type, scoring_type, points, sort_order, actual_team_value_id, actual_string_value, actual_int_value) VALUES (106, 10, 'Počet remíz po základní hrací době', 'integer', 'closest', 2.0, 7, NULL, NULL, 3);
+INSERT INTO special_bet_rule (id, tournament_id, name, value_type, scoring_type, points, sort_order, actual_team_value_id, actual_string_value, actual_int_value) VALUES (106, 10, 'Počet remíz po základní hrací době', 'integer', 'closest', 2.0, 7, NULL, NULL, 5);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (1026, 11, 106, NULL, NULL, 5);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (1027, 14, 106, NULL, NULL, 11);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (1028, 8, 106, NULL, NULL, 5);
@@ -7034,7 +7034,7 @@ INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (1033, 5, 106, NULL, NULL, 5);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (1034, 9, 106, NULL, NULL, 7);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (1035, 2, 106, NULL, NULL, 0);
-INSERT INTO special_bet_rule (id, tournament_id, name, value_type, scoring_type, points, sort_order, actual_team_value_id, actual_string_value, actual_int_value) VALUES (107, 10, 'Trestné minuty Radko Gudase', 'integer', 'closest', 2.0, 8, NULL, NULL, NULL);
+INSERT INTO special_bet_rule (id, tournament_id, name, value_type, scoring_type, points, sort_order, actual_team_value_id, actual_string_value, actual_int_value) VALUES (107, 10, 'Trestné minuty Radko Gudase', 'integer', 'closest', 2.0, 8, NULL, NULL, 4);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (1036, 11, 107, NULL, NULL, 8);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (1037, 14, 107, NULL, NULL, 24);
 INSERT INTO special_bet (id, user_id, rule_id, team_value_id, string_value, int_value) VALUES (1038, 8, 107, NULL, NULL, 6);
