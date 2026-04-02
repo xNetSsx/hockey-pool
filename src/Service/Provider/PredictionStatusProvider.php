@@ -17,7 +17,9 @@ use Symfony\Contracts\Service\ResetInterface;
  */
 final class PredictionStatusProvider implements ResetInterface
 {
-    /** @var array<int, array{missingCount: int, nextMatch: Game|null, missingMatches: list<Game>}> */
+    /**
+     * @var array<int, array{missingCount: int, nextMatch: Game|null, missingMatches: list<Game>}>
+     */
     private array $cache = [];
 
     public function __construct(

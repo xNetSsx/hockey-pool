@@ -11,8 +11,6 @@ use App\Repository\RuleSetRepository;
 use App\Repository\SpecialBetRuleRepository;
 use Doctrine\ORM\EntityManagerInterface;
 
-use function count;
-
 final readonly class TournamentManager
 {
     public function __construct(

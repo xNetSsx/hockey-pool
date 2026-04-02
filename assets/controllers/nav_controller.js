@@ -14,4 +14,10 @@ export default class extends Controller {
         this.openIconTarget.classList.remove('hidden')
         this.closeIconTarget.classList.add('hidden')
     }
+
+    disconnect() {
+        this.menuTarget.classList.add('hidden')
+        this.openIconTarget.classList.remove('hidden')
+        this.closeIconTarget.classList.add('hidden')
+    }
 }

@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Hockey Pool — Symfony 7.4 web application using FrankenPHP (Caddy-based PHP runtime), PostgreSQL 16, Doctrine ORM, Twig + Tailwind CSS (via asset-mapper + symfonycasts/tailwind-bundle), and Stimulus. PHP >= 8.3.12 required.
+Hockey Pool — Symfony 7.4 web application using Apache (php:8.3-apache), PostgreSQL 16, Doctrine ORM, Twig + Tailwind CSS (via asset-mapper + symfonycasts/tailwind-bundle), and Stimulus. PHP >= 8.3.12 required.
 
 ## Common Commands
 
@@ -76,7 +76,7 @@ make sf c="..."         # Run arbitrary Symfony console command
 - **Security**: `symfony/security-bundle` with `User` entity, form login, `ROLE_USER`/`ROLE_ADMIN` hierarchy, `PredictionVoter`, `LoginListener`
 - **Service layer**: `src/Service/Manager/` (entity ops), `src/Service/Resolver/` (point/bet calculation), `src/Service/Builder/` (view-model aggregation), `src/Service/Provider/` (read-only access)
 - **Other src/**: `src/Enum/` (TournamentStatus, TournamentPhase, BetValueType, BetScoringType), `src/Command/` (console commands), `src/Twig/` (extensions), `src/EventListener/`, `src/Security/Voter/`
-- **Docker**: Multi-stage `Dockerfile.frankenphp` (base → dev → prod); `compose.yaml` + `compose.override.yaml` (dev) + `compose.prod.yaml`; `Dockerfile` (Apache variant)
+- **Docker**: `Dockerfile` (Apache); `compose.yaml` + `compose.override.yaml` (dev) + `compose.prod.yaml` (prod)
 
 ## Code Standards
 

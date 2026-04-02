@@ -51,9 +51,10 @@ final readonly class SpecialBetManager
     }
 
     /**
+     * @param User $user
      * @param list<SpecialBetRule> $rules
-     * @param array<int, SpecialBet|null> $existingBets indexed by rule ID
-     * @param array<int|string, string> $rawValues keyed by rule ID
+     * @param array<int, SpecialBet|null> $existingBets
+     * @param array<int|string, string> $rawValues
      */
     public function updateBets(User $user, array $rules, array $existingBets, array $rawValues): void
     {

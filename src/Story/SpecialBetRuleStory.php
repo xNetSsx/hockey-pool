@@ -171,7 +171,9 @@ final class SpecialBetRuleStory extends Story
     }
 
     /**
+     * @param mixed $tournament
      * @param array<int, array<string, mixed>> $rules
+     * @param string $prefix
      */
     private function createRules(mixed $tournament, array $rules, string $prefix): void
     {

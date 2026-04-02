@@ -1,4 +1,5 @@
 {% extends 'base.html.twig' %}
+{% from '_macros.html.twig' import prediction_badge_class %}
 
 {% block title %}{{ game.homeTeam.code }} vs {{ game.awayTeam.code }} — Hockey Pool{% endblock %}
 
@@ -62,13 +63,13 @@
                 <table class="w-full text-sm">
                     <thead>
                         <tr class="border-b border-gray-100 bg-gray-50 text-left text-xs uppercase tracking-wider text-gray-500 dark:border-gray-700 dark:bg-[#0f172a] dark:text-gray-400">
-                            <th class="px-6 py-3">Hráč</th>
-                            <th class="px-6 py-3 text-center">Tip</th>
-                            <th class="px-6 py-3 text-center">Výsledek</th>
-                            <th class="hidden px-6 py-3 text-right sm:table-cell">Základ</th>
-                            <th class="hidden px-6 py-3 text-right sm:table-cell">Bonus</th>
-                            <th class="hidden px-6 py-3 text-right sm:table-cell">Přesný</th>
-                            <th class="px-6 py-3 text-right font-semibold">Celkem</th>
+                            <th scope="col" class="px-6 py-3">Hráč</th>
+                            <th scope="col" class="px-6 py-3 text-center">Tip</th>
+                            <th scope="col" class="px-6 py-3 text-center">Výsledek</th>
+                            <th scope="col" class="hidden px-6 py-3 text-right sm:table-cell">Základ</th>
+                            <th scope="col" class="hidden px-6 py-3 text-right sm:table-cell">Bonus</th>
+                            <th scope="col" class="hidden px-6 py-3 text-right sm:table-cell">Přesný</th>
+                            <th scope="col" class="px-6 py-3 text-right font-semibold">Celkem</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -93,9 +94,9 @@
                                 <td class="px-6 py-3 text-center">
                                     {% if game.isFinished %}
                                         {% if row.exactScore %}
-                                            <span class="inline-block rounded-full bg-amber-100 px-2.5 py-0.5 text-xs font-semibold text-amber-800 dark:bg-amber-900/30 dark:text-amber-300">🎯 Přesný</span>
+                                            <span class="inline-block rounded-full px-2.5 py-0.5 text-xs font-semibold {{ prediction_badge_class(row.prediction, game) }}">🎯 Přesný</span>
                                         {% elseif row.correctWinner %}
-                                            <span class="inline-block rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-semibold text-green-800 dark:bg-green-900/30 dark:text-green-300">✓ Vítěz</span>
+                                            <span class="inline-block rounded-full px-2.5 py-0.5 text-xs font-semibold {{ prediction_badge_class(row.prediction, game) }}">✓ Vítěz</span>
                                         {% else %}
                                             <span class="inline-block rounded-full bg-red-100 px-2.5 py-0.5 text-xs font-semibold text-red-800 dark:bg-red-900/30 dark:text-red-300">✗ Špatně</span>
                                         {% endif %}

@@ -7,6 +7,8 @@ namespace App\Controller\Admin;
 use App\Entity\Tournament;
 use App\Service\Manager\TournamentManager;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\DependencyInjection\Attribute\Target;
+use Symfony\Component\HtmlSanitizer\HtmlSanitizerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -35,10 +37,12 @@ class ContentAdminController extends AbstractController
         string $field,
         Request $request,
         TournamentManager $manager,
+        #[Target('app.html_sanitizer')] HtmlSanitizerInterface $htmlSanitizer,
     ): Response {
-        $content = $request->getPayload()->getString('content');
+        $raw = $request->getPayload()->getString('content');
+        $content = $raw !== '' ? $htmlSanitizer->sanitize($raw) : '';
 
-        if ($field === 'rules') {
+        if ('rules' === $field) {
             $tournament->setRulesContent($content ?: null);
         } else {
             $tournament->setManualContent($content ?: null);

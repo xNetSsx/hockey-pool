@@ -41,6 +41,10 @@ class PredictionRepository extends ServiceEntityRepository
 
         /** @var list<Prediction> $predictions */
         $predictions = $this->createQueryBuilder('p')
+            ->leftJoin('p.game', 'g')
+            ->addSelect('g')
+            ->leftJoin('p.user', 'u')
+            ->addSelect('u')
             ->where('p.game IN (:games)')
             ->setParameter('games', $games)
             ->getQuery()
@@ -55,6 +59,39 @@ class PredictionRepository extends ServiceEntityRepository
             }
 
             $indexed[(int) $gameId][] = $prediction;
+        }
+
+        return $indexed;
+    }
+
+    /**
+     * Batch-fetch predictions for multiple users in a tournament, indexed by user ID then game ID.
+     *
+     * @param list<User> $users
+     * @return array<int, array<int, Prediction>>
+     */
+    public function findByUsersAndTournamentIndexedByUserId(array $users, Tournament $tournament): array
+    {
+        if (empty($users)) {
+            return [];
+        }
+
+        /** @var list<Prediction> $predictions */
+        $predictions = $this->createQueryBuilder('p')
+            ->join('p.game', 'g')
+            ->where('p.user IN (:users)')
+            ->andWhere('g.tournament = :tournament')
+            ->setParameter('users', $users)
+            ->setParameter('tournament', $tournament)
+            ->getQuery()
+            ->getResult();
+
+        /** @var array<int, array<int, Prediction>> $indexed */
+        $indexed = [];
+        foreach ($predictions as $prediction) {
+            $userId = (int) $prediction->getUser()->getId();
+            $gameId = (int) $prediction->getGame()->getId();
+            $indexed[$userId][$gameId] = $prediction;
         }
 
         return $indexed;

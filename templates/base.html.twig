@@ -35,7 +35,7 @@
                     {# Theme toggle for logged-out users #}
                     {% if not app.user %}
                         <button type="button" {{ stimulus_controller('theme') }} {{ stimulus_action('theme', 'toggle') }}
-                                class="rounded-lg p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-white/10 dark:hover:text-white" title="Přepnout vzhled">
+                                class="rounded-lg p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-white/10 dark:hover:text-white" title="Přepnout vzhled" aria-label="Přepnout vzhled">
                             {{ m.theme_icons() }}
                         </button>
                     {% endif %}
@@ -57,7 +57,7 @@
                                 {% endif %}
                                 <a href="{{ path('app_logout') }}" class="rounded-lg px-3 py-2 text-sm text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/10 dark:hover:text-gray-200">Odhlásit</a>
                                 <button type="button" {{ stimulus_controller('theme') }} {{ stimulus_action('theme', 'toggle') }}
-                                        class="rounded-lg p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-white/10 dark:hover:text-white" title="Přepnout vzhled">
+                                        class="rounded-lg p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-white/10 dark:hover:text-white" title="Přepnout vzhled" aria-label="Přepnout vzhled">
                                     {{ m.theme_icons() }}
                                 </button>
                             </div>
@@ -68,10 +68,10 @@
                     {% if app.user %}
                         <div class="flex items-center gap-1 sm:hidden">
                             <button type="button" {{ stimulus_controller('theme') }} {{ stimulus_action('theme', 'toggle') }}
-                                    class="rounded-lg p-2 text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-white/10" title="Přepnout vzhled">
+                                    class="rounded-lg p-2 text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-white/10" title="Přepnout vzhled" aria-label="Přepnout vzhled">
                                 {{ m.theme_icons() }}
                             </button>
-                            <button type="button" class="inline-flex items-center justify-center rounded-lg p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-white/10 dark:hover:text-white" {{ stimulus_action('nav', 'toggle') }}>
+                            <button type="button" class="inline-flex items-center justify-center rounded-lg p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-white/10 dark:hover:text-white" {{ stimulus_action('nav', 'toggle') }} aria-label="Otevřít menu">
                             <svg {{ stimulus_target('nav', 'openIcon') }} class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
                             </svg>

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use App\Enum\PointCategory;
 use App\Repository\PointEntryRepository;
 use DateTimeImmutable;
 use Doctrine\ORM\Mapping as ORM;
@@ -47,6 +48,9 @@ class PointEntry
     #[Assert\NotBlank]
     #[Assert\Length(max: 255)]
     private string $reason;
+
+    #[ORM\Column(type: 'string', length: 50, nullable: true, enumType: PointCategory::class)]
+    private ?PointCategory $category = null;
 
     #[ORM\Column]
     private DateTimeImmutable $calculatedAt;
@@ -129,6 +133,18 @@ class PointEntry
     public function setReason(string $reason): self
     {
         $this->reason = $reason;
+
+        return $this;
+    }
+
+    public function getCategory(): ?PointCategory
+    {
+        return $this->category;
+    }
+
+    public function setCategory(?PointCategory $category): self
+    {
+        $this->category = $category;
 
         return $this;
     }

@@ -25,7 +25,7 @@ class UserType extends AbstractType
                 'label' => 'Heslo',
                 'required' => $options['is_new'],
                 'mapped' => false,
-                'constraints' => $options['is_new'] ? [new Assert\NotBlank(), new Assert\Length(min: 4)] : [new Assert\Length(min: 4)],
+                'constraints' => $options['is_new'] ? [new Assert\NotBlank(), new Assert\Length(min: 8)] : [new Assert\Length(min: 8)],
                 'attr' => ['placeholder' => $options['is_new'] ? '' : 'ponechte prázdné pro zachování'],
             ])
             ->add('admin', CheckboxType::class, [
@@ -41,5 +41,6 @@ class UserType extends AbstractType
             'data_class' => User::class,
             'is_new' => false,
         ]);
+        $resolver->setAllowedTypes('is_new', 'bool');
     }
 }

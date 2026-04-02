@@ -73,18 +73,18 @@
 
 {% block modals %}
     {% if czechSide %}
-        <div id="treason-modal-1" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;z-index:9999;background:rgba(0,0,0,0.85)">
-            <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:100%;max-width:24rem;padding:0 1rem">
-                <div class="rounded-2xl border-2 border-red-500 bg-white p-8 text-center shadow-2xl dark:bg-[#1e293b]" style="animation:shake 0.5s ease-in-out">
+        <dialog id="treason-modal-1" aria-labelledby="treason-modal-1-title">
+            <div style="position:fixed;top:0;left:0;right:0;bottom:0;z-index:9999;background:rgba(0,0,0,0.85);display:flex;align-items:center;justify-content:center;padding:0 1rem">
+                <div class="w-full max-w-sm rounded-2xl border-2 border-red-500 bg-white p-8 text-center shadow-2xl dark:bg-[#1e293b]" style="animation:shake 0.5s ease-in-out">
                     <div class="mb-3 text-7xl">🇨🇿</div>
-                    <h2 class="mb-1 text-3xl font-black uppercase tracking-wide text-red-600">Vlastizrada!</h2>
+                    <h2 id="treason-modal-1-title" class="mb-1 text-3xl font-black uppercase tracking-wide text-red-600">Vlastizrada!</h2>
                     <p class="mb-2 text-xs font-semibold uppercase tracking-widest text-red-400">Detekován tip proti vlasti</p>
                     <p class="mb-6 text-sm text-gray-600 dark:text-gray-300">
                         Vážně tipuješ prohru České republiky?<br>
                         <span class="font-semibold">Tohle je tvoje šance to napravit.</span>
                     </p>
                     <div class="flex flex-col gap-2 sm:flex-row sm:gap-3">
-                        <button onclick="document.getElementById('treason-modal-1').style.display='none'" class="order-1 rounded-lg bg-blue-600 px-4 py-3 text-sm font-bold text-white hover:bg-blue-700 dark:bg-[#38bdf8] dark:text-[#0f172a] sm:flex-1">
+                        <button autofocus onclick="document.getElementById('treason-modal-1').close()" class="order-1 rounded-lg bg-blue-600 px-4 py-3 text-sm font-bold text-white hover:bg-blue-700 dark:bg-[#38bdf8] dark:text-[#0f172a] sm:flex-1">
                             🇨🇿 Sláva! Opravím to
                         </button>
                         <button onclick="showSecondWarning()" class="order-2 rounded-lg bg-gray-200 px-4 py-3 text-sm font-medium text-gray-500 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-400 sm:flex-1">
@@ -93,13 +93,13 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </dialog>
 
-        <div id="treason-modal-2" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;z-index:9999;background:rgba(127,0,0,0.9)">
-            <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:100%;max-width:24rem;padding:0 1rem">
-                <div class="rounded-2xl border-2 border-red-700 bg-white p-8 text-center shadow-2xl dark:bg-[#1e293b]" style="animation:shake 0.3s ease-in-out 3">
+        <dialog id="treason-modal-2" aria-labelledby="treason-modal-2-title">
+            <div style="position:fixed;top:0;left:0;right:0;bottom:0;z-index:9999;background:rgba(127,0,0,0.9);display:flex;align-items:center;justify-content:center;padding:0 1rem">
+                <div class="w-full max-w-sm rounded-2xl border-2 border-red-700 bg-white p-8 text-center shadow-2xl dark:bg-[#1e293b]" style="animation:shake 0.3s ease-in-out 3">
                     <div class="mb-3 text-7xl">⛔</div>
-                    <h2 class="mb-2 text-2xl font-black uppercase text-red-700">Poslední varování!</h2>
+                    <h2 id="treason-modal-2-title" class="mb-2 text-2xl font-black uppercase text-red-700">Poslední varování!</h2>
                     <div class="mb-4 rounded-lg bg-red-50 p-3 dark:bg-red-900/30">
                         <p class="text-sm text-red-800 dark:text-red-300">
                             Tímto se oficiálně prohlašuješ za
@@ -110,7 +110,7 @@
                         Tvůj hanebný tip bude zaznamenán.<br>Ostatní se to dozví. Není cesta zpět.
                     </p>
                     <div class="flex flex-col gap-2 sm:flex-row sm:gap-3">
-                        <button onclick="cancelTreason()" class="order-1 rounded-lg bg-green-600 px-4 py-3 text-sm font-bold text-white hover:bg-green-700 sm:flex-1">
+                        <button autofocus onclick="cancelTreason()" class="order-1 rounded-lg bg-green-600 px-4 py-3 text-sm font-bold text-white hover:bg-green-700 sm:flex-1">
                             🇨🇿 Měním tip! Sláva Čechům!
                         </button>
                         <button onclick="confirmTreason()" class="order-2 rounded-lg bg-red-900 px-4 py-3 text-xs font-medium text-red-300 hover:bg-red-950 sm:flex-1">
@@ -119,9 +119,11 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </dialog>
 
         <style>
+            dialog { padding: 0; border: none; background: transparent; max-width: none; max-height: none; }
+            dialog::backdrop { display: none; }
             @keyframes shake {
                 0%, 100% { transform: translateX(0); }
                 10%, 30%, 50%, 70%, 90% { transform: translateX(-4px); }
@@ -131,7 +133,7 @@
 
         <script>
             (function () {
-                var czechSide = '{{ czechSide }}';
+                var czechSide = '{{ czechSide|e('js') }}';
                 var form = document.querySelector('form[name="prediction"]') || document.querySelector('form[name="match_result"]') || document.querySelector('#prediction-form') || document.querySelector('form');
                 var treasonConfirmed = false;
 
@@ -150,10 +152,10 @@
                 }
 
                 function showModal(id) {
-                    document.getElementById(id).style.display = 'flex';
+                    document.getElementById(id).showModal();
                 }
                 function hideModal(id) {
-                    document.getElementById(id).style.display = 'none';
+                    document.getElementById(id).close();
                 }
 
                 form.addEventListener('submit', function (e) {

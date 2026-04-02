@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
+use App\Entity\RuleSet;
+use App\Entity\SpecialBetRule;
 use App\Entity\Tournament;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
-use App\Entity\RuleSet;
-use App\Entity\SpecialBetRule;
 
 /** @extends ServiceEntityRepository<Tournament> */
 class TournamentRepository extends ServiceEntityRepository
@@ -20,8 +20,8 @@ class TournamentRepository extends ServiceEntityRepository
 
     public function findLatestWithRules(Tournament $exclude): ?Tournament
     {
-        /** @var Tournament|null */
-        return $this->createQueryBuilder('t')
+        /** @var Tournament|null $result */
+        $result = $this->createQueryBuilder('t')
             ->leftJoin(RuleSet::class, 'rs', 'WITH', 'rs.tournament = t')
             ->leftJoin(SpecialBetRule::class, 'sbr', 'WITH', 'sbr.tournament = t')
             ->where('t != :exclude')
@@ -31,5 +31,7 @@ class TournamentRepository extends ServiceEntityRepository
             ->setMaxResults(1)
             ->getQuery()
             ->getOneOrNullResult();
+
+        return $result;
     }
 }

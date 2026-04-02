@@ -8,6 +8,7 @@ use App\Entity\Game;
 use App\Entity\PointEntry;
 use App\Entity\Prediction;
 use App\Entity\RuleSet;
+use App\Enum\PointCategory;
 
 /**
  * Pure scoring logic for match predictions. No persistence — returns PointEntry objects.
@@ -27,7 +28,6 @@ final class MatchPointResolver
      * @param Game $game
      * @param list<Prediction> $predictions
      * @param RuleSet|null $ruleSet
-     *
      * @return list<PointEntry>
      */
     public function resolve(Game $game, array $predictions, ?RuleSet $ruleSet = null): array
@@ -66,7 +66,8 @@ final class MatchPointResolver
                 ->setTournament($tournament)
                 ->setGame($game)
                 ->setPoints($basePoints)
-                ->setReason(self::REASON_CORRECT_WINNER);
+                ->setReason(self::REASON_CORRECT_WINNER)
+                ->setCategory(PointCategory::CorrectWinner);
 
             if ($wrongCount > 0) {
                 $bonus = $wrongCount * $opponentBonus;
@@ -77,7 +78,8 @@ final class MatchPointResolver
                     ->setPoints($bonus)
                     ->setReason(
                         sprintf('Wrong opponent bonus (%s × %d)', number_format($opponentBonus, 2), $wrongCount),
-                    );
+                    )
+                    ->setCategory(PointCategory::OpponentBonus);
             }
 
             if ($prediction->isExactScore($game)) {
@@ -86,7 +88,8 @@ final class MatchPointResolver
                     ->setTournament($tournament)
                     ->setGame($game)
                     ->setPoints($exactBonus)
-                    ->setReason(self::REASON_EXACT_SCORE_BONUS);
+                    ->setReason(self::REASON_EXACT_SCORE_BONUS)
+                    ->setCategory(PointCategory::ExactScoreBonus);
             }
         }
 

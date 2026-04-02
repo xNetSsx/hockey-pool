@@ -20,6 +20,9 @@ security:
                 username_parameter: _username
                 password_parameter: _password
                 enable_csrf: true
+            login_throttling:
+                max_attempts: 5
+                interval: '15 minutes'
             remember_me:
                 secret: '%kernel.secret%'
                 lifetime: 604800 # 1 week

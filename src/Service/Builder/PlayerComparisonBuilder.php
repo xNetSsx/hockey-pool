@@ -38,20 +38,8 @@ final readonly class PlayerComparisonBuilder
         $games = $this->gameRepository->findByTournamentGroupedByPhase($tournament);
         $flatGames = array_merge(...array_values($games));
 
-        $allPredictions = [];
-        $allMatchPoints = [];
-
-        foreach ($users as $user) {
-            $userId = (int) $user->getId();
-            $allPredictions[$userId] = $this->predictionRepository->findByUserIndexedByGame($user, $tournament);
-
-            $indexed = [];
-            foreach ($this->pointEntryRepository->getPointsPerMatch($user, $tournament) as $row) {
-                $indexed[$row['gameId']] = $row['points'];
-            }
-
-            $allMatchPoints[$userId] = $indexed;
-        }
+        $allPredictions = $this->predictionRepository->findByUsersAndTournamentIndexedByUserId($users, $tournament);
+        $allMatchPoints = $this->pointEntryRepository->getPointsPerMatchByUsers($users, $tournament);
 
         $runningTotals = [];
         $cumulative = array_fill_keys(array_map(static fn (User $u) => (int) $u->getId(), $users), 0.0);

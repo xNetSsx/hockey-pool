@@ -27,6 +27,7 @@ class SpecialBetRepository extends ServiceEntityRepository
         /** @var list<SpecialBet> $result */
         $result = $this->createQueryBuilder('sb')
             ->join('sb.rule', 'r')
+            ->addSelect('r')
             ->where('r.tournament = :tournament')
             ->setParameter('tournament', $tournament)
             ->getQuery()
@@ -43,6 +44,7 @@ class SpecialBetRepository extends ServiceEntityRepository
         /** @var list<SpecialBet> $bets */
         $bets = $this->createQueryBuilder('sb')
             ->join('sb.rule', 'r')
+            ->addSelect('r')
             ->where('sb.user = :user')
             ->andWhere('r.tournament = :tournament')
             ->setParameter('user', $user)

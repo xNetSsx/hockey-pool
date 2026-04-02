@@ -1,4 +1,5 @@
 {% extends 'base.html.twig' %}
+{% from '_macros.html.twig' import prediction_badge_class %}
 
 {% block title %}{{ player.username }} — Hockey Pool{% endblock %}
 
@@ -123,18 +124,7 @@
                                 </div>
                                 <div class="w-24 shrink-0 text-right">
                                     {% if prediction %}
-                                        {% if game.isFinished %}
-                                            {% if prediction.isExactScore(game) %}
-                                                {% set cls = 'bg-amber-100 text-amber-800 border-amber-300 dark:bg-amber-900/30 dark:text-amber-300 dark:border-amber-700' %}
-                                            {% elseif prediction.isCorrectWinner(game) %}
-                                                {% set cls = 'bg-green-100 text-green-800 border-green-300 dark:bg-green-900/30 dark:text-green-300 dark:border-green-700' %}
-                                            {% else %}
-                                                {% set cls = 'bg-red-100 text-red-800 border-red-300 dark:bg-red-900/30 dark:text-red-300 dark:border-red-700' %}
-                                            {% endif %}
-                                        {% else %}
-                                            {% set cls = 'bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-900/30 dark:text-blue-300 dark:border-blue-700' %}
-                                        {% endif %}
-                                        <span class="inline-block rounded border px-2 py-0.5 text-xs font-medium tabular-nums {{ cls }}">
+                                        <span class="inline-block rounded border px-2 py-0.5 text-xs font-medium tabular-nums {{ prediction_badge_class(prediction, game) }}">
                                             {{ prediction.homeScore }}:{{ prediction.awayScore }}
                                         </span>
                                     {% else %}

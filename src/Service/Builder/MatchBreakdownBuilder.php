@@ -8,6 +8,7 @@ use App\Entity\Game;
 use App\Entity\PointEntry;
 use App\Entity\Prediction;
 use App\Entity\User;
+use App\Enum\PointCategory;
 use App\Repository\PointEntryRepository;
 use App\Repository\PredictionRepository;
 use App\Service\Resolver\MatchPointResolver;
@@ -57,12 +58,13 @@ final readonly class MatchBreakdownBuilder
             $exactBonus = 0.0;
 
             foreach ($entries as $entry) {
+                $category = $entry->getCategory();
                 $reason = $entry->getReason();
-                if (MatchPointResolver::REASON_CORRECT_WINNER === $reason) {
+                if (PointCategory::CorrectWinner === $category || (null === $category && MatchPointResolver::REASON_CORRECT_WINNER === $reason)) {
                     $basePoints = $entry->getPoints();
-                } elseif (str_starts_with($reason, 'Wrong opponent bonus')) {
+                } elseif (PointCategory::OpponentBonus === $category || (null === $category && str_starts_with($reason, 'Wrong opponent bonus'))) {
                     $opponentBonus = $entry->getPoints();
-                } elseif (MatchPointResolver::REASON_EXACT_SCORE_BONUS === $reason) {
+                } elseif (PointCategory::ExactScoreBonus === $category || (null === $category && MatchPointResolver::REASON_EXACT_SCORE_BONUS === $reason)) {
                     $exactBonus = $entry->getPoints();
                 }
             }

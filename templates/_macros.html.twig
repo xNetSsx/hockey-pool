@@ -18,6 +18,18 @@
  #   active  — boolean, whether this link matches the current route
  #   mobile  — boolean, use mobile-menu variant (slightly different inactive colour)
  #}
+{% macro prediction_badge_class(prediction, game) -%}
+    {%- if not game.isFinished -%}
+        bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-900/30 dark:text-blue-300 dark:border-blue-700
+    {%- elseif prediction.isExactScore(game) -%}
+        bg-amber-100 text-amber-800 border-amber-300 dark:bg-amber-900/30 dark:text-amber-300 dark:border-amber-700
+    {%- elseif prediction.isCorrectWinner(game) -%}
+        bg-green-100 text-green-800 border-green-300 dark:bg-green-900/30 dark:text-green-300 dark:border-green-700
+    {%- else -%}
+        bg-red-100 text-red-800 border-red-300 dark:bg-red-900/30 dark:text-red-300 dark:border-red-700
+    {%- endif -%}
+{% endmacro %}
+
 {% macro nav_link_class(active, mobile = false) -%}
     {%- if active -%}
         bg-gray-100 text-gray-900 dark:bg-white/10 dark:text-white

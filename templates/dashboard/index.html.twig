@@ -76,13 +76,13 @@
                     <table class="w-full text-sm">
                         <thead>
                             <tr class="border-b border-gray-100 bg-gray-50 text-left text-xs uppercase tracking-wider text-gray-500 dark:border-gray-700 dark:bg-[#0f172a] dark:text-gray-400">
-                                <th class="px-4 py-3 w-10">#</th>
-                                <th class="px-4 py-3">Hráč</th>
-                                <th class="px-4 py-3 text-right">Body</th>
-                                <th class="hidden px-4 py-3 text-right sm:table-cell" title="Rozdíl od předchozího">+/-</th>
-                                <th class="hidden px-4 py-3 text-right sm:table-cell" title="Ztráta na 1. místo">Od 1.</th>
+                                <th scope="col" class="px-4 py-3 w-10">#</th>
+                                <th scope="col" class="px-4 py-3">Hráč</th>
+                                <th scope="col" class="px-4 py-3 text-right">Body</th>
+                                <th scope="col" class="hidden px-4 py-3 text-right sm:table-cell" title="Rozdíl od předchozího">+/-</th>
+                                <th scope="col" class="hidden px-4 py-3 text-right sm:table-cell" title="Ztráta na 1. místo">Od 1.</th>
                                 {% if todayPoints|length > 0 %}
-                                    <th class="px-4 py-3 text-right" title="Body dnes">Dnes</th>
+                                    <th scope="col" class="px-4 py-3 text-right" title="Body dnes">Dnes</th>
                                 {% endif %}
                             </tr>
                         </thead>
@@ -94,7 +94,14 @@
                                 {% set diff = previousPoints is not null ? previousPoints - row.totalPoints : 0 %}
                                 {% set diffFromFirst = leaderPoints - row.totalPoints %}
                                 {% set today = todayPoints[row.user.id] ?? 0 %}
-                                <tr class="{{ isCurrentUser ? 'bg-[#38bdf8]/10 font-semibold' : '' }} {{ loop.index is odd and not isCurrentUser ? 'bg-white dark:bg-[#1e293b]' : (not isCurrentUser ? 'bg-gray-50 dark:bg-[#0f172a]/50' : '') }} border-b border-gray-100 last:border-0 dark:border-gray-700 dark:text-gray-100">
+                                {% if isCurrentUser %}
+                                    {% set rowClass = 'bg-[#38bdf8]/10 font-semibold' %}
+                                {% elseif loop.index is odd %}
+                                    {% set rowClass = 'bg-white dark:bg-[#1e293b]' %}
+                                {% else %}
+                                    {% set rowClass = 'bg-gray-50 dark:bg-[#0f172a]/50' %}
+                                {% endif %}
+                                <tr class="{{ rowClass }} border-b border-gray-100 last:border-0 dark:border-gray-700 dark:text-gray-100">
                                     <td class="px-4 py-3">
                                         {% if row.rank <= 3 %}
                                             <span class="text-base" aria-hidden="true">{{ row.rank == 1 ? '🥇' : (row.rank == 2 ? '🥈' : '🥉') }}</span>
@@ -245,7 +252,7 @@
                     '#ec4899', '#06b6d4', '#f97316', '#6366f1', '#14b8a6',
                 ];
 
-                const timelineData = {{ timeline|json_encode|raw }};
+                const timelineData = {{ timeline|json_encode(constant('JSON_HEX_TAG'))|raw }};
 
                 const datasets = timelineData.datasets.map(function (ds, i) {
                     return {

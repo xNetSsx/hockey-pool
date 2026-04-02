@@ -41,7 +41,7 @@ down: ## Stop the docker hub
 
 restart: down up
 
-bash: ## Connect to the FrankenPHP container via bash so up and down arrows go to previous commands
+bash: ## Connect to the PHP container via bash so up and down arrows go to previous commands
 	@$(PHP_CONT) bash
 
 _create-env:
@@ -182,6 +182,11 @@ test-file:
 test: ## Start tests with phpunit, pass the parameter "c=" to add options to phpunit, example: make test c="--group e2e --stop-on-failure"
 	@$(eval c ?=)
 	@$(DOCKER_COMP) exec -e APP_ENV=test php bin/phpunit $(c)
+
+## Generate HTML coverage report to var/coverage/
+coverage:
+	@echo "${GREEN}>>> Generating coverage report to var/coverage/${EOL}"
+	@$(DOCKER_EXEC_TEST) php -d xdebug.mode=coverage ./vendor/bin/phpunit -c phpunit.xml.dist --coverage-html var/coverage/
 
 ### PHPStan
 phpstan:

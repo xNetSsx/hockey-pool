@@ -75,12 +75,6 @@ class PredictionController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            if ($game->getPlayedAt() <= new DateTimeImmutable() && !$this->isGranted('ROLE_ADMIN')) {
-                $this->addFlash('error', 'Zápas už začal, tip nelze měnit.');
-
-                return $this->redirectToRoute('prediction_list');
-            }
-
             /** @var array{homeScore: int, awayScore: int} $data */
             $data = $form->getData();
 

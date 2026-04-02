@@ -8,7 +8,9 @@ use App\Entity\Game;
 use App\Entity\PointEntry;
 use App\Entity\Tournament;
 use App\Entity\User;
+use App\Enum\PointCategory;
 use App\Service\Resolver\MatchPointResolver;
+use DateTimeImmutable;
 use DateTimeInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -26,7 +28,16 @@ class PointEntryRepository extends ServiceEntityRepository
      */
     public function findByGame(Game $game): array
     {
-        return $this->findBy(['game' => $game]);
+        /** @var list<PointEntry> $result */
+        $result = $this->createQueryBuilder('pe')
+            ->leftJoin('pe.user', 'u')
+            ->addSelect('u')
+            ->where('pe.game = :game')
+            ->setParameter('game', $game)
+            ->getQuery()
+            ->getResult();
+
+        return $result;
     }
 
     /**
@@ -38,6 +49,8 @@ class PointEntryRepository extends ServiceEntityRepository
         $entries = $this->createQueryBuilder('pe')
             ->join('pe.game', 'g')
             ->addSelect('g')
+            ->leftJoin('pe.user', 'u')
+            ->addSelect('u')
             ->where('pe.tournament = :tournament')
             ->andWhere('pe.game IS NOT NULL')
             ->setParameter('tournament', $tournament)
@@ -68,13 +81,15 @@ class PointEntryRepository extends ServiceEntityRepository
      */
     public function findSpecialBetEntries(Tournament $tournament): array
     {
-        /** @var list<PointEntry> */
-        return $this->createQueryBuilder('pe')
+        /** @var list<PointEntry> $result */
+        $result = $this->createQueryBuilder('pe')
             ->where('pe.tournament = :tournament')
             ->andWhere('pe.game IS NULL')
             ->setParameter('tournament', $tournament)
             ->getQuery()
             ->getResult();
+
+        return $result;
     }
 
     /**
@@ -121,6 +136,39 @@ class PointEntryRepository extends ServiceEntityRepository
             'gameId' => (int) $row['gameId'],
             'points' => (float) $row['total'],
         ], $rows);
+    }
+
+    /**
+     * Points per match for multiple users, indexed by user ID then game ID.
+     *
+     * @param list<User> $users
+     * @return array<int, array<int, float>>
+     */
+    public function getPointsPerMatchByUsers(array $users, Tournament $tournament): array
+    {
+        if (empty($users)) {
+            return [];
+        }
+
+        /** @var list<array{userId: int|string, gameId: int|string, total: float|string}> $rows */
+        $rows = $this->createQueryBuilder('pe')
+            ->select('IDENTITY(pe.user) as userId, IDENTITY(pe.game) as gameId, SUM(pe.points) as total')
+            ->where('pe.user IN (:users)')
+            ->andWhere('pe.tournament = :tournament')
+            ->andWhere('pe.game IS NOT NULL')
+            ->setParameter('users', $users)
+            ->setParameter('tournament', $tournament)
+            ->groupBy('pe.user, pe.game')
+            ->getQuery()
+            ->getResult();
+
+        /** @var array<int, array<int, float>> $indexed */
+        $indexed = [];
+        foreach ($rows as $row) {
+            $indexed[(int) $row['userId']][(int) $row['gameId']] = (float) $row['total'];
+        }
+
+        return $indexed;
     }
 
     /**
@@ -175,11 +223,15 @@ class PointEntryRepository extends ServiceEntityRepository
         $rows = $this->createQueryBuilder('pe')
             ->select('IDENTITY(pe.user) as userId, pe.reason, COUNT(pe.id) as cnt')
             ->where('pe.tournament = :tournament')
-            ->andWhere('pe.reason IN (:reasons)')
+            ->andWhere('pe.reason IN (:reasons) OR pe.category IN (:categories)')
             ->setParameter('tournament', $tournament)
             ->setParameter('reasons', [
                 MatchPointResolver::REASON_EXACT_SCORE_BONUS,
                 MatchPointResolver::REASON_CORRECT_WINNER,
+            ])
+            ->setParameter('categories', [
+                PointCategory::CorrectWinner,
+                PointCategory::ExactScoreBonus,
             ])
             ->groupBy('pe.user, pe.reason')
             ->getQuery()
@@ -210,8 +262,8 @@ class PointEntryRepository extends ServiceEntityRepository
      */
     public function getTodayPointsByUser(Tournament $tournament): array
     {
-        $today = new \DateTimeImmutable('today');
-        $tomorrow = new \DateTimeImmutable('tomorrow');
+        $today = new DateTimeImmutable('today');
+        $tomorrow = new DateTimeImmutable('tomorrow');
 
         /** @var list<array{userId: int|string, total: float|string}> $rows */
         $rows = $this->createQueryBuilder('pe')

@@ -10,6 +10,7 @@ use App\Entity\SpecialBetRule;
 use App\Entity\Team;
 use App\Enum\BetScoringType;
 use App\Enum\BetValueType;
+use App\Enum\PointCategory;
 
 /**
  * Pure scoring logic for special bets. Driven by SpecialBetRule configuration.
@@ -25,9 +26,9 @@ final class SpecialBetResolver
      * Resolves all bets for a single rule.
      *
      * @param SpecialBetRule $rule
-     * @param list<SpecialBet> $bets All user bets for this rule
-     * @param list<Team> $podiumTeams All actual podium teams (for podium scoring only)
-     * @param list<string> $anyMatchPool All actual string values for any_match scoring
+     * @param list<SpecialBet> $bets
+     * @param list<Team> $podiumTeams
+     * @param list<string> $anyMatchPool
      * @return list<PointEntry>
      */
     public function resolve(SpecialBetRule $rule, array $bets, array $podiumTeams = [], array $anyMatchPool = []): array
@@ -205,6 +206,7 @@ final class SpecialBetResolver
             ->setTournament($rule->getTournament())
             ->setSpecialBetRule($rule)
             ->setPoints($points)
-            ->setReason($reason);
+            ->setReason($reason)
+            ->setCategory(PointCategory::SpecialBet);
     }
 }

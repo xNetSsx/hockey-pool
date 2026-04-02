@@ -10,6 +10,7 @@ use App\Repository\GameRepository;
 use App\Repository\PredictionRepository;
 use App\Service\Builder\MatchBreakdownBuilder;
 use App\Service\Provider\ActiveTournamentProvider;
+use DateTimeImmutable;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -43,7 +44,7 @@ class MatchController extends AbstractController
         Game $game,
         MatchBreakdownBuilder $matchBreakdownBuilder,
     ): Response {
-        $matchStarted = $game->getPlayedAt() <= new \DateTimeImmutable();
+        $matchStarted = $game->getPlayedAt() <= new DateTimeImmutable();
 
         return $this->render('match/detail.html.twig', [
             'game' => $game,
