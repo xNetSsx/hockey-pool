@@ -78,7 +78,7 @@ class UserController extends AbstractController
         PlayerStatsBuilder $playerStatsBuilder,
         PlayerComparisonBuilder $comparisonBuilder,
     ): Response {
-        $usernames = $request->query->all('users');
+        $usernames = array_slice($request->query->all('users'), 0, 5);
 
         if (count($usernames) < 2) {
             return $this->render('user/compare_select.html.twig', [

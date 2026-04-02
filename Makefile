@@ -9,7 +9,7 @@ PHP      = $(PHP_CONT) php
 COMPOSER = $(PHP_CONT) composer
 SYMFONY  = $(PHP) bin/console
 VENDOR = $(PHP) vendor/bin/
-DOCKER_EXEC_TEST = (PHP_CONT) -e APP_ENV=test
+DOCKER_EXEC_TEST = $(DOCKER_COMP) exec -e APP_ENV=test php
 
 # COLORS
 RED  := $(shell tput -Txterm setaf 1)
@@ -54,13 +54,13 @@ _create-local-makefile:
 cc: cache-clear
 cache-clear:
 	@echo "${GREEN}>>> Clear cache${EOL}"
-	@$(DOCKER_EXEC) php -d memory_limit=256M bin/console cache:clear
+	@$(PHP) -d memory_limit=256M bin/console cache:clear
 
 clear-doctrine-cache:
 	@echo "${YELLOW}>>>clearing doctrine metadata, result and query${EOL}"
-	@$(DOCKER_EXEC) bin/console doctrine:cache:clear-metadata
-	@$(DOCKER_EXEC) bin/console doctrine:cache:clear-result
-	@$(DOCKER_EXEC) bin/console doctrine:cache:clear-query
+	@$(SYMFONY) doctrine:cache:clear-metadata
+	@$(SYMFONY) doctrine:cache:clear-result
+	@$(SYMFONY) doctrine:cache:clear-query
 
 ### MIGRATIONS ###
 ## Create db diff for migration purposes
@@ -77,7 +77,7 @@ migration:
 ## Run migrations
 run-migrations:
 	@echo "${GREEN}>>> Running migrations${EOL}"
-	@$(PHP_CONT) bin/console doctrine:migrations:migrate
+	@$(PHP_CONT) bin/console doctrine:migrations:migrate --no-interaction
 
 ## Migration status
 migration-status:
@@ -89,10 +89,18 @@ git-cleanup:
 	@echo "${GREEN}>>> Cleanup merged local branches${EOL}"
 	@git branch --merged origin/master | grep -v '*' | xargs -n 1 git branch -d
 
+## Drop DB, run migrations, apply seed.sql and seed MS2026 data
+seed-apply: db-cleanup run-migrations
+	@echo "${GREEN}>>> applying seed.sql${EOL}"
+	@$(DOCKER_COMP) exec -T database psql -U db_user db_name --single-transaction -v ON_ERROR_STOP=1 < docker/seed.sql
+	@echo "${GREEN}>>> seeding MS2026${EOL}"
+	@$(SYMFONY) app:seed-ms2026
+
 ## Cleanup database
 db-cleanup:
 	@echo "${YELLOW}>>>Cleanup database${EOL}"
-	@$(PHP_CONT) bin/console doctrine:database:drop --force --no-interaction
+	@$(DOCKER_COMP) exec database psql -U db_user postgres -c "SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname = 'db_name' AND pid <> pg_backend_pid();" > /dev/null
+	@$(PHP_CONT) bin/console doctrine:database:drop --force --if-exists --no-interaction
 	@$(PHP_CONT) bin/console doctrine:database:create --if-not-exists --no-interaction
 
 # COMPOSER
@@ -145,19 +153,19 @@ seed-dump: fixtures-load
 ## Recalculate points for all tournaments
 recalculate:
 	@echo "${GREEN}>>> recalculating points for all tournaments${EOL}"
-	@$(PHP_CONT) bin/console app:recalculate-points --all
+	@$(PHP_CONT) bin/console app:recalculate-points --all --no-debug
 
 ### TESTS
 ### Unit
 paratest: unit-tests e2e
 
-unit: unit-tests _clear-test-schemas-force
+unit: unit-tests
 paratest-unit: unit
 unit-tests:
 	@echo "${GREEN}>>> Running non e2e tests${EOL}"
 	@$(DOCKER_EXEC_TEST) php ./vendor/bin/paratest --processes=8 -c phpunit.xml.dist
 
-e2e: assets-prod-compile paratest-e2e _clear-test-schemas-force assets-prod-compile-rm
+e2e: assets-prod-compile paratest-e2e assets-prod-compile-rm
 panther: e2e
 paratest-e2e:
 	@echo "${GREEN}>>> Running e2e tests${EOL}"
@@ -186,7 +194,8 @@ phpcs:
 	@echo "${GREEN}>>> Running PHP CodeSniffer${EOL}"
 	@$(PHP_CONT) ./vendor/bin/phpcs -d memory_limit=256M src/ tests/ -p
 
-### DEPLOY
-_clear-test-schemas-force:
-	@echo "${YELLOW}>>>remove test db schemas${EOL}"
-	@$(PHP_CONT) bin/console -f test:clear-db-schemas
+### Rector
+rector:
+	@echo "${GREEN}>>> Running Rector${EOL}"
+	@$(PHP_CONT) ./vendor/bin/rector process
+

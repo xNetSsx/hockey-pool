@@ -34,6 +34,7 @@
     }
     ,
     "require-dev": {
+        "brianium/paratest": "^7.6",
         "doctrine/doctrine-fixtures-bundle": "^3.6",
         "escapestudios/symfony2-coding-standard": "^3.15",
         "fakerphp/faker": "^1.24",

@@ -7,8 +7,9 @@ namespace App\Tests\Unit\Security\Voter;
 use App\Entity\Game;
 use App\Entity\Prediction;
 use App\Entity\User;
+use App\Repository\TournamentParticipantRepository;
 use App\Security\Voter\PredictionVoter;
-use DateTime;
+use DateTimeImmutable;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 use Symfony\Component\Security\Core\Authorization\Voter\VoterInterface;
@@ -19,12 +20,15 @@ class PredictionVoterTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->voter = new PredictionVoter();
+        $participantRepo = $this->createStub(TournamentParticipantRepository::class);
+        $participantRepo->method('isParticipant')->willReturn(true);
+
+        $this->voter = new PredictionVoter($participantRepo);
     }
 
     public function testCanCreatePredictionBeforeMatchStarts(): void
     {
-        $game = $this->stubGame(new DateTime('+1 hour'));
+        $game = $this->stubGame(new DateTimeImmutable('+1 hour'));
         $token = $this->tokenForUser($this->stubUser(1));
 
         self::assertSame(VoterInterface::ACCESS_GRANTED, $this->voter->vote($token, $game, [PredictionVoter::CREATE]));
@@ -32,7 +36,7 @@ class PredictionVoterTest extends TestCase
 
     public function testCannotCreatePredictionAfterMatchStarts(): void
     {
-        $game = $this->stubGame(new DateTime('-1 hour'));
+        $game = $this->stubGame(new DateTimeImmutable('-1 hour'));
         $token = $this->tokenForUser($this->stubUser(1));
 
         self::assertSame(VoterInterface::ACCESS_DENIED, $this->voter->vote($token, $game, [PredictionVoter::CREATE]));
@@ -40,7 +44,7 @@ class PredictionVoterTest extends TestCase
 
     public function testAdminCanCreatePredictionAfterMatchStarts(): void
     {
-        $game = $this->stubGame(new DateTime('-1 hour'));
+        $game = $this->stubGame(new DateTimeImmutable('-1 hour'));
         $token = $this->tokenForUser($this->stubUser(1, true));
 
         self::assertSame(VoterInterface::ACCESS_GRANTED, $this->voter->vote($token, $game, [PredictionVoter::CREATE]));
@@ -49,7 +53,7 @@ class PredictionVoterTest extends TestCase
     public function testOwnerCanEditPredictionBeforeMatchStarts(): void
     {
         $user = $this->stubUser(1);
-        $prediction = $this->stubPrediction($user, new DateTime('+1 hour'));
+        $prediction = $this->stubPrediction($user, new DateTimeImmutable('+1 hour'));
         $token = $this->tokenForUser($user);
 
         self::assertSame(VoterInterface::ACCESS_GRANTED, $this->voter->vote($token, $prediction, [PredictionVoter::EDIT]));
@@ -58,7 +62,7 @@ class PredictionVoterTest extends TestCase
     public function testOwnerCannotEditPredictionAfterMatchStarts(): void
     {
         $user = $this->stubUser(1);
-        $prediction = $this->stubPrediction($user, new DateTime('-1 hour'));
+        $prediction = $this->stubPrediction($user, new DateTimeImmutable('-1 hour'));
         $token = $this->tokenForUser($user);
 
         self::assertSame(VoterInterface::ACCESS_DENIED, $this->voter->vote($token, $prediction, [PredictionVoter::EDIT]));
@@ -68,7 +72,7 @@ class PredictionVoterTest extends TestCase
     {
         $owner = $this->stubUser(1);
         $otherUser = $this->stubUser(2);
-        $prediction = $this->stubPrediction($owner, new DateTime('+1 hour'));
+        $prediction = $this->stubPrediction($owner, new DateTimeImmutable('+1 hour'));
         $token = $this->tokenForUser($otherUser);
 
         self::assertSame(VoterInterface::ACCESS_DENIED, $this->voter->vote($token, $prediction, [PredictionVoter::EDIT]));
@@ -78,7 +82,7 @@ class PredictionVoterTest extends TestCase
     {
         $owner = $this->stubUser(1);
         $admin = $this->stubUser(2, true);
-        $prediction = $this->stubPrediction($owner, new DateTime('-1 hour'));
+        $prediction = $this->stubPrediction($owner, new DateTimeImmutable('-1 hour'));
         $token = $this->tokenForUser($admin);
 
         self::assertSame(VoterInterface::ACCESS_GRANTED, $this->voter->vote($token, $prediction, [PredictionVoter::EDIT]));
@@ -86,7 +90,7 @@ class PredictionVoterTest extends TestCase
 
     public function testAbstainsOnUnsupportedAttribute(): void
     {
-        $game = $this->stubGame(new DateTime('+1 hour'));
+        $game = $this->stubGame(new DateTimeImmutable('+1 hour'));
         $token = $this->tokenForUser($this->stubUser(1));
 
         self::assertSame(VoterInterface::ACCESS_ABSTAIN, $this->voter->vote($token, $game, ['SOME_OTHER']));
@@ -105,7 +109,7 @@ class PredictionVoterTest extends TestCase
         return $user;
     }
 
-    private function stubGame(DateTime $playedAt): Game
+    private function stubGame(DateTimeImmutable $playedAt): Game
     {
         $game = $this->createStub(Game::class);
         $game->method('getPlayedAt')->willReturn($playedAt);
@@ -113,7 +117,7 @@ class PredictionVoterTest extends TestCase
         return $game;
     }
 
-    private function stubPrediction(User $owner, DateTime $playedAt): Prediction
+    private function stubPrediction(User $owner, DateTimeImmutable $playedAt): Prediction
     {
         $game = $this->stubGame($playedAt);
 

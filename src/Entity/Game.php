@@ -6,7 +6,7 @@ namespace App\Entity;
 
 use App\Enum\TournamentPhase;
 use App\Repository\GameRepository;
-use DateTime;
+use DateTimeImmutable;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -42,9 +42,9 @@ class Game
     #[Assert\NotNull]
     private TournamentPhase $phase;
 
-    #[ORM\Column(type: 'datetime')]
+    #[ORM\Column(type: 'datetime_immutable')]
     #[Assert\NotNull]
-    private DateTime $playedAt;
+    private DateTimeImmutable $playedAt;
 
     #[ORM\Column(nullable: true)]
     #[Assert\PositiveOrZero]
@@ -62,7 +62,7 @@ class Game
         TournamentPhase $phase,
         Team $homeTeam,
         Team $awayTeam,
-        DateTime $playedAt,
+        DateTimeImmutable $playedAt,
     ): self {
         $game = new self();
         $game->tournament = $tournament;
@@ -127,12 +127,12 @@ class Game
         return $this;
     }
 
-    public function getPlayedAt(): DateTime
+    public function getPlayedAt(): DateTimeImmutable
     {
         return $this->playedAt;
     }
 
-    public function setPlayedAt(DateTime $playedAt): self
+    public function setPlayedAt(DateTimeImmutable $playedAt): self
     {
         $this->playedAt = $playedAt;
 

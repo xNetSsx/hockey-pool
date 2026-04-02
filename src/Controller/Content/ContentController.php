@@ -19,6 +19,7 @@ class ContentController extends AbstractController
         return $this->render('content/page.html.twig', [
             'tournament' => $tournament,
             'title' => 'Pravidla',
+            'field' => 'rules',
             'content' => $tournament?->getRulesContent(),
             'emptyMessage' => 'Pravidla zatím nebyla nastavena.',
         ]);
@@ -32,6 +33,7 @@ class ContentController extends AbstractController
         return $this->render('content/page.html.twig', [
             'tournament' => $tournament,
             'title' => 'Manuál',
+            'field' => 'manual',
             'content' => $tournament?->getManualContent(),
             'emptyMessage' => 'Manuál zatím nebyl vytvořen.',
         ]);

@@ -6,7 +6,6 @@ namespace App\Controller\Dashboard;
 
 use App\Entity\User;
 use App\Enum\BetScoringType;
-use App\Enum\BetValueType;
 use App\Enum\TournamentStatus;
 use App\Repository\GameRepository;
 use App\Repository\PointEntryRepository;
@@ -42,11 +41,7 @@ class DashboardController extends AbstractController
             foreach ($ruleRepository->findByTournament($tournament) as $rule) {
                 if ($rule->getScoringType() === BetScoringType::Podium && $rule->getActualTeamValue() !== null) {
                     $medalRules[] = $rule;
-                } elseif ($rule->getScoringType() === BetScoringType::ExactMatch
-                    && $rule->getValueType() === BetValueType::Team
-                    && $rule->getActualTeamValue() !== null
-                    && str_contains($rule->getName(), 'edaile')
-                ) {
+                } elseif ($rule->isMedalRule() && $rule->getActualTeamValue() !== null) {
                     $medalRules[] = $rule;
                 }
             }

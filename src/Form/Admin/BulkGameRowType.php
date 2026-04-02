@@ -28,6 +28,7 @@ class BulkGameRowType extends AbstractType
             ->add('playedAt', DateTimeType::class, [
                 'label' => 'Datum a čas',
                 'widget' => 'single_text',
+                'input' => 'datetime_immutable',
             ]);
     }
 }

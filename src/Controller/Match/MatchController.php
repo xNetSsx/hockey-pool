@@ -43,7 +43,7 @@ class MatchController extends AbstractController
         Game $game,
         MatchBreakdownBuilder $matchBreakdownBuilder,
     ): Response {
-        $matchStarted = $game->getPlayedAt() <= new \DateTime();
+        $matchStarted = $game->getPlayedAt() <= new \DateTimeImmutable();
 
         return $this->render('match/detail.html.twig', [
             'game' => $game,

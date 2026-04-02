@@ -85,6 +85,7 @@ final readonly class TournamentManager
             $newRule->setScoringType($sourceRule->getScoringType());
             $newRule->setPoints($sourceRule->getPoints());
             $newRule->setSortOrder($sourceRule->getSortOrder());
+            $newRule->setIsMedalRule($sourceRule->isMedalRule());
 
             $this->em->persist($newRule);
             $cloned++;

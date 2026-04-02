@@ -4,7 +4,9 @@
 
 {% block stylesheets %}
     {{ parent() }}
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/trix@2/dist/trix.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/trix@2.1.18/dist/trix.min.css"
+          integrity="sha384-OdKlax565lFPdig7pB3qfqRiYdNqdvvlGVkiIyAf3ZPuanZ6+F4Tm1fz4Pk6NGtr"
+          crossorigin="anonymous">
 {% endblock %}
 
 {% block body %}
@@ -18,6 +20,7 @@
 
         <div class="overflow-hidden rounded-xl bg-white p-6 shadow dark:bg-[#1e293b] dark:shadow-gray-900/30 sm:p-8">
             {% if content %}
+                {# |raw is safe here: content is authored exclusively by admins via the Trix editor #}
                 <div class="trix-content prose max-w-none dark:prose-invert">
                     {{ content|raw }}
                 </div>
@@ -28,7 +31,7 @@
 
         {% if is_granted('ROLE_ADMIN') and tournament %}
             <div class="mt-4 text-center">
-                <a href="{{ path('admin_tournament_content', {id: tournament.id, field: title == 'Pravidla' ? 'rules' : 'manual'}) }}"
+                <a href="{{ path('admin_tournament_content', {id: tournament.id, field: field}) }}"
                    class="text-sm text-blue-600 hover:underline dark:text-[#38bdf8]">
                     Upravit obsah
                 </a>

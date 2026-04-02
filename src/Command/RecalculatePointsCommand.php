@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Command;
 
+use App\Entity\Tournament;
 use App\Repository\TournamentRepository;
 use App\Service\Builder\LeaderboardBuilder;
 use App\Service\Resolver\TournamentResolver;
@@ -90,7 +91,7 @@ class RecalculatePointsCommand extends Command
         return Command::SUCCESS;
     }
 
-    private function printLeaderboard(\App\Entity\Tournament $tournament, SymfonyStyle $io): void
+    private function printLeaderboard(Tournament $tournament, SymfonyStyle $io): void
     {
         $leaderboard = $this->leaderboardBuilder->build($tournament);
 

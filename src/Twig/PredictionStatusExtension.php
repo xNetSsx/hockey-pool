@@ -16,7 +16,7 @@ use Twig\Extension\GlobalsInterface;
  *  - prediction_status: missing predictions info
  *  - current_tournament: the active/selected tournament
  */
-class PredictionStatusExtension extends AbstractExtension implements GlobalsInterface
+final class PredictionStatusExtension extends AbstractExtension implements GlobalsInterface
 {
     public function __construct(
         private readonly Security $security,

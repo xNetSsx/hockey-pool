@@ -149,7 +149,7 @@ final class SpecialBetResolver
             }
 
             if ($isExactPosition) {
-                $entries[] = $this->createEntry($bet, $rule, 3.0, sprintf('%s — správná pozice (1+2)', $rule->getName()));
+                $entries[] = $this->createEntry($bet, $rule, $rule->getPoints(), sprintf('%s — správná pozice', $rule->getName()));
             } else {
                 $entries[] = $this->createEntry($bet, $rule, 1.0, sprintf('%s — tým v top 3', $rule->getName()));
             }

@@ -1,10 +1,9 @@
+{% import '_macros.html.twig' as m %}
 <!DOCTYPE html>
 <html lang="cs">
-    <script>
-        (function(){var t=localStorage.getItem('theme');var d=t==='dark'||(!t&&window.matchMedia('(prefers-color-scheme:dark)').matches);if(d)document.documentElement.classList.add('dark')})();
-    </script>
     <head>
         <meta charset="UTF-8">
+        <script>(function(){var t=localStorage.getItem('theme');var d=t==='dark'||(!t&&window.matchMedia('(prefers-color-scheme:dark)').matches);if(d)document.documentElement.classList.add('dark')})();</script>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>{% block title %}Hockey Pool{% endblock %}</title>
         <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>🏒</text></svg>">
@@ -37,12 +36,7 @@
                     {% if not app.user %}
                         <button type="button" {{ stimulus_controller('theme') }} {{ stimulus_action('theme', 'toggle') }}
                                 class="rounded-lg p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-white/10 dark:hover:text-white" title="Přepnout vzhled">
-                            <svg {{ stimulus_target('theme', 'darkIcon') }} class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.718 9.718 0 0118 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 003 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 009.002-5.998z" />
-                            </svg>
-                            <svg {{ stimulus_target('theme', 'lightIcon') }} class="hidden h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386l-1.591 1.591M21 12h-2.25m-.386 6.364l-1.591-1.591M12 18.75V21m-4.773-4.227l-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z" />
-                            </svg>
+                            {{ m.theme_icons() }}
                         </button>
                     {% endif %}
 
@@ -50,11 +44,11 @@
                     {% if app.user %}
                         <div class="hidden items-center gap-1 sm:flex">
                             {% set _route = app.request.attributes.get('_route') %}
-                            <a href="{{ path('prediction_list') }}" class="rounded-lg px-3 py-2 text-sm font-medium {{ _route starts with 'prediction_' or _route starts with 'match_' or _route == 'special_bet_overview' ? 'bg-gray-100 text-gray-900 dark:bg-white/10 dark:text-white' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-white/10 dark:hover:text-white' }}">Tipy</a>
-                            <a href="{{ path('player_compare') }}" class="rounded-lg px-3 py-2 text-sm font-medium {{ _route starts with 'player_compare' ? 'bg-gray-100 text-gray-900 dark:bg-white/10 dark:text-white' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-white/10 dark:hover:text-white' }}">Porovnat</a>
-                            <a href="{{ path('rules_page') }}" class="rounded-lg px-3 py-2 text-sm font-medium {{ _route == 'rules_page' ? 'bg-gray-100 text-gray-900 dark:bg-white/10 dark:text-white' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-white/10 dark:hover:text-white' }}">Pravidla</a>
-                            <a href="{{ path('manual_page') }}" class="rounded-lg px-3 py-2 text-sm font-medium {{ _route == 'manual_page' ? 'bg-gray-100 text-gray-900 dark:bg-white/10 dark:text-white' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-white/10 dark:hover:text-white' }}">Manuál</a>
-                            <a href="{{ path('tournament_archive') }}" class="rounded-lg px-3 py-2 text-sm font-medium {{ _route starts with 'tournament_' ? 'bg-gray-100 text-gray-900 dark:bg-white/10 dark:text-white' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-white/10 dark:hover:text-white' }}">Turnaje</a>
+                            <a href="{{ path('prediction_list') }}" class="rounded-lg px-3 py-2 text-sm font-medium {{ m.nav_link_class(_route starts with 'prediction_' or _route starts with 'match_' or _route == 'special_bet_overview') }}">Tipy</a>
+                            <a href="{{ path('player_compare') }}" class="rounded-lg px-3 py-2 text-sm font-medium {{ m.nav_link_class(_route starts with 'player_compare') }}">Porovnat</a>
+                            <a href="{{ path('rules_page') }}" class="rounded-lg px-3 py-2 text-sm font-medium {{ m.nav_link_class(_route == 'rules_page') }}">Pravidla</a>
+                            <a href="{{ path('manual_page') }}" class="rounded-lg px-3 py-2 text-sm font-medium {{ m.nav_link_class(_route == 'manual_page') }}">Manuál</a>
+                            <a href="{{ path('tournament_archive') }}" class="rounded-lg px-3 py-2 text-sm font-medium {{ m.nav_link_class(_route starts with 'tournament_') }}">Turnaje</a>
                             {% block nav_links %}{% endblock %}
                             <div class="ml-2 flex items-center gap-2 border-l border-gray-200 pl-3 dark:border-gray-700">
                                 <a href="{{ path('change_password') }}" class="rounded-lg px-3 py-2 text-sm font-medium text-gray-900 hover:bg-gray-100 dark:text-white dark:hover:bg-white/10">{{ app.user.username }}</a>
@@ -64,12 +58,7 @@
                                 <a href="{{ path('app_logout') }}" class="rounded-lg px-3 py-2 text-sm text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/10 dark:hover:text-gray-200">Odhlásit</a>
                                 <button type="button" {{ stimulus_controller('theme') }} {{ stimulus_action('theme', 'toggle') }}
                                         class="rounded-lg p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-white/10 dark:hover:text-white" title="Přepnout vzhled">
-                                    <svg {{ stimulus_target('theme', 'darkIcon') }} class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.718 9.718 0 0118 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 003 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 009.002-5.998z" />
-                                    </svg>
-                                    <svg {{ stimulus_target('theme', 'lightIcon') }} class="hidden h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386l-1.591 1.591M21 12h-2.25m-.386 6.364l-1.591-1.591M12 18.75V21m-4.773-4.227l-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z" />
-                                    </svg>
+                                    {{ m.theme_icons() }}
                                 </button>
                             </div>
                         </div>
@@ -80,18 +69,13 @@
                         <div class="flex items-center gap-1 sm:hidden">
                             <button type="button" {{ stimulus_controller('theme') }} {{ stimulus_action('theme', 'toggle') }}
                                     class="rounded-lg p-2 text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-white/10" title="Přepnout vzhled">
-                                <svg {{ stimulus_target('theme', 'darkIcon') }} class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.718 9.718 0 0118 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 003 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 009.002-5.998z" />
-                                </svg>
-                                <svg {{ stimulus_target('theme', 'lightIcon') }} class="hidden h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386l-1.591 1.591M21 12h-2.25m-.386 6.364l-1.591-1.591M12 18.75V21m-4.773-4.227l-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z" />
-                                </svg>
+                                {{ m.theme_icons() }}
                             </button>
                             <button type="button" class="inline-flex items-center justify-center rounded-lg p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-white/10 dark:hover:text-white" {{ stimulus_action('nav', 'toggle') }}>
-                            <svg {{ stimulus_target('nav', 'openIcon') }} class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                            <svg {{ stimulus_target('nav', 'openIcon') }} class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
                             </svg>
-                            <svg {{ stimulus_target('nav', 'closeIcon') }} class="hidden h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                            <svg {{ stimulus_target('nav', 'closeIcon') }} class="hidden h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
                             </svg>
                         </button>
@@ -110,11 +94,11 @@
                             </span>
                         {% endif %}
                         {% set _route = app.request.attributes.get('_route') %}
-                        <a href="{{ path('prediction_list') }}" class="block rounded-lg px-3 py-2 text-base font-medium {{ _route starts with 'prediction_' or _route starts with 'match_' or _route == 'special_bet_overview' ? 'bg-gray-100 text-gray-900 dark:bg-white/10 dark:text-white' : 'text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-white/10' }}" {{ stimulus_action('nav', 'close') }}>Tipy</a>
-                        <a href="{{ path('player_compare') }}" class="block rounded-lg px-3 py-2 text-base font-medium {{ _route starts with 'player_compare' ? 'bg-gray-100 text-gray-900 dark:bg-white/10 dark:text-white' : 'text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-white/10' }}" {{ stimulus_action('nav', 'close') }}>Porovnat</a>
-                        <a href="{{ path('rules_page') }}" class="block rounded-lg px-3 py-2 text-base font-medium {{ _route == 'rules_page' ? 'bg-gray-100 text-gray-900 dark:bg-white/10 dark:text-white' : 'text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-white/10' }}" {{ stimulus_action('nav', 'close') }}>Pravidla</a>
-                        <a href="{{ path('manual_page') }}" class="block rounded-lg px-3 py-2 text-base font-medium {{ _route == 'manual_page' ? 'bg-gray-100 text-gray-900 dark:bg-white/10 dark:text-white' : 'text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-white/10' }}" {{ stimulus_action('nav', 'close') }}>Manuál</a>
-                        <a href="{{ path('tournament_archive') }}" class="block rounded-lg px-3 py-2 text-base font-medium {{ _route starts with 'tournament_' ? 'bg-gray-100 text-gray-900 dark:bg-white/10 dark:text-white' : 'text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-white/10' }}" {{ stimulus_action('nav', 'close') }}>Turnaje</a>
+                        <a href="{{ path('prediction_list') }}" class="block rounded-lg px-3 py-2 text-base font-medium {{ m.nav_link_class(_route starts with 'prediction_' or _route starts with 'match_' or _route == 'special_bet_overview', true) }}" {{ stimulus_action('nav', 'close') }}>Tipy</a>
+                        <a href="{{ path('player_compare') }}" class="block rounded-lg px-3 py-2 text-base font-medium {{ m.nav_link_class(_route starts with 'player_compare', true) }}" {{ stimulus_action('nav', 'close') }}>Porovnat</a>
+                        <a href="{{ path('rules_page') }}" class="block rounded-lg px-3 py-2 text-base font-medium {{ m.nav_link_class(_route == 'rules_page', true) }}" {{ stimulus_action('nav', 'close') }}>Pravidla</a>
+                        <a href="{{ path('manual_page') }}" class="block rounded-lg px-3 py-2 text-base font-medium {{ m.nav_link_class(_route == 'manual_page', true) }}" {{ stimulus_action('nav', 'close') }}>Manuál</a>
+                        <a href="{{ path('tournament_archive') }}" class="block rounded-lg px-3 py-2 text-base font-medium {{ m.nav_link_class(_route starts with 'tournament_', true) }}" {{ stimulus_action('nav', 'close') }}>Turnaje</a>
                         <div class="mt-3 border-t border-gray-200 pt-3 dark:border-gray-700">
                             <a href="{{ path('change_password') }}" class="block rounded-lg px-3 py-2 text-base font-medium text-gray-900 hover:bg-gray-100 dark:text-white dark:hover:bg-white/10">{{ app.user.username }}</a>
                             {% if is_granted('ROLE_ADMIN') %}
@@ -130,7 +114,9 @@
         <main class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
             {% for label, messages in app.flashes %}
                 {% for message in messages %}
-                    <div class="mb-4 rounded-md p-4 {{ label == 'success' ? 'bg-green-50 text-green-800 dark:bg-green-900/30 dark:text-green-300' : (label == 'error' ? 'bg-red-50 text-red-800 dark:bg-red-900/30 dark:text-red-300' : 'bg-blue-50 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300') }}">
+                    <div role="{{ label == 'error' ? 'alert' : 'status' }}"
+                         aria-live="{{ label == 'error' ? 'assertive' : 'polite' }}"
+                         class="mb-4 rounded-md p-4 {{ label == 'success' ? 'bg-green-50 text-green-800 dark:bg-green-900/30 dark:text-green-300' : (label == 'error' ? 'bg-red-50 text-red-800 dark:bg-red-900/30 dark:text-red-300' : 'bg-blue-50 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300') }}">
                         {{ message }}
                     </div>
                 {% endfor %}

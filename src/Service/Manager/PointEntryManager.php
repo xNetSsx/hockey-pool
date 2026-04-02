@@ -37,4 +37,25 @@ final readonly class PointEntryManager
 
         $this->em->flush();
     }
+
+    /**
+     * Removes old entries and persists new entries in a single flush.
+     *
+     * @param list<PointEntry> $toRemove
+     * @param list<PointEntry> $toAdd
+     */
+    public function replaceAll(array $toRemove, array $toAdd): void
+    {
+        foreach ($toRemove as $entry) {
+            $this->em->remove($entry);
+        }
+
+        foreach ($toAdd as $entry) {
+            $this->em->persist($entry);
+        }
+
+        if (count($toRemove) > 0 || count($toAdd) > 0) {
+            $this->em->flush();
+        }
+    }
 }

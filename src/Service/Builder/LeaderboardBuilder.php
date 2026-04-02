@@ -34,8 +34,7 @@ final readonly class LeaderboardBuilder
     {
         $rows = $this->pointEntryRepository->getPointsGroupedByUser($tournament);
         $participantUserIds = $this->participantRepository->getParticipantUserIds($tournament);
-        $exactScores = $this->pointEntryRepository->countExactScoresByUser($tournament);
-        $correctWinners = $this->pointEntryRepository->countCorrectWinnersByUser($tournament);
+        $tiebreaks = $this->pointEntryRepository->getTiebreakCountsByUser($tournament);
 
         $userIds = array_column($rows, 'userId');
         $users = $this->userRepository->findByIds($userIds);
@@ -51,11 +50,12 @@ final readonly class LeaderboardBuilder
                 continue;
             }
 
+            $tb = $tiebreaks[$row['userId']] ?? ['exactScores' => 0, 'correctWinners' => 0];
             $entries[] = [
                 'user' => $users[$row['userId']],
                 'totalPoints' => $row['totalPoints'],
-                'exactScores' => $exactScores[$row['userId']] ?? 0,
-                'correctWinners' => $correctWinners[$row['userId']] ?? 0,
+                'exactScores' => $tb['exactScores'],
+                'correctWinners' => $tb['correctWinners'],
                 'rank' => 0,
             ];
         }
@@ -87,6 +87,8 @@ final readonly class LeaderboardBuilder
 
             $entry['rank'] = $rank;
         }
+
+        unset($entry);
 
         return $entries;
     }

@@ -13,7 +13,7 @@ use Symfony\Component\Security\Core\Validator\Constraints\UserPassword;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
-class ChangePasswordType extends AbstractType
+final class ChangePasswordType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
@@ -43,7 +43,7 @@ class ChangePasswordType extends AbstractType
                 'invalid_message' => 'Hesla se neshodují.',
                 'constraints' => [
                     new NotBlank(),
-                    new Length(min: 6, minMessage: 'Heslo musí mít alespoň {{ limit }} znaků.'),
+                    new Length(min: 8, minMessage: 'Heslo musí mít alespoň {{ limit }} znaků.'),
                 ],
             ]);
     }

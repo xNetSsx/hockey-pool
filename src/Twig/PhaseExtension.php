@@ -8,7 +8,7 @@ use App\Enum\TournamentPhase;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
 
-class PhaseExtension extends AbstractExtension
+final class PhaseExtension extends AbstractExtension
 {
     /** @return list<TwigFilter> */
     public function getFilters(): array

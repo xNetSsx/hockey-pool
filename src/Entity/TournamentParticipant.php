@@ -13,6 +13,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Entity(repositoryClass: TournamentParticipantRepository::class)]
 #[ORM\Table(name: 'tournament_participant')]
 #[ORM\UniqueConstraint(name: 'uniq_participant_user_tournament', columns: ['user_id', 'tournament_id'])]
+#[ORM\Index(columns: ['tournament_id'], name: 'idx_participant_tournament')]
 #[UniqueEntity(fields: ['user', 'tournament'])]
 class TournamentParticipant
 {

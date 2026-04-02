@@ -6,7 +6,7 @@ namespace App\Story;
 
 use App\Enum\TournamentPhase;
 use App\Factory\GameFactory;
-use DateTime;
+use DateTimeImmutable;
 use DateTimeZone;
 use Zenstruck\Foundry\Story;
 
@@ -27,7 +27,7 @@ final class GameStory extends Story
                 'homeTeam' => $home,
                 'awayTeam' => $away,
                 'phase' => $data['phase'],
-                'playedAt' => new DateTime($data['date'], new DateTimeZone('Europe/Prague')),
+                'playedAt' => new DateTimeImmutable($data['date'], new DateTimeZone('Europe/Prague')),
                 'homeScore' => $data['hs'],
                 'awayScore' => $data['as'],
                 'isFinished' => true,

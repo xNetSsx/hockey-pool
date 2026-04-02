@@ -32,4 +32,33 @@ class SpecialBetRuleRepository extends ServiceEntityRepository
 
         return $result;
     }
+
+    /**
+     * Returns a map of tournament IDs that have at least one special bet rule (single query).
+     *
+     * @param list<Tournament> $tournaments
+     * @return array<int, true>
+     */
+    public function getHasSpecialBetRulesMap(array $tournaments): array
+    {
+        if (empty($tournaments)) {
+            return [];
+        }
+
+        /** @var list<array{tournamentId: int|string}> $rows */
+        $rows = $this->createQueryBuilder('r')
+            ->select('IDENTITY(r.tournament) as tournamentId')
+            ->where('r.tournament IN (:tournaments)')
+            ->setParameter('tournaments', $tournaments)
+            ->groupBy('r.tournament')
+            ->getQuery()
+            ->getResult();
+
+        $map = [];
+        foreach ($rows as $row) {
+            $map[(int) $row['tournamentId']] = true;
+        }
+
+        return $map;
+    }
 }

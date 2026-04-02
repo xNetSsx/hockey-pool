@@ -12,7 +12,7 @@ use App\Entity\Tournament;
 use App\Entity\User;
 use App\Enum\TournamentPhase;
 use App\Service\Resolver\MatchPointResolver;
-use DateTime;
+use DateTimeImmutable;
 use PHPUnit\Framework\TestCase;
 
 class MatchPointResolverTest extends TestCase
@@ -226,7 +226,7 @@ class MatchPointResolverTest extends TestCase
         $game->setHomeTeam($this->stubTeam());
         $game->setAwayTeam($this->stubTeam());
         $game->setPhase(TournamentPhase::GroupStage);
-        $game->setPlayedAt(new DateTime());
+        $game->setPlayedAt(new DateTimeImmutable());
         $game->setHomeScore($homeScore);
         $game->setAwayScore($awayScore);
         $game->setIsFinished($finished);

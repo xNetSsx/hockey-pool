@@ -8,7 +8,7 @@ use App\Entity\Game;
 use App\Entity\Prediction;
 use App\Entity\User;
 use App\Repository\TournamentParticipantRepository;
-use DateTime;
+use DateTimeImmutable;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
@@ -93,6 +93,6 @@ class PredictionVoter extends Voter
 
     private function hasMatchStarted(Game $game): bool
     {
-        return $game->getPlayedAt() <= new DateTime();
+        return $game->getPlayedAt() <= new DateTimeImmutable();
     }
 }

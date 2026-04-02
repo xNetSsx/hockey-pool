@@ -17,7 +17,7 @@ use App\Security\Voter\PredictionVoter;
 use App\Service\Manager\PredictionManager;
 use App\Service\Manager\SpecialBetManager;
 use App\Service\Provider\ActiveTournamentProvider;
-use DateTime;
+use DateTimeImmutable;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -45,7 +45,7 @@ class PredictionController extends AbstractController
             'tournament' => $tournament,
             'groupedGames' => $gameRepository->findByTournamentGroupedByPhase($tournament),
             'userPredictions' => $predictionRepository->findByUserIndexedByGame($user, $tournament),
-            'now' => new DateTime(),
+            'now' => new DateTimeImmutable(),
         ]);
     }
 
@@ -75,7 +75,7 @@ class PredictionController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            if ($game->getPlayedAt() <= new DateTime() && !$this->isGranted('ROLE_ADMIN')) {
+            if ($game->getPlayedAt() <= new DateTimeImmutable() && !$this->isGranted('ROLE_ADMIN')) {
                 $this->addFlash('error', 'Zápas už začal, tip nelze měnit.');
 
                 return $this->redirectToRoute('prediction_list');
@@ -92,7 +92,7 @@ class PredictionController extends AbstractController
 
             $prediction->setHomeScore($data['homeScore']);
             $prediction->setAwayScore($data['awayScore']);
-            $prediction->setUpdatedAt(new DateTime());
+            $prediction->setUpdatedAt(new DateTimeImmutable());
 
             $predictionManager->save($prediction);
 
@@ -132,7 +132,7 @@ class PredictionController extends AbstractController
         $user = $this->getUser();
 
         $firstMatchDate = $gameRepository->findFirstMatchDate($tournament);
-        $isLocked = null !== $firstMatchDate && $firstMatchDate <= new DateTime() && !$this->isGranted('ROLE_ADMIN');
+        $isLocked = null !== $firstMatchDate && $firstMatchDate <= new DateTimeImmutable() && !$this->isGranted('ROLE_ADMIN');
 
         return $this->render('prediction/special.html.twig', [
             'tournament' => $tournament,
@@ -163,7 +163,7 @@ class PredictionController extends AbstractController
         $user = $this->getUser();
 
         $firstMatchDate = $gameRepository->findFirstMatchDate($tournament);
-        if (null !== $firstMatchDate && $firstMatchDate <= new DateTime() && !$this->isGranted('ROLE_ADMIN')) {
+        if (null !== $firstMatchDate && $firstMatchDate <= new DateTimeImmutable() && !$this->isGranted('ROLE_ADMIN')) {
             $this->addFlash('error', 'Speciální tipy jsou uzamčeny.');
 
             return $this->redirectToRoute('prediction_special');

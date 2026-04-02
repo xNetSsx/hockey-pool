@@ -28,6 +28,39 @@ class PredictionRepository extends ServiceEntityRepository
     }
 
     /**
+     * Batch-fetch predictions for a set of games, indexed by game ID.
+     *
+     * @param list<Game> $games
+     * @return array<int, list<Prediction>>
+     */
+    public function findByGamesIndexedByGameId(array $games): array
+    {
+        if (empty($games)) {
+            return [];
+        }
+
+        /** @var list<Prediction> $predictions */
+        $predictions = $this->createQueryBuilder('p')
+            ->where('p.game IN (:games)')
+            ->setParameter('games', $games)
+            ->getQuery()
+            ->getResult();
+
+        /** @var array<int, list<Prediction>> $indexed */
+        $indexed = [];
+        foreach ($predictions as $prediction) {
+            $gameId = $prediction->getGame()->getId();
+            if (null === $gameId) {
+                continue;
+            }
+
+            $indexed[(int) $gameId][] = $prediction;
+        }
+
+        return $indexed;
+    }
+
+    /**
      * Returns predictions for a user in a tournament, indexed by game ID.
      *
      * @return array<int, Prediction>

@@ -11,6 +11,7 @@ use App\Enum\BetValueType;
 use App\Repository\TournamentRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
@@ -41,7 +42,11 @@ class SpecialBetRuleType extends AbstractType
                 'choice_label' => static fn (BetScoringType $t) => $t->label(),
             ])
             ->add('points', NumberType::class, ['label' => 'Body za výhru', 'scale' => 2])
-            ->add('sortOrder', IntegerType::class, ['label' => 'Pořadí zobrazení']);
+            ->add('sortOrder', IntegerType::class, ['label' => 'Pořadí zobrazení'])
+            ->add('isMedalRule', CheckboxType::class, [
+                'label' => 'Medalové pravidlo (zobrazit na dashboardu)',
+                'required' => false,
+            ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void

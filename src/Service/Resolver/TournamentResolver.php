@@ -65,25 +65,34 @@ final readonly class TournamentResolver
     {
         $ruleSet = $this->ruleSetRepository->findByTournament($tournament);
 
-        foreach ($tournament->getMatches() as $game) {
-            if (!$game->isFinished()) {
-                continue;
-            }
+        /** @var list<Game> $finishedGames */
+        $finishedGames = array_values(array_filter(
+            $tournament->getMatches()->toArray(),
+            static fn (Game $game) => $game->isFinished(),
+        ));
 
-            $this->pointEntryManager->removeAll($this->pointEntryRepository->findByGame($game));
+        // Batch-fetch all existing game point entries and predictions in two queries
+        $existingEntriesByGame = $this->pointEntryRepository->findGameEntriesByTournamentIndexedByGameId($tournament);
+        $predictionsByGame = $this->predictionRepository->findByGamesIndexedByGameId($finishedGames);
 
-            $predictions = $this->predictionRepository->findByGame($game);
+        $allOldEntries = [];
+        $allNewEntries = [];
+
+        foreach ($finishedGames as $game) {
+            $gameId = (int) $game->getId();
+            array_push($allOldEntries, ...($existingEntriesByGame[$gameId] ?? []));
+
+            $predictions = $predictionsByGame[$gameId] ?? [];
             $entries = $this->matchPointResolver->resolve($game, $predictions, $ruleSet);
-
-            if (count($entries) > 0) {
-                $this->pointEntryManager->saveAll($entries);
-            }
+            array_push($allNewEntries, ...$entries);
         }
+
+        $this->pointEntryManager->replaceAll($allOldEntries, $allNewEntries);
     }
 
     private function resolveAllSpecialBets(Tournament $tournament): void
     {
-        $this->pointEntryManager->removeAll($this->pointEntryRepository->findSpecialBetEntries($tournament));
+        $oldEntries = $this->pointEntryRepository->findSpecialBetEntries($tournament);
 
         $rules = $this->specialBetRuleRepository->findByTournament($tournament);
 
@@ -100,20 +109,22 @@ final readonly class TournamentResolver
             }
         }
 
-        $allEntries = [];
+        // Batch-fetch all bets for the tournament in one query
+        $betsByRule = $this->specialBetRepository->findByTournamentIndexedByRule($tournament);
+
+        $newEntries = [];
 
         foreach ($rules as $rule) {
             if (!$rule->hasActualValue()) {
                 continue;
             }
 
-            $bets = $this->specialBetRepository->findByRule($rule);
+            $ruleId = $rule->getId();
+            $bets = null !== $ruleId ? ($betsByRule[$ruleId] ?? []) : [];
             $entries = $this->specialBetResolver->resolve($rule, $bets, $podiumTeams, $anyMatchPool);
-            array_push($allEntries, ...$entries);
+            array_push($newEntries, ...$entries);
         }
 
-        if (count($allEntries) > 0) {
-            $this->pointEntryManager->saveAll($allEntries);
-        }
+        $this->pointEntryManager->replaceAll($oldEntries, $newEntries);
     }
 }

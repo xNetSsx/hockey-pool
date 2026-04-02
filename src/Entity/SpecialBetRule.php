@@ -65,6 +65,9 @@ class SpecialBetRule
     #[ORM\Column(nullable: true)]
     private ?int $actualIntValue = null;
 
+    #[ORM\Column(options: ['default' => false])]
+    private bool $isMedalRule = false;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -174,6 +177,18 @@ class SpecialBetRule
     public function setActualIntValue(?int $actualIntValue): self
     {
         $this->actualIntValue = $actualIntValue;
+
+        return $this;
+    }
+
+    public function isMedalRule(): bool
+    {
+        return $this->isMedalRule;
+    }
+
+    public function setIsMedalRule(bool $isMedalRule): self
+    {
+        $this->isMedalRule = $isMedalRule;
 
         return $this;
     }

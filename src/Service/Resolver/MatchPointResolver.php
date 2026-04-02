@@ -16,6 +16,9 @@ use App\Entity\RuleSet;
  */
 final class MatchPointResolver
 {
+    public const string REASON_CORRECT_WINNER = 'Correct winner';
+    public const string REASON_EXACT_SCORE_BONUS = 'Exact score bonus';
+
     private const float DEFAULT_WINNER_BASE = 1.0;
     private const float DEFAULT_OPPONENT_BONUS = 0.25;
     private const float DEFAULT_EXACT_BONUS = 2.0;
@@ -63,7 +66,7 @@ final class MatchPointResolver
                 ->setTournament($tournament)
                 ->setGame($game)
                 ->setPoints($basePoints)
-                ->setReason('Correct winner');
+                ->setReason(self::REASON_CORRECT_WINNER);
 
             if ($wrongCount > 0) {
                 $bonus = $wrongCount * $opponentBonus;
@@ -83,7 +86,7 @@ final class MatchPointResolver
                     ->setTournament($tournament)
                     ->setGame($game)
                     ->setPoints($exactBonus)
-                    ->setReason('Exact score bonus');
+                    ->setReason(self::REASON_EXACT_SCORE_BONUS);
             }
         }
 

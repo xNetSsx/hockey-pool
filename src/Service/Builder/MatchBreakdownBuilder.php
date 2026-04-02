@@ -10,6 +10,7 @@ use App\Entity\Prediction;
 use App\Entity\User;
 use App\Repository\PointEntryRepository;
 use App\Repository\PredictionRepository;
+use App\Service\Resolver\MatchPointResolver;
 
 /**
  * Builds per-user point breakdown for a single match.
@@ -57,11 +58,11 @@ final readonly class MatchBreakdownBuilder
 
             foreach ($entries as $entry) {
                 $reason = $entry->getReason();
-                if ('Correct winner' === $reason) {
+                if (MatchPointResolver::REASON_CORRECT_WINNER === $reason) {
                     $basePoints = $entry->getPoints();
                 } elseif (str_starts_with($reason, 'Wrong opponent bonus')) {
                     $opponentBonus = $entry->getPoints();
-                } elseif ('Exact score bonus' === $reason) {
+                } elseif (MatchPointResolver::REASON_EXACT_SCORE_BONUS === $reason) {
                     $exactBonus = $entry->getPoints();
                 }
             }

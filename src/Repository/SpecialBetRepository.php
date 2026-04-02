@@ -65,4 +65,34 @@ class SpecialBetRepository extends ServiceEntityRepository
     {
         return $this->findBy(['rule' => $rule]);
     }
+
+    /**
+     * Batch-fetch all bets for a tournament, indexed by rule ID.
+     *
+     * @return array<int, list<SpecialBet>> ruleId => bets
+     */
+    public function findByTournamentIndexedByRule(Tournament $tournament): array
+    {
+        /** @var list<SpecialBet> $bets */
+        $bets = $this->createQueryBuilder('sb')
+            ->join('sb.rule', 'r')
+            ->addSelect('r')
+            ->where('r.tournament = :tournament')
+            ->setParameter('tournament', $tournament)
+            ->getQuery()
+            ->getResult();
+
+        /** @var array<int, list<SpecialBet>> $indexed */
+        $indexed = [];
+        foreach ($bets as $bet) {
+            $ruleId = $bet->getRule()->getId();
+            if (null === $ruleId) {
+                continue;
+            }
+
+            $indexed[$ruleId][] = $bet;
+        }
+
+        return $indexed;
+    }
 }

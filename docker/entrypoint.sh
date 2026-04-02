@@ -20,13 +20,15 @@ if [ -f /app/docker/seed.sql ]; then
         echo "==> Empty database, importing seed data..."
         psql "$DATABASE_URL" --single-transaction -v ON_ERROR_STOP=1 < /app/docker/seed.sql 2>&1 || true
         echo "==> Seed data imported!"
-        echo "==> Recalculating points for all tournaments..."
-        php bin/console app:recalculate-points --all 2>&1 || true
     fi
 fi
 
 # Seed new tournaments (idempotent — skips if already exists)
 php bin/console app:seed-ms2026 2>&1 || true
+
+# Recalculate points to apply any data corrections from migrations
+echo "==> Recalculating points for all tournaments..."
+php bin/console app:recalculate-points --all --no-debug 2>&1 || true
 
 # Clear and rebuild cache with real env vars
 php bin/console cache:clear 2>&1 || true

@@ -8,6 +8,7 @@ use App\Entity\Game;
 use App\Entity\PointEntry;
 use App\Entity\Tournament;
 use App\Entity\User;
+use App\Service\Resolver\MatchPointResolver;
 use DateTimeInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -26,6 +27,40 @@ class PointEntryRepository extends ServiceEntityRepository
     public function findByGame(Game $game): array
     {
         return $this->findBy(['game' => $game]);
+    }
+
+    /**
+     * @return array<int, list<PointEntry>> gameId => entries
+     */
+    public function findGameEntriesByTournamentIndexedByGameId(Tournament $tournament): array
+    {
+        /** @var list<PointEntry> $entries */
+        $entries = $this->createQueryBuilder('pe')
+            ->join('pe.game', 'g')
+            ->addSelect('g')
+            ->where('pe.tournament = :tournament')
+            ->andWhere('pe.game IS NOT NULL')
+            ->setParameter('tournament', $tournament)
+            ->getQuery()
+            ->getResult();
+
+        /** @var array<int, list<PointEntry>> $indexed */
+        $indexed = [];
+        foreach ($entries as $entry) {
+            $game = $entry->getGame();
+            if (null === $game) {
+                continue;
+            }
+
+            $gameId = $game->getId();
+            if (null === $gameId) {
+                continue;
+            }
+
+            $indexed[$gameId][] = $entry;
+        }
+
+        return $indexed;
     }
 
     /**
@@ -130,52 +165,39 @@ class PointEntryRepository extends ServiceEntityRepository
     }
 
     /**
-     * Count of 'Exact score bonus' entries per user for tiebreaking.
+     * Combined tiebreaker counts (exact scores + correct winners) per user in a single query.
      *
-     * @return array<int, int> userId => count
+     * @return array<int, array{exactScores: int, correctWinners: int}>
      */
-    public function countExactScoresByUser(Tournament $tournament): array
+    public function getTiebreakCountsByUser(Tournament $tournament): array
     {
-        /** @var list<array{userId: int|string, cnt: int|string}> $rows */
+        /** @var list<array{userId: int|string, reason: string, cnt: int|string}> $rows */
         $rows = $this->createQueryBuilder('pe')
-            ->select('IDENTITY(pe.user) as userId, COUNT(pe.id) as cnt')
+            ->select('IDENTITY(pe.user) as userId, pe.reason, COUNT(pe.id) as cnt')
             ->where('pe.tournament = :tournament')
-            ->andWhere('pe.reason = :reason')
+            ->andWhere('pe.reason IN (:reasons)')
             ->setParameter('tournament', $tournament)
-            ->setParameter('reason', 'Exact score bonus')
-            ->groupBy('pe.user')
+            ->setParameter('reasons', [
+                MatchPointResolver::REASON_EXACT_SCORE_BONUS,
+                MatchPointResolver::REASON_CORRECT_WINNER,
+            ])
+            ->groupBy('pe.user, pe.reason')
             ->getQuery()
             ->getResult();
 
+        /** @var array<int, array{exactScores: int, correctWinners: int}> $result */
         $result = [];
         foreach ($rows as $row) {
-            $result[(int) $row['userId']] = (int) $row['cnt'];
-        }
+            $userId = (int) $row['userId'];
+            if (!isset($result[$userId])) {
+                $result[$userId] = ['exactScores' => 0, 'correctWinners' => 0];
+            }
 
-        return $result;
-    }
-
-    /**
-     * Count of 'Correct winner' entries per user for tiebreaking.
-     *
-     * @return array<int, int> userId => count
-     */
-    public function countCorrectWinnersByUser(Tournament $tournament): array
-    {
-        /** @var list<array{userId: int|string, cnt: int|string}> $rows */
-        $rows = $this->createQueryBuilder('pe')
-            ->select('IDENTITY(pe.user) as userId, COUNT(pe.id) as cnt')
-            ->where('pe.tournament = :tournament')
-            ->andWhere('pe.reason = :reason')
-            ->setParameter('tournament', $tournament)
-            ->setParameter('reason', 'Correct winner')
-            ->groupBy('pe.user')
-            ->getQuery()
-            ->getResult();
-
-        $result = [];
-        foreach ($rows as $row) {
-            $result[(int) $row['userId']] = (int) $row['cnt'];
+            if ($row['reason'] === MatchPointResolver::REASON_EXACT_SCORE_BONUS) {
+                $result[$userId]['exactScores'] = (int) $row['cnt'];
+            } elseif ($row['reason'] === MatchPointResolver::REASON_CORRECT_WINNER) {
+                $result[$userId]['correctWinners'] = (int) $row['cnt'];
+            }
         }
 
         return $result;
@@ -259,7 +281,7 @@ class PointEntryRepository extends ServiceEntityRepository
             ->where('pe.tournament = :tournament')
             ->andWhere('pe.reason = :reason')
             ->setParameter('tournament', $tournament)
-            ->setParameter('reason', 'Exact score bonus')
+            ->setParameter('reason', MatchPointResolver::REASON_EXACT_SCORE_BONUS)
             ->groupBy('pe.user, u.username')
             ->orderBy('cnt', 'DESC')
             ->setMaxResults(1)

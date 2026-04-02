@@ -7,7 +7,7 @@ namespace App\Repository;
 use App\Entity\Game;
 use App\Entity\Tournament;
 use App\Enum\TournamentPhase;
-use DateTime;
+use DateTimeImmutable;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -30,7 +30,7 @@ class GameRepository extends ServiceEntityRepository
             ->andWhere('g.isFinished = false')
             ->andWhere('g.playedAt > :now')
             ->setParameter('tournament', $tournament)
-            ->setParameter('now', new DateTime())
+            ->setParameter('now', new DateTimeImmutable())
             ->orderBy('g.playedAt', 'ASC')
             ->setMaxResults($limit)
             ->getQuery()
@@ -90,7 +90,7 @@ class GameRepository extends ServiceEntityRepository
             ->getSingleScalarResult();
     }
 
-    public function findFirstMatchDate(Tournament $tournament): ?DateTime
+    public function findFirstMatchDate(Tournament $tournament): ?DateTimeImmutable
     {
         /** @var Game|null $game */
         $game = $this->createQueryBuilder('g')
