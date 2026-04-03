@@ -26,9 +26,9 @@ fi
 # Seed new tournaments (idempotent — skips if already exists)
 php bin/console app:seed-ms2026 2>&1 || true
 
-# Recalculate points to apply any data corrections from migrations
-echo "==> Recalculating points for all tournaments..."
-php bin/console app:recalculate-points --all --no-debug 2>&1 || true
+# Recalculate points for the active tournament only
+echo "==> Recalculating points for active tournament..."
+php bin/console app:recalculate-points --active --no-debug 2>&1 || true
 
 # Clear and rebuild cache with real env vars
 php bin/console cache:clear 2>&1 || true

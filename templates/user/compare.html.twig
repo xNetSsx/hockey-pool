@@ -63,11 +63,12 @@
         <div class="overflow-x-auto">
             <table class="w-full text-sm">
                 <thead>
-                    <tr class="border-b border-gray-100 bg-gray-50 text-xs uppercase tracking-wider text-gray-500 dark:border-gray-700 dark:bg-[#0f172a] dark:text-gray-400">
+                    <tr class="border-b border-gray-200 bg-gray-50 text-xs uppercase tracking-wider text-gray-500 dark:border-gray-700 dark:bg-[#0f172a] dark:text-gray-400">
                         <th class="px-4 py-3 text-left">Zápas</th>
                         <th class="px-3 py-3 text-center">Výsledek</th>
                         {% for user in users %}
-                            <th class="px-3 py-3 text-center" style="color: {{ playerColors[loop.index0 % playerColors|length] }}">
+                            {% set colColor = playerColors[loop.index0 % playerColors|length] %}
+                            <th class="px-3 py-3 text-center" style="color: {{ colColor }}; border-left: 2px solid {{ colColor }}33">
                                 {{ user.username }}
                             </th>
                         {% endfor %}
@@ -83,7 +84,7 @@
                                 {% if pts > maxPoints %}{% set maxPoints = pts %}{% endif %}
                             {% endfor %}
 
-                            <tr class="border-b border-gray-100 last:border-0 dark:border-gray-700 dark:text-gray-100">
+                            <tr class="border-b border-gray-100 last:border-0 even:bg-gray-50 dark:border-gray-700 dark:text-gray-100 dark:even:bg-slate-800/40">
                                 <td class="whitespace-nowrap px-4 py-2.5">
                                     <span class="text-xs">
                                         {{ team_flag(game.homeTeam.code) }} {{ game.homeTeam.code }}
@@ -92,7 +93,7 @@
                                     </span>
                                 </td>
                                 <td class="px-3 py-2.5 text-center">
-                                    <span class="text-xs font-bold tabular-nums">{{ game.homeScore }}:{{ game.awayScore }}</span>
+                                    <span class="inline-block rounded bg-gray-100 px-1.5 py-0.5 text-xs font-bold tabular-nums dark:bg-gray-700">{{ game.homeScore }}:{{ game.awayScore }}</span>
                                 </td>
                                 {% for user in users %}
                                     {% set prediction = comparison.predictions[user.id][game.id] ?? null %}
@@ -100,13 +101,22 @@
                                     {% set running = comparison.runningTotals[user.id][game.id] ?? 0 %}
                                     {% set isBest = pts > 0 and pts == maxPoints %}
                                     {% set color = playerColors[loop.index0 % playerColors|length] %}
-                                    <td class="px-3 py-2.5 text-center" {% if isBest %}style="background-color: {{ color }}1a"{% endif %}>
+                                    {% set isExact = prediction and prediction.homeScore == game.homeScore and prediction.awayScore == game.awayScore %}
+                                    <td class="px-3 py-2.5 text-center" style="border-left: 2px solid {{ color }}33{% if isBest %}; background-color: {{ color }}22{% endif %}">
                                         {% if prediction %}
-                                            <span class="tabular-nums text-xs">{{ prediction.homeScore }}:{{ prediction.awayScore }}</span>
-                                            {% if pts > 0 %}
+                                            {% if isExact %}
+                                                {# Exact score: amber/gold pill #}
+                                                <span class="inline-block rounded bg-amber-100 px-1.5 py-0.5 tabular-nums text-xs font-semibold text-amber-800 dark:bg-amber-900/30 dark:text-amber-200">{{ prediction.homeScore }}:{{ prediction.awayScore }}</span>
+                                                <span class="ml-1 text-xs font-semibold text-amber-800 dark:text-amber-200">+{{ pts|number_format(2) }}</span>
+                                            {% elseif pts > 0 %}
+                                                {# Correct winner only: green tinted #}
+                                                <span class="tabular-nums text-xs font-medium text-green-700 dark:text-green-400">{{ prediction.homeScore }}:{{ prediction.awayScore }}</span>
                                                 <span class="ml-1 text-xs font-semibold text-green-700 dark:text-green-400">+{{ pts|number_format(2) }}</span>
+                                            {% else %}
+                                                {# Wrong prediction: red/muted #}
+                                                <span class="tabular-nums text-xs text-red-400 dark:text-red-500">{{ prediction.homeScore }}:{{ prediction.awayScore }}</span>
                                             {% endif %}
-                                            <div class="text-[10px] tabular-nums text-gray-400 dark:text-gray-500">Σ {{ running|number_format(2) }}</div>
+                                            <div class="mt-0.5 text-[10px] tabular-nums text-gray-400 dark:text-gray-500">Σ {{ running|number_format(2) }}</div>
                                         {% else %}
                                             <span class="text-xs text-gray-300 dark:text-gray-600">—</span>
                                         {% endif %}

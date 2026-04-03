@@ -4,9 +4,8 @@ declare(strict_types=1);
 
 namespace App\Command;
 
-use App\Entity\Tournament;
+use App\Enum\TournamentStatus;
 use App\Repository\TournamentRepository;
-use App\Service\Builder\LeaderboardBuilder;
 use App\Service\Resolver\TournamentResolver;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -24,7 +23,6 @@ class RecalculatePointsCommand extends Command
 {
     public function __construct(
         private readonly TournamentResolver $tournamentResolver,
-        private readonly LeaderboardBuilder $leaderboardBuilder,
         private readonly TournamentRepository $tournamentRepository,
     ) {
         parent::__construct();
@@ -34,7 +32,8 @@ class RecalculatePointsCommand extends Command
     {
         $this
             ->addArgument('slug', InputArgument::OPTIONAL, 'Tournament slug (e.g. oh-2026)')
-            ->addOption('all', null, InputOption::VALUE_NONE, 'Recalculate all tournaments');
+            ->addOption('all', null, InputOption::VALUE_NONE, 'Recalculate all tournaments')
+            ->addOption('active', null, InputOption::VALUE_NONE, 'Recalculate only the active (in-progress) tournament');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
@@ -43,6 +42,22 @@ class RecalculatePointsCommand extends Command
 
         if ($input->getOption('all')) {
             return $this->recalculateAll($io);
+        }
+
+        if ($input->getOption('active')) {
+            $tournament = $this->tournamentRepository->findOneBy(['status' => TournamentStatus::InProgress]);
+
+            if (null === $tournament) {
+                $io->warning('No active (in-progress) tournament found.');
+
+                return Command::SUCCESS;
+            }
+
+            $io->info(sprintf('Recalculating points for active tournament "%s"...', $tournament->getName()));
+            $this->tournamentResolver->recalculateAll($tournament);
+            $io->success('Done.');
+
+            return Command::SUCCESS;
         }
 
         /** @var string|null $slug */
@@ -64,7 +79,6 @@ class RecalculatePointsCommand extends Command
 
         $io->info(sprintf('Recalculating points for "%s"...', $tournament->getName()));
         $this->tournamentResolver->recalculateAll($tournament);
-        $this->printLeaderboard($tournament, $io);
         $io->success('Done.');
 
         return Command::SUCCESS;
@@ -83,24 +97,10 @@ class RecalculatePointsCommand extends Command
         foreach ($tournaments as $tournament) {
             $io->section($tournament->getName());
             $this->tournamentResolver->recalculateAll($tournament);
-            $this->printLeaderboard($tournament, $io);
         }
 
         $io->success(sprintf('Recalculated %d tournaments.', count($tournaments)));
 
         return Command::SUCCESS;
-    }
-
-    private function printLeaderboard(Tournament $tournament, SymfonyStyle $io): void
-    {
-        $leaderboard = $this->leaderboardBuilder->build($tournament);
-
-        $io->table(
-            ['#', 'Hráč', 'Body'],
-            array_map(
-                static fn (array $row) => [$row['rank'], $row['user']->getUsername(), number_format($row['totalPoints'], 2)],
-                $leaderboard,
-            ),
-        );
     }
 }

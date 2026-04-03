@@ -14,6 +14,11 @@ export default class extends Controller {
         this.update()
     }
 
+    compareAll() {
+        this.selectAll()
+        this.element.closest('form').submit()
+    }
+
     update() {
         const checkboxes = this.element.querySelectorAll('input[type="checkbox"]')
         let checked = 0
