@@ -21,6 +21,34 @@ use Symfony\Component\Routing\Attribute\Route;
 
 class DashboardController extends AbstractController
 {
+    private function czechAccountToIban(string $accountNumber, string $bankCode): string
+    {
+        $parts = explode('-', $accountNumber);
+        if (count($parts) === 2) {
+            $prefix = str_pad($parts[0], 6, '0', STR_PAD_LEFT);
+            $number = str_pad($parts[1], 10, '0', STR_PAD_LEFT);
+        } else {
+            $prefix = '000000';
+            $number = str_pad($parts[0], 10, '0', STR_PAD_LEFT);
+        }
+
+        $bban = str_pad($bankCode, 4, '0', STR_PAD_LEFT) . $prefix . $number;
+
+        $numericString = '';
+        foreach (str_split($bban . 'CZ00') as $char) {
+            $numericString .= ctype_alpha($char)
+                ? (string)(ord(strtoupper($char)) - ord('A') + 10)
+                : $char;
+        }
+
+        $remainder = 0;
+        foreach (str_split($numericString) as $digit) {
+            $remainder = ($remainder * 10 + (int)$digit) % 97;
+        }
+
+        return 'CZ' . str_pad((string)(98 - $remainder), 2, '0', STR_PAD_LEFT) . $bban;
+    }
+
     #[Route('/', name: 'homepage')]
     public function index(
         ActiveTournamentProvider $activeTournamentProvider,
@@ -65,7 +93,10 @@ class DashboardController extends AbstractController
                 $message = $ruleSet->getPaymentMessage();
                 $paymentAmount = $amount;
 
-                $acc = $ruleSet->getPaymentAccountNumber() . '/' . $ruleSet->getPaymentBankCode();
+                $acc = $this->czechAccountToIban(
+                    $ruleSet->getPaymentAccountNumber() ?? '',
+                    $ruleSet->getPaymentBankCode() ?? '',
+                );
                 $parts = ['SPD', '1.0', 'ACC:' . $acc];
                 if ($amount !== null) {
                     $parts[] = 'AM:' . number_format($amount, 2, '.', '');
