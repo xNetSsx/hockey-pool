@@ -9,6 +9,7 @@ use App\Entity\Prediction;
 use App\Entity\SpecialBetRule;
 use App\Entity\Team;
 use App\Entity\Tournament;
+use App\Entity\User;
 use App\Enum\BetScoringType;
 use App\Repository\GameRepository;
 use App\Repository\PointEntryRepository;
@@ -16,6 +17,7 @@ use App\Repository\PredictionRepository;
 use App\Repository\RuleSetRepository;
 use App\Repository\SpecialBetRepository;
 use App\Repository\SpecialBetRuleRepository;
+use App\Repository\TournamentParticipantRepository;
 use App\Service\Manager\PointEntryManager;
 
 final readonly class TournamentResolver
@@ -30,6 +32,7 @@ final readonly class TournamentResolver
         private SpecialBetRepository $specialBetRepository,
         private SpecialBetRuleRepository $specialBetRuleRepository,
         private RuleSetRepository $ruleSetRepository,
+        private TournamentParticipantRepository $tournamentParticipantRepository,
     ) {
     }
 
@@ -41,6 +44,10 @@ final readonly class TournamentResolver
         /** @var list<Prediction> $predictions */
         $predictions = $this->predictionRepository->findBy(['game' => $game]);
 
+        $participants = $this->tournamentParticipantRepository->findByTournament($game->getTournament());
+        $participantUsers = array_map(static fn ($p) => $p->getUser(), $participants);
+
+        $predictions = $this->fillMissingPredictions($game, $predictions, $participantUsers);
         $entries = $this->matchPointResolver->resolve($game, $predictions, $ruleSet);
 
         if (count($entries) > 0) {
@@ -69,6 +76,9 @@ final readonly class TournamentResolver
         $existingEntriesByGame = $this->pointEntryRepository->findGameEntriesByTournamentIndexedByGameId($tournament);
         $predictionsByGame = $this->predictionRepository->findByGamesIndexedByGameId($finishedGames);
 
+        $participants = $this->tournamentParticipantRepository->findByTournament($tournament);
+        $participantUsers = array_map(static fn ($p) => $p->getUser(), $participants);
+
         $allOldEntries = [];
         $allNewEntries = [];
 
@@ -77,6 +87,7 @@ final readonly class TournamentResolver
             array_push($allOldEntries, ...($existingEntriesByGame[$gameId] ?? []));
 
             $predictions = $predictionsByGame[$gameId] ?? [];
+            $predictions = $this->fillMissingPredictions($game, $predictions, $participantUsers);
             $entries = $this->matchPointResolver->resolve($game, $predictions, $ruleSet);
             array_push($allNewEntries, ...$entries);
         }
@@ -110,6 +121,40 @@ final readonly class TournamentResolver
     }
 
     /**
+     * Returns the original predictions merged with synthetic 0:0 Prediction objects for every
+     * participant who did not submit a real prediction. Synthetic predictions are never persisted.
+     *
+     * @param Game $game
+     * @param list<Prediction> $predictions
+     * @param list<User> $participantUsers
+     * @return list<Prediction>
+     */
+    private function fillMissingPredictions(Game $game, array $predictions, array $participantUsers): array
+    {
+        /** @var array<int, true> $submittedUserIds */
+        $submittedUserIds = [];
+        foreach ($predictions as $prediction) {
+            $submittedUserIds[$prediction->getUser()->getId()] = true;
+        }
+
+        foreach ($participantUsers as $user) {
+            if (isset($submittedUserIds[$user->getId()])) {
+                continue;
+            }
+
+            $synthetic = (new Prediction())
+                ->setUser($user)
+                ->setGame($game)
+                ->setHomeScore(0)
+                ->setAwayScore(0);
+
+            $predictions[] = $synthetic;
+        }
+
+        return $predictions;
+    }
+
+    /**
      * @param list<SpecialBetRule> $rules
      * @return array{list<Team>, list<string>}
      */
@@ -124,9 +169,13 @@ final readonly class TournamentResolver
             }
 
             if ($rule->getScoringType() === BetScoringType::Podium) {
-                $podiumTeams[] = $rule->getActualTeamValue();
+                $team = $rule->getActualTeamValue();
+                assert($team !== null);
+                $podiumTeams[] = $team;
             } elseif ($rule->getScoringType() === BetScoringType::AnyMatch) {
-                $anyMatchPool[] = $rule->getActualStringValue();
+                $value = $rule->getActualStringValue();
+                assert($value !== null);
+                $anyMatchPool[] = $value;
             }
         }
 

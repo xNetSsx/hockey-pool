@@ -11,6 +11,7 @@ use App\Entity\User;
 use App\Enum\PointCategory;
 use App\Repository\PointEntryRepository;
 use App\Repository\PredictionRepository;
+use App\Repository\TournamentParticipantRepository;
 use App\Service\Resolver\MatchPointResolver;
 
 /**
@@ -21,6 +22,7 @@ final readonly class MatchBreakdownBuilder
     public function __construct(
         private PointEntryRepository $pointEntryRepository,
         private PredictionRepository $predictionRepository,
+        private TournamentParticipantRepository $tournamentParticipantRepository,
     ) {
     }
 
@@ -40,6 +42,29 @@ final readonly class MatchBreakdownBuilder
     {
         /** @var list<Prediction> $predictions */
         $predictions = $this->predictionRepository->findBy(['game' => $game]);
+
+        // Index real predictions by user ID for fast lookup
+        /** @var array<int, true> $submittedUserIds */
+        $submittedUserIds = [];
+        foreach ($predictions as $prediction) {
+            $submittedUserIds[$prediction->getUser()->getId()] = true;
+        }
+
+        // Append synthetic 0:0 predictions for participants who didn't submit — never persisted
+        $participants = $this->tournamentParticipantRepository->findByTournament($game->getTournament());
+        foreach ($participants as $participant) {
+            $userId = $participant->getUser()->getId();
+            if (isset($submittedUserIds[$userId])) {
+                continue;
+            }
+
+            $predictions[] = (new Prediction())
+                ->setUser($participant->getUser())
+                ->setGame($game)
+                ->setHomeScore(0)
+                ->setAwayScore(0);
+        }
+
         $pointEntries = $this->pointEntryRepository->findByGame($game);
 
         /** @var array<int, list<PointEntry>> $entriesByUser */
