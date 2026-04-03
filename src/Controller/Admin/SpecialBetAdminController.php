@@ -131,7 +131,8 @@ class SpecialBetAdminController extends AbstractController
 
         $this->addFlash(
             'success',
-            sprintf('Výsledky uloženy a speciální tipy přepočteny pro "%s".', $tournament->getName()));
+            sprintf('Výsledky uloženy a speciální tipy přepočteny pro "%s".', $tournament->getName())
+        );
 
         return $this->redirectToRoute('admin_special_results', ['id' => $tournament->getId()]);
     }

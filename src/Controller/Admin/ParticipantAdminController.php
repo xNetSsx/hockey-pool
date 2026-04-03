@@ -35,7 +35,8 @@ class ParticipantAdminController extends AbstractController
 
         $participants = $participantRepo->findByTournament($tournament);
         $participantUserIds = array_map(
-            static fn (TournamentParticipant $p) => $p->getUser()->getId(), $participants
+            static fn (TournamentParticipant $p) => $p->getUser()->getId(),
+            $participants
         );
         $allUsers = $userRepo->findBy([], ['username' => 'ASC']);
 
@@ -43,7 +44,8 @@ class ParticipantAdminController extends AbstractController
             'tournament' => $tournament,
             'participants' => $participants,
             'availableUsers' => array_filter(
-                $allUsers, static fn (User $u) => !in_array($u->getId(), $participantUserIds, true)
+                $allUsers,
+                static fn (User $u) => !in_array($u->getId(), $participantUserIds, true)
             ),
         ]);
     }

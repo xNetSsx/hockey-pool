@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Service\Resolver\SpecialBet;
 
+use App\Entity\PointEntry;
 use App\Entity\SpecialBet;
 use App\Entity\SpecialBetRule;
 use App\Enum\BetScoringType;
@@ -18,6 +19,7 @@ final class ExactMatchScoringResolver implements SpecialBetScoringResolverInterf
         return $type === BetScoringType::ExactMatch;
     }
 
+    /** @return list<PointEntry> */
     public function resolve(SpecialBetRule $rule, array $bets, array $podiumTeams, array $anyMatchPool): array
     {
         $entries = [];
@@ -35,7 +37,7 @@ final class ExactMatchScoringResolver implements SpecialBetScoringResolverInterf
     {
         $valueType = $rule->getValueType();
 
-        if ($valueType === BetValueType::Team) {
+        if (BetValueType::Team === $valueType) {
             $actualTeam = $rule->getActualTeamValue();
             assert($actualTeam !== null);
 

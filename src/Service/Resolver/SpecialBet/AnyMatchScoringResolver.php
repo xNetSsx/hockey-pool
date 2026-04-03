@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Service\Resolver\SpecialBet;
 
+use App\Entity\PointEntry;
 use App\Entity\SpecialBetRule;
 use App\Enum\BetScoringType;
 
@@ -16,6 +17,7 @@ final class AnyMatchScoringResolver implements SpecialBetScoringResolverInterfac
         return $type === BetScoringType::AnyMatch;
     }
 
+    /** @return list<PointEntry> */
     public function resolve(SpecialBetRule $rule, array $bets, array $podiumTeams, array $anyMatchPool): array
     {
         $entries = [];

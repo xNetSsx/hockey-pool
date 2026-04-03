@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Service\Resolver\SpecialBet;
 
+use App\Entity\PointEntry;
 use App\Entity\SpecialBetRule;
 use App\Enum\BetScoringType;
 
@@ -16,6 +17,7 @@ final class ClosestScoringResolver implements SpecialBetScoringResolverInterface
         return $type === BetScoringType::Closest;
     }
 
+    /** @return list<PointEntry> */
     public function resolve(SpecialBetRule $rule, array $bets, array $podiumTeams, array $anyMatchPool): array
     {
         $actual = $rule->getActualIntValue();
@@ -29,7 +31,7 @@ final class ClosestScoringResolver implements SpecialBetScoringResolverInterface
 
             $distances[] = [
                 'bet' => $bet,
-                'distance' => abs($bet->getIntValue() - $actual)
+                'distance' => abs($bet->getIntValue() - $actual),
             ];
         }
 

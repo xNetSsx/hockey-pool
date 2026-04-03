@@ -23,6 +23,7 @@ final class SpecialBetResolver
     /**
      * Resolves all bets for a single rule.
      *
+     * @param SpecialBetRule $rule
      * @param list<SpecialBet> $bets
      * @param list<Team> $podiumTeams
      * @param list<string> $anyMatchPool

@@ -91,11 +91,11 @@ final readonly class CareerStatsBuilder
                 $bestRank = $rank;
             }
 
-            if ($rank === 1) {
+            if (1 === $rank) {
                 $firstPlace++;
-            } elseif ($rank === 2) {
+            } elseif (2 === $rank) {
                 $secondPlace++;
-            } elseif ($rank === 3) {
+            } elseif (3 === $rank) {
                 $thirdPlace++;
             }
 
@@ -196,11 +196,11 @@ final readonly class CareerStatsBuilder
                     $statsById[$uid]['bestRank'] = $rank;
                 }
 
-                if ($rank === 1) {
+                if (1 === $rank) {
                     $statsById[$uid]['firstPlace']++;
-                } elseif ($rank === 2) {
+                } elseif (2 === $rank) {
                     $statsById[$uid]['secondPlace']++;
-                } elseif ($rank === 3) {
+                } elseif (3 === $rank) {
                     $statsById[$uid]['thirdPlace']++;
                 }
             }

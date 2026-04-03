@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace App\Service\Resolver\SpecialBet;
 
-use App\Entity\Team;
+use App\Entity\PointEntry;
 use App\Entity\SpecialBetRule;
+use App\Entity\Team;
 use App\Enum\BetScoringType;
 
 final class PodiumScoringResolver implements SpecialBetScoringResolverInterface
@@ -17,6 +18,7 @@ final class PodiumScoringResolver implements SpecialBetScoringResolverInterface
         return $type === BetScoringType::Podium;
     }
 
+    /** @return list<PointEntry> */
     public function resolve(SpecialBetRule $rule, array $bets, array $podiumTeams, array $anyMatchPool): array
     {
         $actualTeam = $rule->getActualTeamValue();

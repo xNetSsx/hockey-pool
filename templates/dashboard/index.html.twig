@@ -87,7 +87,12 @@
         <div class="tour-leaderboard lg:col-span-2">
             <div class="overflow-hidden rounded-xl bg-white shadow dark:bg-[#1e293b] dark:shadow-gray-900/30">
                 <div class="border-b border-gray-200 bg-[#0f172a] px-6 py-4 dark:border-gray-700">
-                    <h2 class="text-lg font-semibold text-white">Žebříček</h2>
+                    <div class="flex items-baseline justify-between gap-2">
+                        <h2 class="text-lg font-semibold text-white">Žebříček</h2>
+                        {% if leaderboardUpdatedAt %}
+                            <span class="text-xs text-gray-400">Aktualizováno {{ leaderboardUpdatedAt|date('d.m. H:i') }}</span>
+                        {% endif %}
+                    </div>
                 </div>
                 <div class="overflow-x-auto">
                     <table class="w-full text-sm">

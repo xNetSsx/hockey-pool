@@ -17,6 +17,7 @@ interface SpecialBetScoringResolverInterface
     public function supports(BetScoringType $type): bool;
 
     /**
+     * @param SpecialBetRule $rule
      * @param list<SpecialBet> $bets
      * @param list<Team> $podiumTeams
      * @param list<string> $anyMatchPool

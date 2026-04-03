@@ -393,4 +393,19 @@ class PointEntryRepository extends ServiceEntityRepository
             'count' => (int) $row['cnt'],
         ];
     }
+
+    public function findLastCalculatedAt(Tournament $tournament): ?DateTimeImmutable
+    {
+        /** @var array{calculatedAt: DateTimeImmutable}|null $row */
+        $row = $this->createQueryBuilder('pe')
+            ->select('pe.calculatedAt')
+            ->where('pe.tournament = :tournament')
+            ->setParameter('tournament', $tournament)
+            ->orderBy('pe.calculatedAt', 'DESC')
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult();
+
+        return $row['calculatedAt'] ?? null;
+    }
 }
