@@ -24,24 +24,23 @@ final readonly class PointsTimelineBuilder
     {
         $rawData = $this->pointEntryRepository->getTimelineData($tournament);
 
-        $matchOrder = [];
-        $matchLabels = [];
+        $dateOrder = [];
         $userPoints = [];
 
         foreach ($rawData as $row) {
-            $gameId = $row['gameId'];
+            $date = substr($row['playedAt'], 0, 10);
 
-            if (!isset($matchOrder[$gameId])) {
-                $matchOrder[$gameId] = true;
-                $matchLabels[$gameId] = $row['homeCode'] . '-' . $row['awayCode'];
+            if (!isset($dateOrder[$date])) {
+                [, $month, $day] = explode('-', $date);
+                $dateOrder[$date] = (int) $day . '. ' . (int) $month . '.';
             }
 
             $userPoints[$row['userId']]['username'] = $row['username'];
-            $userPoints[$row['userId']]['games'][$gameId] = $row['points'];
+            $userPoints[$row['userId']]['dates'][$date] = ($userPoints[$row['userId']]['dates'][$date] ?? 0.0) + $row['points'];
         }
 
-        $gameIds = array_keys($matchOrder);
-        $labels = array_values($matchLabels);
+        $dates = array_keys($dateOrder);
+        $labels = array_values($dateOrder);
 
         $datasets = [];
 
@@ -49,8 +48,8 @@ final readonly class PointsTimelineBuilder
             $cumulative = 0.0;
             $data = [];
 
-            foreach ($gameIds as $gameId) {
-                $cumulative += $userData['games'][$gameId] ?? 0.0;
+            foreach ($dates as $date) {
+                $cumulative += $userData['dates'][$date] ?? 0.0;
                 $data[] = round($cumulative, 2);
             }
 

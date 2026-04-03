@@ -91,8 +91,14 @@
                                    class="rounded bg-[#0f172a] px-3 py-1 text-xs font-medium text-white hover:bg-[#1e293b] dark:bg-[#38bdf8] dark:text-[#0f172a] dark:hover:bg-[#7dd3fc]">
                                     {{ prediction ? 'Změnit' : 'Tipovat' }}
                                 </a>
-                            {% elseif not prediction %}
-                                <span class="rounded bg-gray-100 px-3 py-1 text-xs text-gray-400 dark:bg-gray-700 dark:text-gray-500">🔒</span>
+                            {% else %}
+                                {% if not prediction %}
+                                    <span class="rounded bg-gray-100 px-3 py-1 text-xs text-gray-400 dark:bg-gray-700 dark:text-gray-500">🔒</span>
+                                {% endif %}
+                                <a href="{{ path('match_detail', {id: game.id}) }}"
+                                   class="rounded bg-gray-200 px-3 py-1 text-xs font-medium text-gray-600 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600">
+                                    Tipy hráčů
+                                </a>
                             {% endif %}
                         </div>
                     </div>

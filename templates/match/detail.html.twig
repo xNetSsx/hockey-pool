@@ -5,7 +5,7 @@
 
 {% block body %}
     <div class="mb-6">
-        <a href="{{ path('match_list') }}" class="text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">← Zpět na zápasy</a>
+        <a href="{{ path('prediction_list') }}" class="text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">← Zpět na zápasy</a>
     </div>
 
     {# Match header #}
@@ -46,7 +46,8 @@
         {% if is_granted('ROLE_ADMIN') %}
             <div class="mt-4 text-center">
                 <a href="{{ path('admin_match_result', {id: game.id}) }}"
-                   class="inline-block rounded bg-white/10 px-4 py-1.5 text-xs font-medium text-white hover:bg-white/20">
+                   class="inline-block rounded bg-white/10 px-4 py-1.5 text-xs font-medium text-white hover:bg-white/20"
+                   onclick="return confirm('Upravuješ výsledek zápasu, ne svůj tip. Pokračovat?')">
                     ✏️ Upravit výsledek
                 </a>
             </div>

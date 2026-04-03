@@ -38,7 +38,8 @@ final readonly class MatchBreakdownBuilder
      */
     public function build(Game $game): array
     {
-        $predictions = $this->predictionRepository->findByGame($game);
+        /** @var list<Prediction> $predictions */
+        $predictions = $this->predictionRepository->findBy(['game' => $game]);
         $pointEntries = $this->pointEntryRepository->findByGame($game);
 
         /** @var array<int, list<PointEntry>> $entriesByUser */

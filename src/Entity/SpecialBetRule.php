@@ -9,6 +9,7 @@ use App\Enum\BetValueType;
 use App\Repository\SpecialBetRuleRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 /**
  * Defines a single special bet for a tournament.
@@ -199,6 +200,36 @@ class SpecialBetRule
             BetValueType::Team => $this->actualTeamValue !== null,
             BetValueType::String => $this->actualStringValue !== null,
             BetValueType::Integer => $this->actualIntValue !== null,
+        };
+    }
+
+    #[Assert\Callback]
+    public function validateScoringTypeCombination(ExecutionContextInterface $context): void
+    {
+        $valid = match ($this->scoringType) {
+            BetScoringType::ExactMatch => true,
+            BetScoringType::Closest => $this->valueType === BetValueType::Integer,
+            BetScoringType::Podium => $this->valueType === BetValueType::Team,
+            BetScoringType::AnyMatch => $this->valueType === BetValueType::String,
+        };
+
+        if (!$valid) {
+            $context->buildViolation('Typ bodování "{{ scoring }}" vyžaduje typ hodnoty "{{ required }}", zvoleno "{{ actual }}".')
+                ->setParameter('{{ scoring }}', $this->scoringType->label())
+                ->setParameter('{{ required }}', $this->requiredValueType()->label())
+                ->setParameter('{{ actual }}', $this->valueType->label())
+                ->atPath('scoringType')
+                ->addViolation();
+        }
+    }
+
+    private function requiredValueType(): BetValueType
+    {
+        return match ($this->scoringType) {
+            BetScoringType::Closest => BetValueType::Integer,
+            BetScoringType::Podium => BetValueType::Team,
+            BetScoringType::AnyMatch => BetValueType::String,
+            BetScoringType::ExactMatch => $this->valueType,
         };
     }
 }

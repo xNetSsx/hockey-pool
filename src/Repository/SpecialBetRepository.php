@@ -61,14 +61,6 @@ class SpecialBetRepository extends ServiceEntityRepository
     }
 
     /**
-     * @return list<SpecialBet> All bets for a specific rule
-     */
-    public function findByRule(SpecialBetRule $rule): array
-    {
-        return $this->findBy(['rule' => $rule]);
-    }
-
-    /**
      * Batch-fetch all bets for a tournament, indexed by rule ID.
      *
      * @return array<int, list<SpecialBet>> ruleId => bets

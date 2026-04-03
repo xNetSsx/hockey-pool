@@ -37,7 +37,8 @@ class ContentAdminController extends AbstractController
         string $field,
         Request $request,
         TournamentManager $manager,
-        #[Target('app.html_sanitizer')] HtmlSanitizerInterface $htmlSanitizer,
+        #[Target('app.html_sanitizer')]
+        HtmlSanitizerInterface $htmlSanitizer,
     ): Response {
         $raw = $request->getPayload()->getString('content');
         $content = $raw !== '' ? $htmlSanitizer->sanitize($raw) : '';

@@ -69,6 +69,23 @@ class GameRepository extends ServiceEntityRepository
         return $ordered;
     }
 
+    /**
+     * @return list<Game>
+     */
+    public function findFinishedByTournament(Tournament $tournament): array
+    {
+        /** @var list<Game> $result */
+        $result = $this->createQueryBuilder('g')
+            ->where('g.tournament = :tournament')
+            ->andWhere('g.isFinished = true')
+            ->setParameter('tournament', $tournament)
+            ->orderBy('g.playedAt', 'ASC')
+            ->getQuery()
+            ->getResult();
+
+        return $result;
+    }
+
     public function countFinished(Tournament $tournament): int
     {
         return (int) $this->createQueryBuilder('g')

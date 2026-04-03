@@ -105,7 +105,12 @@ class SpecialBetAdminController extends AbstractController
         ]);
     }
 
-    #[Route('/special-results/{id}', name: 'admin_special_results_save', requirements: ['id' => '\d+'], methods: ['POST'])]
+    #[Route(
+        '/special-results/{id}',
+        name: 'admin_special_results_save',
+        requirements: ['id' => '\d+'],
+        methods: ['POST']
+    )]
     #[IsCsrfTokenValid('special_results')]
     public function specialResultsSave(
         Tournament $tournament,
@@ -124,7 +129,9 @@ class SpecialBetAdminController extends AbstractController
         $ruleManager->updateActualValues($rules, $rawValues);
         $tournamentResolver->resolveSpecialBets($tournament);
 
-        $this->addFlash('success', sprintf('Výsledky uloženy a speciální tipy přepočteny pro "%s".', $tournament->getName()));
+        $this->addFlash(
+            'success',
+            sprintf('Výsledky uloženy a speciální tipy přepočteny pro "%s".', $tournament->getName()));
 
         return $this->redirectToRoute('admin_special_results', ['id' => $tournament->getId()]);
     }

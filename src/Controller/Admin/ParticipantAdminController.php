@@ -34,13 +34,17 @@ class ParticipantAdminController extends AbstractController
         }
 
         $participants = $participantRepo->findByTournament($tournament);
-        $participantUserIds = array_map(static fn (TournamentParticipant $p) => $p->getUser()->getId(), $participants);
+        $participantUserIds = array_map(
+            static fn (TournamentParticipant $p) => $p->getUser()->getId(), $participants
+        );
         $allUsers = $userRepo->findBy([], ['username' => 'ASC']);
 
         return $this->render('admin/participants.html.twig', [
             'tournament' => $tournament,
             'participants' => $participants,
-            'availableUsers' => array_filter($allUsers, static fn (User $u) => !in_array($u->getId(), $participantUserIds, true)),
+            'availableUsers' => array_filter(
+                $allUsers, static fn (User $u) => !in_array($u->getId(), $participantUserIds, true)
+            ),
         ]);
     }
 
@@ -55,6 +59,8 @@ class ParticipantAdminController extends AbstractController
         $tournament = $activeTournamentProvider->getActiveTournament();
 
         if (null === $tournament) {
+            $this->addFlash('error', 'Žádný aktivní turnaj.');
+
             return $this->redirectToRoute('admin_dashboard');
         }
 

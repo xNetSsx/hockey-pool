@@ -92,7 +92,11 @@ class MatchAdminController extends AbstractController
 
         return $this->render('admin/form.html.twig', [
             'form' => $form,
-            'title' => sprintf('Upravit zápas: %s vs %s', $game->getHomeTeam()->getCode(), $game->getAwayTeam()->getCode()),
+            'title' => sprintf(
+                'Upravit zápas: %s vs %s',
+                $game->getHomeTeam()->getCode(),
+                $game->getAwayTeam()->getCode()
+            ),
             'back' => 'admin_matches',
         ]);
     }
@@ -113,7 +117,13 @@ class MatchAdminController extends AbstractController
                     continue;
                 }
 
-                $games[] = Game::create($data['tournament'], $data['phase'], $row['homeTeam'], $row['awayTeam'], $row['playedAt']);
+                $games[] = Game::create(
+                    $data['tournament'],
+                    $data['phase'],
+                    $row['homeTeam'],
+                    $row['awayTeam'],
+                    $row['playedAt']
+                );
             }
 
             if (count($games) > 0) {

@@ -20,14 +20,6 @@ class PredictionRepository extends ServiceEntityRepository
     }
 
     /**
-     * @return list<Prediction>
-     */
-    public function findByGame(Game $game): array
-    {
-        return $this->findBy(['game' => $game]);
-    }
-
-    /**
      * Batch-fetch predictions for a set of games, indexed by game ID.
      *
      * @param list<Game> $games

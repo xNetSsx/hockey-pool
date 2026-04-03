@@ -60,7 +60,8 @@
                                     <td class="space-x-2 px-4 py-2.5 text-right">
                                         <a href="{{ path('admin_match_edit', {id: game.id}) }}" class="text-xs text-blue-600 hover:underline dark:text-[#38bdf8]">Upravit</a>
                                         <a href="{{ path('admin_match_result', {id: game.id}) }}"
-                                           class="rounded bg-blue-600 px-3 py-1 text-xs font-medium text-white hover:bg-blue-700 dark:bg-[#38bdf8] dark:text-[#0f172a] dark:hover:bg-[#7dd3fc]">
+                                           class="rounded bg-blue-600 px-3 py-1 text-xs font-medium text-white hover:bg-blue-700 dark:bg-[#38bdf8] dark:text-[#0f172a] dark:hover:bg-[#7dd3fc]"
+                                           onclick="return confirm('Upravuješ výsledek zápasu, ne svůj tip. Pokračovat?')">
                                             {{ game.isFinished ? 'Změnit skóre' : 'Zadat skóre' }}
                                         </a>
                                     </td>
