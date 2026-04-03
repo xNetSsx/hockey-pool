@@ -57,6 +57,9 @@ class Game
     #[ORM\Column(options: ['default' => false])]
     private bool $isFinished = false;
 
+    #[ORM\Column(options: ['default' => false])]
+    private bool $isTiebreaker = false;
+
     public static function create(
         Tournament $tournament,
         TournamentPhase $phase,
@@ -171,6 +174,18 @@ class Game
     public function setIsFinished(bool $isFinished): self
     {
         $this->isFinished = $isFinished;
+
+        return $this;
+    }
+
+    public function isTiebreaker(): bool
+    {
+        return $this->isTiebreaker;
+    }
+
+    public function setIsTiebreaker(bool $isTiebreaker): self
+    {
+        $this->isTiebreaker = $isTiebreaker;
 
         return $this;
     }

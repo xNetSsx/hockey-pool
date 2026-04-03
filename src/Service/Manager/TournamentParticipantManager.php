@@ -20,7 +20,6 @@ final readonly class TournamentParticipantManager
 
     /**
      * Adds a user as a participant. Returns false when the user is already a participant.
-     * New participants are marked as paid by default (admin-initiated enrolment).
      */
     public function add(User $user, Tournament $tournament): bool
     {
@@ -31,7 +30,6 @@ final readonly class TournamentParticipantManager
         $participant = new TournamentParticipant();
         $participant->setUser($user);
         $participant->setTournament($tournament);
-        $participant->setPaid(true);
         $this->em->persist($participant);
         $this->em->flush();
 

@@ -17,7 +17,7 @@
             <div class="p-6">
                 {{ form_start(form, {attr: {class: 'space-y-4', novalidate: 'novalidate'}}) }}
                     {% for field in form %}
-                        {% if field.vars.name not in ['_token', 'save'] %}
+                        {% if field.vars.name not in ['_token', 'save'] and 'button' not in field.vars.block_prefixes %}
                             <div>
                                 {{ form_label(field, null, {label_attr: {class: 'block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300'}}) }}
                                 {{ form_widget(field, {attr: field.vars.attr|merge({class: (field.vars.attr.class ?? '') ~ ' ' ~ inputClass})}) }}

@@ -38,6 +38,10 @@
                             {{ form_widget(form.awayScore, {attr: {class: 'w-20 rounded-lg border border-gray-300 px-3 py-2 text-center text-lg font-bold focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 dark:bg-[#0f172a] dark:border-gray-600 dark:text-white'}}) }}
                         </div>
                     </div>
+                    <label class="mt-6 flex cursor-pointer items-center justify-between rounded-lg border border-gray-200 px-4 py-3 hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-white/5">
+                        <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Zápas skončil remízou</span>
+                        {{ form_widget(form.isTiebreaker, {attr: {class: 'h-5 w-5 cursor-pointer rounded border-gray-300 text-blue-600 focus:ring-blue-500 dark:border-gray-600 dark:bg-[#0f172a]'}}) }}
+                    </label>
                     <div class="mt-6 text-center">
                         {{ form_widget(form.save, {attr: {class: 'rounded-lg bg-blue-600 px-6 py-2.5 font-semibold text-white hover:bg-blue-700 dark:bg-[#38bdf8] dark:text-[#0f172a] dark:hover:bg-[#7dd3fc]'}}) }}
                     </div>

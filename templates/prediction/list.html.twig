@@ -4,25 +4,27 @@
 {% block title %}Moje tipy — Hockey Pool{% endblock %}
 
 {% block body %}
-    <div class="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+    <div id="predictions-header" class="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
             <h1 class="text-2xl font-bold text-gray-900 dark:text-white">🎯 Moje tipy</h1>
             <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">{{ tournament.name }}</p>
         </div>
         <div class="flex gap-2">
-            <a href="{{ path('prediction_special') }}"
+            <a id="special-bets-btn" href="{{ path('prediction_special') }}"
                class="inline-flex items-center rounded-lg bg-[#0f172a] px-4 py-2 text-sm font-medium text-white hover:bg-[#1e293b]">
                 Moje speciální tipy
             </a>
-            <a href="{{ path('special_bet_overview') }}"
+            {% if tournament.status.value != 'upcoming' %}
+            <a id="others-bets-btn" href="{{ path('special_bet_overview') }}"
                class="inline-flex items-center rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-white/10">
                 Tipy ostatních
             </a>
+            {% endif %}
         </div>
     </div>
 
     {% for phaseValue, games in groupedGames %}
-        <div class="mb-4 mt-8 first:mt-0">
+        <div class="tour-phase mb-4 mt-8 first:mt-0">
             <h2 class="inline-block rounded-lg bg-[#0f172a] px-4 py-2 text-sm font-semibold uppercase tracking-wider text-white">
                 {{ phaseValue|phase_label }}
             </h2>
@@ -46,7 +48,7 @@
                         {% set lastDate = gameDate %}
                     {% endif %}
 
-                    <div class="flex items-center gap-3 px-4 py-3 sm:gap-4 sm:px-6 dark:text-gray-100">
+                    <div class="tour-game-row flex items-center gap-3 px-4 py-3 sm:gap-4 sm:px-6 dark:text-gray-100">
                         {# Time #}
                         <div class="w-10 shrink-0 text-center text-xs text-gray-400 sm:w-12 dark:text-gray-500">
                             {{ game.playedAt|date('H:i') }}
@@ -64,6 +66,9 @@
                                     <span class="rounded bg-[#0f172a] px-2 py-0.5 text-xs font-bold tabular-nums text-white sm:text-sm">
                                         {{ game.homeScore }}:{{ game.awayScore }}
                                     </span>
+                                    {% if game.isTiebreaker %}
+                                        <span class="mt-0.5 block text-[10px] font-semibold uppercase tracking-wide text-amber-500">remíza</span>
+                                    {% endif %}
                                 {% else %}
                                     <span class="text-xs text-gray-400 dark:text-gray-500">vs</span>
                                 {% endif %}
@@ -76,7 +81,7 @@
                         </div>
 
                         {# Prediction + Action #}
-                        <div class="flex shrink-0 items-center gap-2">
+                        <div class="tour-game-action flex shrink-0 items-center gap-2">
                             {% if prediction %}
                                 <span class="inline-block rounded border px-2 py-0.5 text-xs font-medium tabular-nums {{ prediction_badge_class(prediction, game) }}">
                                     {{ prediction.homeScore }}:{{ prediction.awayScore }}

@@ -6,6 +6,7 @@ namespace App\Form;
 
 use App\Entity\Game;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -32,6 +33,10 @@ class MatchResultType extends AbstractType
                     new Assert\PositiveOrZero(),
                 ],
                 'attr' => ['min' => 0, 'class' => 'w-20'],
+            ])
+            ->add('isTiebreaker', CheckboxType::class, [
+                'label' => 'Zápas skončil remízou',
+                'required' => false,
             ])
             ->add('save', SubmitType::class, [
                 'label' => 'Uložit výsledek',

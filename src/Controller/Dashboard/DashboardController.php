@@ -9,7 +9,9 @@ use App\Enum\BetScoringType;
 use App\Enum\TournamentStatus;
 use App\Repository\GameRepository;
 use App\Repository\PointEntryRepository;
+use App\Repository\RuleSetRepository;
 use App\Repository\SpecialBetRuleRepository;
+use App\Repository\TournamentParticipantRepository;
 use App\Service\Builder\LeaderboardBuilder;
 use App\Service\Builder\PointsTimelineBuilder;
 use App\Service\Provider\ActiveTournamentProvider;
@@ -27,6 +29,8 @@ class DashboardController extends AbstractController
         PointEntryRepository $pointEntryRepository,
         LeaderboardBuilder $leaderboardBuilder,
         PointsTimelineBuilder $timelineBuilder,
+        RuleSetRepository $ruleSetRepository,
+        TournamentParticipantRepository $participantRepository,
     ): Response {
         $tournament = $activeTournamentProvider->getActiveTournament();
 
@@ -50,6 +54,30 @@ class DashboardController extends AbstractController
         /** @var User $currentUser */
         $currentUser = $this->getUser();
 
+        $paymentQrString = null;
+        $paymentAmount = null;
+
+        $ruleSet = $ruleSetRepository->findByTournament($tournament);
+        if ($ruleSet !== null && $ruleSet->hasPaymentSettings()) {
+            $participant = $participantRepository->findOneBy(['user' => $currentUser, 'tournament' => $tournament]);
+            if ($participant !== null && !$participant->isPaid()) {
+                $amount = $ruleSet->getPaymentAmount();
+                $message = $ruleSet->getPaymentMessage();
+                $paymentAmount = $amount;
+
+                $acc = $ruleSet->getPaymentAccountNumber() . '/' . $ruleSet->getPaymentBankCode();
+                $parts = ['SPD', '1.0', 'ACC:' . $acc];
+                if ($amount !== null) {
+                    $parts[] = 'AM:' . number_format($amount, 2, '.', '');
+                }
+                $parts[] = 'CC:' . $ruleSet->getPaymentCurrency();
+                if ($message !== null && $message !== '') {
+                    $parts[] = 'MSG:' . $message;
+                }
+                $paymentQrString = implode('*', $parts);
+            }
+        }
+
         return $this->render('dashboard/index.html.twig', [
             'tournament' => $tournament,
             'medalRules' => $medalRules,
@@ -63,6 +91,8 @@ class DashboardController extends AbstractController
             'mostExactPredictions' => $pointEntryRepository->findMostExactPredictions($tournament),
             'timeline' => $timelineBuilder->build($tournament),
             'todayPoints' => $isFinished ? [] : $pointEntryRepository->getTodayPointsByUser($tournament),
+            'paymentQrString' => $paymentQrString,
+            'paymentAmount' => $paymentAmount,
         ]);
     }
 }

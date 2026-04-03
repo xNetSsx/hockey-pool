@@ -19,7 +19,7 @@
     </div>
 
     {# All-time standings #}
-    <div class="mb-12">
+    <div class="tour-hof-alltime mb-12">
         <h2 class="mb-4 text-lg font-semibold text-gray-900 dark:text-white">Celkové pořadí</h2>
 
         {% if standings|length == 0 %}
@@ -47,6 +47,7 @@
                                 <th scope="col" class="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wider text-gray-400">Prům. pořadí</th>
                                 <th scope="col" class="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wider text-gray-400">Úspěšnost</th>
                                 <th scope="col" class="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wider text-gray-400">Přesná skóre</th>
+                                <th scope="col" class="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wider text-gray-400" title="Podíl přesně tipovaných zápasů">Přesná %</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-100 dark:divide-gray-700">
@@ -87,7 +88,14 @@
                                         {% if row.careerAccuracy is not null %}{{ row.careerAccuracy }}%{% else %}—{% endif %}
                                     </td>
                                     <td class="px-4 py-3 text-center text-sm tabular-nums text-gray-600 dark:text-gray-300">
-                                        {{ row.careerExactScores }}
+                                        {% if row.careerExactScores > 0 %}
+                                            {{ row.careerExactScores }}×
+                                        {% else %}
+                                            <span class="text-gray-300 dark:text-gray-600">—</span>
+                                        {% endif %}
+                                    </td>
+                                    <td class="px-4 py-3 text-center text-sm tabular-nums text-gray-600 dark:text-gray-300">
+                                        {% if row.careerExactRate is not null %}{{ row.careerExactRate }}%{% else %}—{% endif %}
                                     </td>
                                 </tr>
                             {% endfor %}
@@ -99,7 +107,7 @@
     </div>
 
     {# Tournament history / podiums #}
-    <div>
+    <div class="tour-hof-history">
         <h2 class="mb-4 text-lg font-semibold text-gray-900 dark:text-white">Historie turnajů</h2>
 
         {% if podiums|length == 0 %}

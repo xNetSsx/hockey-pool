@@ -44,6 +44,26 @@ class RuleSet
     #[ORM\Column(type: 'json')]
     private array $prizes = ['1' => 300, '2' => 150, '3' => 50];
 
+    #[ORM\Column(length: 17, nullable: true)]
+    #[Assert\Length(max: 17)]
+    private ?string $paymentAccountNumber = null;
+
+    #[ORM\Column(length: 4, nullable: true)]
+    #[Assert\Length(max: 4)]
+    private ?string $paymentBankCode = null;
+
+    #[ORM\Column(type: 'float', nullable: true)]
+    #[Assert\PositiveOrZero]
+    private ?float $paymentAmount = null;
+
+    #[ORM\Column(length: 3, options: ['default' => 'CZK'])]
+    #[Assert\Length(max: 3)]
+    private string $paymentCurrency = 'CZK';
+
+    #[ORM\Column(length: 140, nullable: true)]
+    #[Assert\Length(max: 140)]
+    private ?string $paymentMessage = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -109,5 +129,70 @@ class RuleSet
         $this->prizes = $prizes;
 
         return $this;
+    }
+
+    public function getPaymentAccountNumber(): ?string
+    {
+        return $this->paymentAccountNumber;
+    }
+
+    public function setPaymentAccountNumber(?string $paymentAccountNumber): self
+    {
+        $this->paymentAccountNumber = $paymentAccountNumber;
+
+        return $this;
+    }
+
+    public function getPaymentBankCode(): ?string
+    {
+        return $this->paymentBankCode;
+    }
+
+    public function setPaymentBankCode(?string $paymentBankCode): self
+    {
+        $this->paymentBankCode = $paymentBankCode;
+
+        return $this;
+    }
+
+    public function getPaymentAmount(): ?float
+    {
+        return $this->paymentAmount;
+    }
+
+    public function setPaymentAmount(?float $paymentAmount): self
+    {
+        $this->paymentAmount = $paymentAmount;
+
+        return $this;
+    }
+
+    public function getPaymentCurrency(): string
+    {
+        return $this->paymentCurrency;
+    }
+
+    public function setPaymentCurrency(string $paymentCurrency): self
+    {
+        $this->paymentCurrency = $paymentCurrency;
+
+        return $this;
+    }
+
+    public function getPaymentMessage(): ?string
+    {
+        return $this->paymentMessage;
+    }
+
+    public function setPaymentMessage(?string $paymentMessage): self
+    {
+        $this->paymentMessage = $paymentMessage;
+
+        return $this;
+    }
+
+    public function hasPaymentSettings(): bool
+    {
+        return $this->paymentAccountNumber !== null && $this->paymentBankCode !== null && $this->paymentAmount !== null;
     }
 }

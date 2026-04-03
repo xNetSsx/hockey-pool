@@ -7,7 +7,6 @@ namespace App\Controller\Prediction;
 use App\Entity\SpecialBet;
 use App\Entity\TournamentParticipant;
 use App\Enum\TournamentStatus;
-use App\Repository\GameRepository;
 use App\Repository\SpecialBetRepository;
 use App\Repository\SpecialBetRuleRepository;
 use App\Repository\TournamentParticipantRepository;
@@ -24,7 +23,6 @@ class SpecialBetOverviewController extends AbstractController
         SpecialBetRuleRepository $ruleRepository,
         SpecialBetRepository $betRepository,
         TournamentParticipantRepository $participantRepository,
-        GameRepository $gameRepository,
     ): Response {
         $tournament = $activeTournamentProvider->getActiveTournament();
 
@@ -38,7 +36,11 @@ class SpecialBetOverviewController extends AbstractController
             ]);
         }
 
-        $isStarted = $tournament->getStatus() !== TournamentStatus::Upcoming;
+        if ($tournament->getStatus() === TournamentStatus::Upcoming) {
+            $this->addFlash('error', 'Tipy ostatních se zobrazí po začátku turnaje.');
+
+            return $this->redirectToRoute('prediction_special');
+        }
 
         $rules = $ruleRepository->findByTournament($tournament);
         $participants = $participantRepository->findByTournament($tournament);
@@ -50,14 +52,11 @@ class SpecialBetOverviewController extends AbstractController
         /** @var array<int, array<int, SpecialBet>> $betsByRuleAndUser */
         $betsByRuleAndUser = [];
 
-        if ($isStarted) {
-            $allBets = $betRepository->findByTournament($tournament);
-
-            foreach ($allBets as $bet) {
-                $ruleId = (int) $bet->getRule()->getId();
-                $userId = (int) $bet->getUser()->getId();
-                $betsByRuleAndUser[$ruleId][$userId] = $bet;
-            }
+        $allBets = $betRepository->findByTournament($tournament);
+        foreach ($allBets as $bet) {
+            $ruleId = (int) $bet->getRule()->getId();
+            $userId = (int) $bet->getUser()->getId();
+            $betsByRuleAndUser[$ruleId][$userId] = $bet;
         }
 
         return $this->render('prediction/special_overview.html.twig', [
@@ -65,7 +64,7 @@ class SpecialBetOverviewController extends AbstractController
             'rules' => $rules,
             'players' => $players,
             'betsByRuleAndUser' => $betsByRuleAndUser,
-            'locked' => !$isStarted,
+            'locked' => false,
         ]);
     }
 }

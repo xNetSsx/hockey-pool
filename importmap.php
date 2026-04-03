@@ -22,4 +22,7 @@ return [
     '@symfony/stimulus-bundle' => [
         'path' => './vendor/symfony/stimulus-bundle/assets/dist/loader.js',
     ],
+    'qrcode' => [
+        'version' => '1.5.4',
+    ],
 ];

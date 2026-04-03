@@ -7,6 +7,7 @@ namespace App\Controller\Admin;
 use App\Entity\RuleSet;
 use App\Entity\Tournament;
 use App\Enum\TournamentStatus;
+use App\Form\Admin\PaymentSettingsType;
 use App\Form\Admin\RuleSetType;
 use App\Form\Admin\TournamentType;
 use App\Repository\RuleSetRepository;
@@ -129,6 +130,37 @@ class TournamentAdminController extends AbstractController
         return $this->render('admin/form.html.twig', [
             'form' => $form,
             'title' => 'Bodování: ' . $tournament->getName(),
+            'back' => 'admin_tournaments',
+        ]);
+    }
+
+    #[Route('/tournaments/{id}/payment', name: 'admin_tournament_payment', requirements: ['id' => '\d+'])]
+    public function tournamentPayment(
+        Tournament $tournament,
+        Request $request,
+        RuleSetRepository $ruleSetRepo,
+        RuleSetManager $ruleSetManager,
+    ): Response {
+        $ruleSet = $ruleSetRepo->findByTournament($tournament);
+
+        if (null === $ruleSet) {
+            $ruleSet = new RuleSet();
+            $ruleSet->setTournament($tournament);
+        }
+
+        $form = $this->createForm(PaymentSettingsType::class, $ruleSet);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $ruleSetManager->save($ruleSet);
+            $this->addFlash('success', 'Nastavení platby uloženo.');
+
+            return $this->redirectToRoute('admin_tournaments');
+        }
+
+        return $this->render('admin/form.html.twig', [
+            'form' => $form,
+            'title' => 'Platba: ' . $tournament->getName(),
             'back' => 'admin_tournaments',
         ]);
     }

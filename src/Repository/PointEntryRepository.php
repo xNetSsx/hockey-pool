@@ -221,7 +221,7 @@ class PointEntryRepository extends ServiceEntityRepository
     {
         /** @var list<array{userId: int|string, reason: string, cnt: int|string}> $rows */
         $rows = $this->createQueryBuilder('pe')
-            ->select('IDENTITY(pe.user) as userId, pe.reason, COUNT(pe.id) as cnt')
+            ->select('IDENTITY(pe.user) as userId, pe.reason, COUNT(DISTINCT IDENTITY(pe.game)) as cnt')
             ->where('pe.tournament = :tournament')
             ->andWhere('pe.reason IN (:reasons) OR pe.category IN (:categories)')
             ->setParameter('tournament', $tournament)
@@ -269,7 +269,7 @@ class PointEntryRepository extends ServiceEntityRepository
 
         /** @var list<array{userId: int|string, reason: string, cnt: int|string}> $rows */
         $rows = $this->createQueryBuilder('pe')
-            ->select('IDENTITY(pe.user) as userId, pe.reason, COUNT(pe.id) as cnt')
+            ->select('IDENTITY(pe.user) as userId, pe.reason, COUNT(DISTINCT IDENTITY(pe.game)) as cnt')
             ->where('pe.tournament IN (:tournaments)')
             ->andWhere('pe.reason IN (:reasons)')
             ->setParameter('tournaments', $tournaments)

@@ -65,9 +65,26 @@
         </div>
     {% endif %}
 
+    {% if paymentQrString %}
+        <div class="mb-6 flex flex-col items-start justify-between gap-4 rounded-xl border border-blue-200 bg-blue-50 px-6 py-4 sm:flex-row sm:items-center dark:border-blue-800 dark:bg-blue-900/20">
+            <div class="flex items-center gap-4">
+                <span class="text-2xl" aria-hidden="true">💳</span>
+                <div>
+                    <p class="text-sm font-medium text-blue-900 dark:text-blue-200">
+                        Nezaplaceno{% if paymentAmount %} — {{ paymentAmount|number_format(0, ',', ' ') }} Kč{% endif %}
+                    </p>
+                    <p class="mt-0.5 text-xs text-blue-700 dark:text-blue-300">Naskenuj QR kód pro zaplacení účastnického poplatku</p>
+                </div>
+            </div>
+            <div class="shrink-0 rounded-lg bg-white p-2 shadow-sm dark:bg-[#1e293b]">
+                <canvas data-controller="qr" data-qr-data-value="{{ paymentQrString }}"></canvas>
+            </div>
+        </div>
+    {% endif %}
+
     <div class="grid gap-6 lg:grid-cols-3">
         {# Leaderboard — spans 2 columns on large screens #}
-        <div class="lg:col-span-2">
+        <div class="tour-leaderboard lg:col-span-2">
             <div class="overflow-hidden rounded-xl bg-white shadow dark:bg-[#1e293b] dark:shadow-gray-900/30">
                 <div class="border-b border-gray-200 bg-[#0f172a] px-6 py-4 dark:border-gray-700">
                     <h2 class="text-lg font-semibold text-white">Žebříček</h2>
@@ -152,7 +169,7 @@
 
             {# Points progression chart #}
             {% if timeline.labels|length > 0 %}
-                <div class="mt-6 rounded-xl bg-white p-6 shadow dark:bg-[#1e293b] dark:shadow-gray-900/30">
+                <div class="tour-chart mt-6 rounded-xl bg-white p-6 shadow dark:bg-[#1e293b] dark:shadow-gray-900/30">
                     <h2 class="mb-4 text-lg font-semibold text-gray-900 dark:text-white">Průběh bodů</h2>
                     <div class="relative" style="height: 350px;">
                         <canvas id="points-chart"></canvas>
@@ -164,7 +181,7 @@
         {# Right sidebar #}
         <div class="space-y-6">
             {# Quick stats #}
-            <div class="rounded-xl bg-white shadow dark:bg-[#1e293b] dark:shadow-gray-900/30">
+            <div class="tour-stats rounded-xl bg-white shadow dark:bg-[#1e293b] dark:shadow-gray-900/30">
                 <div class="border-b border-gray-200 bg-[#0f172a] px-6 py-4 dark:border-gray-700">
                     <h2 class="text-lg font-semibold text-white">Statistiky</h2>
                 </div>
@@ -194,7 +211,7 @@
 
             {# Upcoming matches or final results #}
             {% if not isFinished and upcomingMatches|length > 0 %}
-                <div class="rounded-xl bg-white shadow dark:bg-[#1e293b] dark:shadow-gray-900/30">
+                <div class="tour-upcoming rounded-xl bg-white shadow dark:bg-[#1e293b] dark:shadow-gray-900/30">
                     <div class="border-b border-gray-200 bg-[#0f172a] px-6 py-4 dark:border-gray-700">
                         <h2 class="text-lg font-semibold text-white">Nadcházející zápasy</h2>
                     </div>
