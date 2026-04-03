@@ -7,6 +7,7 @@ namespace App\Security\Voter;
 use App\Entity\Game;
 use App\Entity\Prediction;
 use App\Entity\User;
+use App\Repository\RuleSetRepository;
 use App\Repository\TournamentParticipantRepository;
 use DateTimeImmutable;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
@@ -30,6 +31,7 @@ class PredictionVoter extends Voter
 
     public function __construct(
         private readonly TournamentParticipantRepository $participantRepository,
+        private readonly RuleSetRepository $ruleSetRepository,
     ) {
     }
 
@@ -71,7 +73,15 @@ class PredictionVoter extends Voter
             return true;
         }
 
-        if (!$this->participantRepository->isParticipant($user, $game->getTournament())) {
+        $tournament = $game->getTournament();
+        $participant = $this->participantRepository->findParticipant($user, $tournament);
+
+        if (null === $participant) {
+            return false;
+        }
+
+        $ruleSet = $this->ruleSetRepository->findByTournament($tournament);
+        if (null !== $ruleSet && $ruleSet->hasPaymentSettings() && !$participant->isPaid()) {
             return false;
         }
 

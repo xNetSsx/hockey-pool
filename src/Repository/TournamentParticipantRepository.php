@@ -23,6 +23,11 @@ class TournamentParticipantRepository extends ServiceEntityRepository
         return null !== $this->findOneBy(['user' => $user, 'tournament' => $tournament]);
     }
 
+    public function findParticipant(User $user, Tournament $tournament): ?TournamentParticipant
+    {
+        return $this->findOneBy(['user' => $user, 'tournament' => $tournament]);
+    }
+
     /**
      * @return list<TournamentParticipant>
      */

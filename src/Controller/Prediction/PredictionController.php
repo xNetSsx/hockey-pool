@@ -14,6 +14,7 @@ use App\Repository\SpecialBetRepository;
 use App\Repository\SpecialBetRuleRepository;
 use App\Repository\TeamRepository;
 use App\Security\Voter\PredictionVoter;
+use App\Security\Voter\SpecialBetVoter;
 use App\Service\Manager\PredictionManager;
 use App\Service\Manager\SpecialBetManager;
 use App\Service\Provider\ActiveTournamentProvider;
@@ -111,7 +112,6 @@ class PredictionController extends AbstractController
     #[Route('/predictions/special', name: 'prediction_special', methods: ['GET'])]
     public function special(
         ActiveTournamentProvider $activeTournamentProvider,
-        GameRepository $gameRepository,
         SpecialBetRuleRepository $ruleRepository,
         SpecialBetRepository $specialBetRepository,
         TeamRepository $teamRepository,
@@ -125,8 +125,7 @@ class PredictionController extends AbstractController
         /** @var User $user */
         $user = $this->getUser();
 
-        $firstMatchDate = $gameRepository->findFirstMatchDate($tournament);
-        $isLocked = null !== $firstMatchDate && $firstMatchDate <= new DateTimeImmutable() && !$this->isGranted('ROLE_ADMIN');
+        $isLocked = !$this->isGranted(SpecialBetVoter::SUBMIT, $tournament);
 
         return $this->render('prediction/special.html.twig', [
             'tournament' => $tournament,
@@ -142,7 +141,6 @@ class PredictionController extends AbstractController
     public function specialSave(
         Request $request,
         ActiveTournamentProvider $activeTournamentProvider,
-        GameRepository $gameRepository,
         SpecialBetRuleRepository $ruleRepository,
         SpecialBetRepository $specialBetRepository,
         SpecialBetManager $specialBetManager,
@@ -153,15 +151,10 @@ class PredictionController extends AbstractController
             return $this->redirectToRoute('prediction_special');
         }
 
+        $this->denyAccessUnlessGranted(SpecialBetVoter::SUBMIT, $tournament);
+
         /** @var User $user */
         $user = $this->getUser();
-
-        $firstMatchDate = $gameRepository->findFirstMatchDate($tournament);
-        if (null !== $firstMatchDate && $firstMatchDate <= new DateTimeImmutable() && !$this->isGranted('ROLE_ADMIN')) {
-            $this->addFlash('error', 'Speciální tipy jsou uzamčeny.');
-
-            return $this->redirectToRoute('prediction_special');
-        }
 
         $rules = $ruleRepository->findByTournament($tournament);
         $existingBets = $specialBetRepository->findByUserIndexedByRule($user, $tournament);

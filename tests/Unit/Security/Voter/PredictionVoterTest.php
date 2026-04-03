@@ -6,7 +6,9 @@ namespace App\Tests\Unit\Security\Voter;
 
 use App\Entity\Game;
 use App\Entity\Prediction;
+use App\Entity\TournamentParticipant;
 use App\Entity\User;
+use App\Repository\RuleSetRepository;
 use App\Repository\TournamentParticipantRepository;
 use App\Security\Voter\PredictionVoter;
 use DateTimeImmutable;
@@ -20,10 +22,16 @@ class PredictionVoterTest extends TestCase
 
     protected function setUp(): void
     {
-        $participantRepo = $this->createStub(TournamentParticipantRepository::class);
-        $participantRepo->method('isParticipant')->willReturn(true);
+        $participant = $this->createStub(TournamentParticipant::class);
+        $participant->method('isPaid')->willReturn(true);
 
-        $this->voter = new PredictionVoter($participantRepo);
+        $participantRepo = $this->createStub(TournamentParticipantRepository::class);
+        $participantRepo->method('findParticipant')->willReturn($participant);
+
+        $ruleSetRepo = $this->createStub(RuleSetRepository::class);
+        $ruleSetRepo->method('findByTournament')->willReturn(null);
+
+        $this->voter = new PredictionVoter($participantRepo, $ruleSetRepo);
     }
 
     public function testCanCreatePredictionBeforeMatchStarts(): void
