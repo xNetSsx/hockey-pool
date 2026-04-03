@@ -5,9 +5,11 @@ declare(strict_types=1);
 namespace App\Controller\User;
 
 use App\Entity\User;
+use App\Enum\TournamentStatus;
 use App\Repository\GameRepository;
 use App\Repository\PredictionRepository;
 use App\Repository\SpecialBetRepository;
+use App\Repository\TournamentParticipantRepository;
 use App\Repository\UserRepository;
 use App\Service\Builder\CareerStatsBuilder;
 use App\Service\Builder\LeaderboardBuilder;
@@ -82,15 +84,27 @@ class UserController extends AbstractController
         Request $request,
         UserRepository $userRepository,
         ActiveTournamentProvider $activeTournamentProvider,
+        TournamentParticipantRepository $participantRepository,
         LeaderboardBuilder $leaderboardBuilder,
         PlayerStatsBuilder $playerStatsBuilder,
         PlayerComparisonBuilder $comparisonBuilder,
     ): Response {
-        $usernames = array_slice($request->query->all('users'), 0, 5);
+        $usernames = $request->query->all('users');
 
         if (count($usernames) < 2) {
+            $tournament = $activeTournamentProvider->getActiveTournament();
+            $players = [];
+            if (null !== $tournament && $tournament->getStatus() !== TournamentStatus::Upcoming) {
+                foreach ($participantRepository->findByTournament($tournament) as $participant) {
+                    $players[] = $participant->getUser();
+                }
+            } else {
+                $players = $userRepository->findBy([], ['username' => 'ASC']);
+            }
+            usort($players, static fn (User $a, User $b) => strcmp($a->getUsername(), $b->getUsername()));
+
             return $this->render('user/compare_select.html.twig', [
-                'allUsers' => $userRepository->findBy([], ['username' => 'ASC']),
+                'players' => $players,
             ]);
         }
 
