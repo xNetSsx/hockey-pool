@@ -98,6 +98,38 @@ class PredictionRepository extends ServiceEntityRepository
     }
 
     /**
+     * Count of finished-game predictions per user across multiple tournaments.
+     *
+     * @param list<Tournament> $tournaments
+     * @return array<int, int> userId => count
+     */
+    public function getFinishedPredictionCountsByUsers(array $tournaments): array
+    {
+        if ([] === $tournaments) {
+            return [];
+        }
+
+        /** @var list<array{userId: int|string, cnt: int|string}> $rows */
+        $rows = $this->createQueryBuilder('p')
+            ->select('IDENTITY(p.user) as userId, COUNT(p.id) as cnt')
+            ->join('p.game', 'g')
+            ->where('g.tournament IN (:tournaments)')
+            ->andWhere('g.isFinished = true')
+            ->setParameter('tournaments', $tournaments)
+            ->groupBy('p.user')
+            ->getQuery()
+            ->getResult();
+
+        /** @var array<int, int> $result */
+        $result = [];
+        foreach ($rows as $row) {
+            $result[(int) $row['userId']] = (int) $row['cnt'];
+        }
+
+        return $result;
+    }
+
+    /**
      * Returns predictions for a user in a tournament, indexed by game ID.
      *
      * @return array<int, Prediction>

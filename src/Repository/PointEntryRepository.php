@@ -256,6 +256,50 @@ class PointEntryRepository extends ServiceEntityRepository
     }
 
     /**
+     * Career tiebreak counts (exact scores + correct winners) aggregated across multiple tournaments.
+     *
+     * @param list<Tournament> $tournaments
+     * @return array<int, array{exactScores: int, correctWinners: int}>
+     */
+    public function getCareerTiebreakCountsByUsers(array $tournaments): array
+    {
+        if ([] === $tournaments) {
+            return [];
+        }
+
+        /** @var list<array{userId: int|string, reason: string, cnt: int|string}> $rows */
+        $rows = $this->createQueryBuilder('pe')
+            ->select('IDENTITY(pe.user) as userId, pe.reason, COUNT(pe.id) as cnt')
+            ->where('pe.tournament IN (:tournaments)')
+            ->andWhere('pe.reason IN (:reasons)')
+            ->setParameter('tournaments', $tournaments)
+            ->setParameter('reasons', [
+                MatchPointResolver::REASON_EXACT_SCORE_BONUS,
+                MatchPointResolver::REASON_CORRECT_WINNER,
+            ])
+            ->groupBy('pe.user, pe.reason')
+            ->getQuery()
+            ->getResult();
+
+        /** @var array<int, array{exactScores: int, correctWinners: int}> $result */
+        $result = [];
+        foreach ($rows as $row) {
+            $userId = (int) $row['userId'];
+            if (!isset($result[$userId])) {
+                $result[$userId] = ['exactScores' => 0, 'correctWinners' => 0];
+            }
+
+            if ($row['reason'] === MatchPointResolver::REASON_EXACT_SCORE_BONUS) {
+                $result[$userId]['exactScores'] = (int) $row['cnt'];
+            } elseif ($row['reason'] === MatchPointResolver::REASON_CORRECT_WINNER) {
+                $result[$userId]['correctWinners'] = (int) $row['cnt'];
+            }
+        }
+
+        return $result;
+    }
+
+    /**
      * Points earned today per user (from matches played today).
      *
      * @return array<int, float> userId => points

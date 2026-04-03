@@ -25,7 +25,7 @@
                         </a>
                         {% if current_tournament %}
                             <a href="{{ path('tournament_archive') }}"
-                               class="hidden rounded-full bg-[#0f172a] px-3 py-1 text-xs font-medium text-white hover:bg-[#1e293b] dark:bg-[#38bdf8] dark:text-[#0f172a] dark:hover:bg-[#7dd3fc] sm:inline-block"
+                               class="inline-block rounded-full bg-[#0f172a] px-3 py-1 text-xs font-medium text-white hover:bg-[#1e293b] dark:bg-[#38bdf8] dark:text-[#0f172a] dark:hover:bg-[#7dd3fc]"
                                title="Změnit turnaj">
                                 {{ current_tournament.name }}
                             </a>
@@ -49,12 +49,19 @@
                             <a href="{{ path('rules_page') }}" class="rounded-lg px-3 py-2 text-sm font-medium {{ m.nav_link_class(_route == 'rules_page') }}">Pravidla</a>
                             <a href="{{ path('manual_page') }}" class="rounded-lg px-3 py-2 text-sm font-medium {{ m.nav_link_class(_route == 'manual_page') }}">Manuál</a>
                             <a href="{{ path('tournament_archive') }}" class="rounded-lg px-3 py-2 text-sm font-medium {{ m.nav_link_class(_route starts with 'tournament_') }}">Turnaje</a>
+                            <a href="{{ path('hall_of_fame') }}" class="inline-flex items-center gap-1 rounded-lg px-3 py-2 text-sm font-medium {{ m.nav_link_class(_route == 'hall_of_fame') }}">
+                                <svg class="h-4 w-4 text-amber-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                                    <path fill-rule="evenodd" d="M5.166 2.621v.858c-1.035.148-2.059.33-3.071.543a.75.75 0 0 0-.584.859 6.753 6.753 0 0 0 6.138 5.6 6.73 6.73 0 0 0 2.743 1.346A6.707 6.707 0 0 1 9.279 15H8.54c-1.036 0-1.875.84-1.875 1.875V19.5h-.75a2.25 2.25 0 0 0-2.25 2.25c0 .414.336.75.75.75h15a.75.75 0 0 0 .75-.75 2.25 2.25 0 0 0-2.25-2.25h-.75v-2.625c0-1.036-.84-1.875-1.875-1.875h-.739a6.706 6.706 0 0 1-1.112-3.173 6.73 6.73 0 0 0 2.743-1.347 6.753 6.753 0 0 0 6.139-5.6.75.75 0 0 0-.585-.858 47.077 47.077 0 0 0-3.07-.543V2.62a.75.75 0 0 0-.658-.744 49.798 49.798 0 0 0-6.093-.377c-2.063 0-4.096.128-6.093.377a.75.75 0 0 0-.657.744Zm0 2.629c0 1.196.312 2.32.857 3.294A5.266 5.266 0 0 1 3.16 5.337a45.6 45.6 0 0 1 2.006-.343v.256Zm13.5 0v-.256c.674.1 1.343.214 2.006.343a5.265 5.265 0 0 1-2.863 3.207 6.72 6.72 0 0 0 .857-3.294Z" clip-rule="evenodd" />
+                                </svg>
+                                Síň slávy
+                            </a>
                             {% block nav_links %}{% endblock %}
                             <div class="ml-2 flex items-center gap-2 border-l border-gray-200 pl-3 dark:border-gray-700">
-                                <a href="{{ path('change_password') }}" class="rounded-lg px-3 py-2 text-sm font-medium text-gray-900 hover:bg-gray-100 dark:text-white dark:hover:bg-white/10">{{ app.user.username }}</a>
+                                <a href="{{ path('player_profile', {username: app.user.username}) }}" class="rounded-lg px-3 py-2 text-sm font-medium text-gray-900 hover:bg-gray-100 dark:text-white dark:hover:bg-white/10">{{ app.user.username }}</a>
                                 {% if is_granted('ROLE_ADMIN') %}
                                     <a href="{{ path('admin_dashboard') }}" class="rounded bg-red-500/10 px-2.5 py-1 text-xs font-semibold text-red-600 hover:bg-red-500/20 dark:text-red-400">Admin</a>
                                 {% endif %}
+                                <a href="{{ path('change_password') }}" class="rounded-lg px-3 py-2 text-sm text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/10 dark:hover:text-gray-200">Heslo</a>
                                 <a href="{{ path('app_logout') }}" class="rounded-lg px-3 py-2 text-sm text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/10 dark:hover:text-gray-200">Odhlásit</a>
                                 <button type="button" {{ stimulus_controller('theme') }} {{ stimulus_action('theme', 'toggle') }}
                                         class="rounded-lg p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-white/10 dark:hover:text-white" title="Přepnout vzhled" aria-label="Přepnout vzhled">
@@ -99,8 +106,15 @@
                         <a href="{{ path('rules_page') }}" class="block rounded-lg px-3 py-2 text-base font-medium {{ m.nav_link_class(_route == 'rules_page', true) }}" {{ stimulus_action('nav', 'close') }}>Pravidla</a>
                         <a href="{{ path('manual_page') }}" class="block rounded-lg px-3 py-2 text-base font-medium {{ m.nav_link_class(_route == 'manual_page', true) }}" {{ stimulus_action('nav', 'close') }}>Manuál</a>
                         <a href="{{ path('tournament_archive') }}" class="block rounded-lg px-3 py-2 text-base font-medium {{ m.nav_link_class(_route starts with 'tournament_', true) }}" {{ stimulus_action('nav', 'close') }}>Turnaje</a>
+                        <a href="{{ path('hall_of_fame') }}" class="flex items-center gap-2 rounded-lg px-3 py-2 text-base font-medium {{ m.nav_link_class(_route == 'hall_of_fame', true) }}" {{ stimulus_action('nav', 'close') }}>
+                            <svg class="h-4 w-4 text-amber-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                                <path fill-rule="evenodd" d="M5.166 2.621v.858c-1.035.148-2.059.33-3.071.543a.75.75 0 0 0-.584.859 6.753 6.753 0 0 0 6.138 5.6 6.73 6.73 0 0 0 2.743 1.346A6.707 6.707 0 0 1 9.279 15H8.54c-1.036 0-1.875.84-1.875 1.875V19.5h-.75a2.25 2.25 0 0 0-2.25 2.25c0 .414.336.75.75.75h15a.75.75 0 0 0 .75-.75 2.25 2.25 0 0 0-2.25-2.25h-.75v-2.625c0-1.036-.84-1.875-1.875-1.875h-.739a6.706 6.706 0 0 1-1.112-3.173 6.73 6.73 0 0 0 2.743-1.347 6.753 6.753 0 0 0 6.139-5.6.75.75 0 0 0-.585-.858 47.077 47.077 0 0 0-3.07-.543V2.62a.75.75 0 0 0-.658-.744 49.798 49.798 0 0 0-6.093-.377c-2.063 0-4.096.128-6.093.377a.75.75 0 0 0-.657.744Zm0 2.629c0 1.196.312 2.32.857 3.294A5.266 5.266 0 0 1 3.16 5.337a45.6 45.6 0 0 1 2.006-.343v.256Zm13.5 0v-.256c.674.1 1.343.214 2.006.343a5.265 5.265 0 0 1-2.863 3.207 6.72 6.72 0 0 0 .857-3.294Z" clip-rule="evenodd" />
+                            </svg>
+                            Síň slávy
+                        </a>
                         <div class="mt-3 border-t border-gray-200 pt-3 dark:border-gray-700">
-                            <a href="{{ path('change_password') }}" class="block rounded-lg px-3 py-2 text-base font-medium text-gray-900 hover:bg-gray-100 dark:text-white dark:hover:bg-white/10">{{ app.user.username }}</a>
+                            <a href="{{ path('player_profile', {username: app.user.username}) }}" class="block rounded-lg px-3 py-2 text-base font-medium text-gray-900 hover:bg-gray-100 dark:text-white dark:hover:bg-white/10">{{ app.user.username }}</a>
+                            <a href="{{ path('change_password') }}" class="block rounded-lg px-3 py-2 text-base text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-white/10">Změnit heslo</a>
                             {% if is_granted('ROLE_ADMIN') %}
                                 <a href="{{ path('admin_dashboard') }}" class="block rounded-lg px-3 py-2 text-base font-medium text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-500/10">Admin</a>
                             {% endif %}

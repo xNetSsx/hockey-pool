@@ -13,14 +13,14 @@
                     {% for user in allUsers %}
                         <label class="flex items-center gap-3 rounded-lg border border-gray-200 px-4 py-2.5 hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-white/5">
                             <input type="checkbox" name="users[]" value="{{ user.username }}"
-                                   class="h-4 w-4 rounded border-gray-300 text-blue-600">
+                                   class="h-4 w-4 rounded border-gray-300 text-[#38bdf8] focus:ring-[#38bdf8]">
                             <span class="text-sm font-medium dark:text-gray-100">{{ user.username }}</span>
                         </label>
                     {% endfor %}
                 </div>
                 <div class="mt-6 text-center">
                     <button type="submit"
-                            class="rounded-lg bg-blue-600 px-6 py-2.5 font-semibold text-white hover:bg-blue-700 dark:bg-[#38bdf8] dark:text-[#0f172a] dark:hover:bg-[#7dd3fc]">
+                            class="rounded-lg bg-[#0f172a] px-6 py-2.5 font-semibold text-white hover:bg-[#1e293b] focus:outline-none focus:ring-2 focus:ring-[#38bdf8] focus:ring-offset-2 dark:bg-[#38bdf8] dark:text-[#0f172a] dark:hover:bg-[#7dd3fc]">
                         Porovnat
                     </button>
                 </div>

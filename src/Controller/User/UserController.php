@@ -9,6 +9,7 @@ use App\Repository\GameRepository;
 use App\Repository\PredictionRepository;
 use App\Repository\SpecialBetRepository;
 use App\Repository\UserRepository;
+use App\Service\Builder\CareerStatsBuilder;
 use App\Service\Builder\LeaderboardBuilder;
 use App\Service\Builder\PlayerComparisonBuilder;
 use App\Service\Builder\PlayerStatsBuilder;
@@ -31,6 +32,7 @@ class UserController extends AbstractController
         SpecialBetRepository $specialBetRepository,
         LeaderboardBuilder $leaderboardBuilder,
         PlayerStatsBuilder $playerStatsBuilder,
+        CareerStatsBuilder $careerStatsBuilder,
     ): Response {
         $player = $userRepository->findOneBy(['username' => $username]);
 
@@ -40,8 +42,13 @@ class UserController extends AbstractController
 
         $tournament = $activeTournamentProvider->getActiveTournament();
 
+        $careerStats = $careerStatsBuilder->buildForUser($player);
+
         if (null === $tournament) {
-            return $this->render('user/empty.html.twig', ['player' => $player]);
+            return $this->render('user/empty.html.twig', [
+                'player' => $player,
+                'careerStats' => $careerStats,
+            ]);
         }
 
         $leaderboard = $leaderboardBuilder->build($tournament);
@@ -66,6 +73,7 @@ class UserController extends AbstractController
             'userPredictions' => $predictionRepository->findByUserIndexedByGame($player, $tournament),
             'specialBets' => $specialBetRepository->findByUserIndexedByRule($player, $tournament),
             'stats' => $playerStatsBuilder->build($player, $tournament),
+            'careerStats' => $careerStats,
         ]);
     }
 

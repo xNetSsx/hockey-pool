@@ -88,7 +88,7 @@
                                     <span class="countdown-timer flex items-center gap-1 text-[11px] tabular-nums" data-deadline="{{ game.playedAt|date('c') }}"></span>
                                 {% endif %}
                                 <a href="{{ path('prediction_edit', {id: game.id}) }}"
-                                   class="rounded bg-blue-600 px-3 py-1 text-xs font-medium text-white hover:bg-blue-700">
+                                   class="rounded bg-[#0f172a] px-3 py-1 text-xs font-medium text-white hover:bg-[#1e293b] dark:bg-[#38bdf8] dark:text-[#0f172a] dark:hover:bg-[#7dd3fc]">
                                     {{ prediction ? 'Změnit' : 'Tipovat' }}
                                 </a>
                             {% elseif not prediction %}
