@@ -32,11 +32,12 @@ class ChangePasswordController extends AbstractController
 
             $this->addFlash('success', 'Heslo bylo změněno.');
 
-            return $this->redirectToRoute('homepage');
+            return $this->redirectToRoute('player_profile', ['username' => $user->getUsername()]);
         }
 
         return $this->render('user/change_password.html.twig', [
             'form' => $form,
+            'user' => $user,
         ]);
     }
 }

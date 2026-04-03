@@ -15,7 +15,7 @@ use Symfony\Component\HttpFoundation\RequestStack;
  * Priority:
  *  1. Tournament stored in session (user explicitly picked one)
  *  2. In-progress tournament
- *  3. Latest finished tournament
+ *  3. null → caller redirects to tournament selection
  */
 final readonly class ActiveTournamentProvider
 {
@@ -53,7 +53,6 @@ final readonly class ActiveTournamentProvider
 
     public function getDefaultTournament(): ?Tournament
     {
-        return $this->tournamentRepository->findOneBy(['status' => TournamentStatus::InProgress])
-            ?? $this->tournamentRepository->findOneBy(['status' => TournamentStatus::Finished], ['year' => 'DESC']);
+        return $this->tournamentRepository->findOneBy(['status' => TournamentStatus::InProgress]);
     }
 }
