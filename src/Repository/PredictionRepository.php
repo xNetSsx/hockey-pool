@@ -122,6 +122,63 @@ class PredictionRepository extends ServiceEntityRepository
     }
 
     /**
+     * Accuracy stats per tournament for a single user, computed in one query.
+     *
+     * exactScores: games where prediction matched exact score
+     * correctWinners: games where prediction matched winner (includes exact scores)
+     * wrongPredictions: finished games with a prediction but wrong winner
+     * total: all predictions including non-finished games
+     *
+     * @param User $user
+     * @param list<Tournament> $tournaments
+     * @return array<int, array{total: int, exactScores: int, correctWinners: int, wrongPredictions: int}>
+     */
+    public function getAccuracyStatsByTournamentForUser(User $user, array $tournaments): array
+    {
+        if ([] === $tournaments) {
+            return [];
+        }
+
+        /** @var list<array{
+         *     tournamentId: int|string,
+         *     total: int|string,
+         *     exactScores: int|string,
+         *     correctWinners: int|string,
+         *     wrongPredictions: int|string,
+         * }> $rows
+         */
+        $rows = $this->createQueryBuilder('p')
+            ->select(
+                'IDENTITY(g.tournament) as tournamentId',
+                'COUNT(p.id) as total',
+                'SUM(CASE WHEN g.isFinished = true AND p.homeScore = g.homeScore AND p.awayScore = g.awayScore THEN 1 ELSE 0 END) as exactScores',
+                'SUM(CASE WHEN g.isFinished = true AND ((p.homeScore > p.awayScore AND g.homeScore > g.awayScore) OR (p.awayScore > p.homeScore AND g.awayScore > g.homeScore)) THEN 1 ELSE 0 END) as correctWinners',
+                'SUM(CASE WHEN g.isFinished = true AND NOT ((p.homeScore > p.awayScore AND g.homeScore > g.awayScore) OR (p.awayScore > p.homeScore AND g.awayScore > g.homeScore)) THEN 1 ELSE 0 END) as wrongPredictions',
+            )
+            ->join('p.game', 'g')
+            ->where('p.user = :user')
+            ->andWhere('g.tournament IN (:tournaments)')
+            ->setParameter('user', $user)
+            ->setParameter('tournaments', $tournaments)
+            ->groupBy('g.tournament')
+            ->getQuery()
+            ->getResult();
+
+        /** @var array<int, array{total: int, exactScores: int, correctWinners: int, wrongPredictions: int}> $result */
+        $result = [];
+        foreach ($rows as $row) {
+            $result[(int) $row['tournamentId']] = [
+                'total' => (int) $row['total'],
+                'exactScores' => (int) $row['exactScores'],
+                'correctWinners' => (int) $row['correctWinners'],
+                'wrongPredictions' => (int) $row['wrongPredictions'],
+            ];
+        }
+
+        return $result;
+    }
+
+    /**
      * Returns predictions for a user in a tournament, indexed by game ID.
      *
      * @return array<int, Prediction>

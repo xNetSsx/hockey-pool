@@ -51,4 +51,33 @@ class TournamentParticipantRepository extends ServiceEntityRepository
 
         return array_map(static fn (array $row) => (int) $row['userId'], $rows);
     }
+
+    /**
+     * Participant user IDs for multiple tournaments in one query.
+     *
+     * @param list<Tournament> $tournaments
+     * @return array<int, list<int>>
+     */
+    public function getParticipantUserIdsByTournaments(array $tournaments): array
+    {
+        if ([] === $tournaments) {
+            return [];
+        }
+
+        /** @var list<array{tournamentId: int|string, userId: int|string}> $rows */
+        $rows = $this->createQueryBuilder('tp')
+            ->select('IDENTITY(tp.tournament) as tournamentId, IDENTITY(tp.user) as userId')
+            ->where('tp.tournament IN (:tournaments)')
+            ->setParameter('tournaments', $tournaments)
+            ->getQuery()
+            ->getResult();
+
+        /** @var array<int, list<int>> $result */
+        $result = [];
+        foreach ($rows as $row) {
+            $result[(int) $row['tournamentId']][] = (int) $row['userId'];
+        }
+
+        return $result;
+    }
 }

@@ -22,7 +22,6 @@ final readonly class CareerStatsBuilder
         private TournamentRepository $tournamentRepository,
         private PointEntryRepository $pointEntryRepository,
         private LeaderboardBuilder $leaderboardBuilder,
-        private PlayerStatsBuilder $playerStatsBuilder,
         private PredictionRepository $predictionRepository,
     ) {
     }
@@ -54,6 +53,9 @@ final readonly class CareerStatsBuilder
             ['year' => 'ASC'],
         );
 
+        $leaderboardsByTournament = $this->leaderboardBuilder->buildForTournaments($finishedTournaments);
+        $accuracyByTournament = $this->predictionRepository->getAccuracyStatsByTournamentForUser($user, $finishedTournaments);
+
         $tournamentsPlayed = 0;
         $firstPlace = 0;
         $secondPlace = 0;
@@ -70,7 +72,8 @@ final readonly class CareerStatsBuilder
         $userId = $user->getId();
 
         foreach ($finishedTournaments as $tournament) {
-            $leaderboard = $this->leaderboardBuilder->build($tournament);
+            $tournamentId = (int) $tournament->getId();
+            $leaderboard = $leaderboardsByTournament[$tournamentId] ?? [];
 
             $rank = null;
             foreach ($leaderboard as $row) {
@@ -99,14 +102,20 @@ final readonly class CareerStatsBuilder
                 $thirdPlace++;
             }
 
-            $pStats = $this->playerStatsBuilder->build($user, $tournament);
-            $totalPredictions += $pStats['totalPredictions'];
-            $careerExactScores += $pStats['exactScores'];
-            $careerCorrectWinners += $pStats['correctWinners'];
-            $careerWrongPredictions += $pStats['wrongPredictions'];
-            $bestTournamentAccuracy = null === $bestTournamentAccuracy
-                ? $pStats['accuracy']
-                : max($bestTournamentAccuracy, $pStats['accuracy']);
+            $acc = $accuracyByTournament[$tournamentId] ?? null;
+            if (null !== $acc) {
+                $totalPredictions += $acc['total'];
+                $careerExactScores += $acc['exactScores'];
+                $careerCorrectWinners += $acc['correctWinners'];
+                $careerWrongPredictions += $acc['wrongPredictions'];
+                $finishedWithPrediction = $acc['correctWinners'] + $acc['wrongPredictions'];
+                $tournamentAccuracy = $finishedWithPrediction > 0
+                    ? round($acc['correctWinners'] / $finishedWithPrediction * 100, 1)
+                    : 0.0;
+                $bestTournamentAccuracy = null === $bestTournamentAccuracy
+                    ? $tournamentAccuracy
+                    : max($bestTournamentAccuracy, $tournamentAccuracy);
+            }
         }
 
         $finishedWithPrediction = $careerCorrectWinners + $careerWrongPredictions;
@@ -170,9 +179,9 @@ final readonly class CareerStatsBuilder
         /** @var array<int, array{user: User, tournamentsPlayed: int, firstPlace: int, secondPlace: int, thirdPlace: int, rankSum: float, bestRank: int|null}> $statsById */
         $statsById = [];
 
-        foreach ($finishedTournaments as $tournament) {
-            $leaderboard = $this->leaderboardBuilder->build($tournament);
+        $leaderboardsByTournament = $this->leaderboardBuilder->buildForTournaments($finishedTournaments);
 
+        foreach ($leaderboardsByTournament as $leaderboard) {
             foreach ($leaderboard as $row) {
                 $uid = (int) $row['user']->getId();
                 $rank = $row['rank'];
@@ -299,10 +308,13 @@ final readonly class CareerStatsBuilder
             ['year' => 'DESC'],
         );
 
+        $leaderboardsByTournament = $this->leaderboardBuilder->buildForTournaments($finishedTournaments);
+
         $result = [];
 
         foreach ($finishedTournaments as $tournament) {
-            $leaderboard = $this->leaderboardBuilder->build($tournament);
+            $tournamentId = (int) $tournament->getId();
+            $leaderboard = $leaderboardsByTournament[$tournamentId] ?? [];
 
             $podium = [];
             foreach ($leaderboard as $row) {

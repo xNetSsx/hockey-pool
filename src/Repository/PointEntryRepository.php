@@ -256,6 +256,91 @@ class PointEntryRepository extends ServiceEntityRepository
     }
 
     /**
+     * Points grouped by user for multiple tournaments in one query.
+     *
+     * @param list<Tournament> $tournaments
+     * @return array<int, list<array{userId: int, totalPoints: float}>>
+     */
+    public function getPointsGroupedByUserForTournaments(array $tournaments): array
+    {
+        if ([] === $tournaments) {
+            return [];
+        }
+
+        /** @var list<array{tournamentId: int|string, userId: int|string, totalPoints: float|string}> $rows */
+        $rows = $this->createQueryBuilder('pe')
+            ->select('IDENTITY(pe.tournament) as tournamentId, IDENTITY(pe.user) as userId, SUM(pe.points) as totalPoints')
+            ->where('pe.tournament IN (:tournaments)')
+            ->setParameter('tournaments', $tournaments)
+            ->groupBy('pe.tournament, pe.user')
+            ->orderBy('totalPoints', 'DESC')
+            ->getQuery()
+            ->getResult();
+
+        /** @var array<int, list<array{userId: int, totalPoints: float}>> $result */
+        $result = [];
+        foreach ($rows as $row) {
+            $tournamentId = (int) $row['tournamentId'];
+            $result[$tournamentId][] = [
+                'userId' => (int) $row['userId'],
+                'totalPoints' => (float) $row['totalPoints'],
+            ];
+        }
+
+        return $result;
+    }
+
+    /**
+     * Tiebreak counts per user for multiple tournaments in one query.
+     *
+     * @param list<Tournament> $tournaments
+     * @return array<int, array<int, array{exactScores: int, correctWinners: int}>>
+     */
+    public function getTiebreakCountsByUserForTournaments(array $tournaments): array
+    {
+        if ([] === $tournaments) {
+            return [];
+        }
+
+        /** @var list<array{tournamentId: int|string, userId: int|string, reason: string, cnt: int|string}> $rows */
+        $rows = $this->createQueryBuilder('pe')
+            ->select('IDENTITY(pe.tournament) as tournamentId, IDENTITY(pe.user) as userId, pe.reason, COUNT(DISTINCT IDENTITY(pe.game)) as cnt')
+            ->where('pe.tournament IN (:tournaments)')
+            ->andWhere('pe.reason IN (:reasons) OR pe.category IN (:categories)')
+            ->setParameter('tournaments', $tournaments)
+            ->setParameter('reasons', [
+                MatchPointResolver::REASON_EXACT_SCORE_BONUS,
+                MatchPointResolver::REASON_CORRECT_WINNER,
+            ])
+            ->setParameter('categories', [
+                PointCategory::CorrectWinner,
+                PointCategory::ExactScoreBonus,
+            ])
+            ->groupBy('pe.tournament, pe.user, pe.reason')
+            ->getQuery()
+            ->getResult();
+
+        /** @var array<int, array<int, array{exactScores: int, correctWinners: int}>> $result */
+        $result = [];
+        foreach ($rows as $row) {
+            $tournamentId = (int) $row['tournamentId'];
+            $userId = (int) $row['userId'];
+
+            if (!isset($result[$tournamentId][$userId])) {
+                $result[$tournamentId][$userId] = ['exactScores' => 0, 'correctWinners' => 0];
+            }
+
+            if ($row['reason'] === MatchPointResolver::REASON_EXACT_SCORE_BONUS) {
+                $result[$tournamentId][$userId]['exactScores'] = (int) $row['cnt'];
+            } elseif ($row['reason'] === MatchPointResolver::REASON_CORRECT_WINNER) {
+                $result[$tournamentId][$userId]['correctWinners'] = (int) $row['cnt'];
+            }
+        }
+
+        return $result;
+    }
+
+    /**
      * Career tiebreak counts (exact scores + correct winners) aggregated across multiple tournaments.
      *
      * @param list<Tournament> $tournaments
