@@ -3,6 +3,9 @@
 {% block title %}Speciální tipy — přehled{% endblock %}
 
 {% block body %}
+    {% set currentUserId = currentUserId|default(null) %}
+    {% set pointsByRuleAndUser = pointsByRuleAndUser|default({}) %}
+
     <div class="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
             <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Speciální tipy — přehled</h1>
@@ -10,52 +13,125 @@
                 <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">{{ tournament.name }}</p>
             {% endif %}
         </div>
-        <a href="{{ path('prediction_special') }}"
-           class="inline-flex items-center rounded-lg bg-[#0f172a] px-4 py-2 text-sm font-medium text-white hover:bg-[#1e293b]">
-            Moje tipy
-        </a>
+        <div class="flex gap-2">
+            <a href="{{ path('prediction_list') }}"
+               class="inline-flex items-center rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-white/10">
+                Zpět na tipy
+            </a>
+            <a href="{{ path('prediction_special') }}"
+               class="inline-flex items-center rounded-lg bg-[#0f172a] px-4 py-2 text-sm font-medium text-white hover:bg-[#1e293b]">
+                Upravit tipy
+            </a>
+        </div>
     </div>
 
-    {% if locked %}
-        <div class="rounded-xl bg-white p-8 text-center shadow dark:bg-[#1e293b] dark:shadow-gray-900/30">
-            <p class="text-gray-500 dark:text-gray-400">Tipy ostatních se zobrazí po začátku turnaje.</p>
-        </div>
-    {% elseif rules|length == 0 %}
+    {% if rules|length == 0 %}
         <div class="rounded-xl bg-white p-8 text-center shadow dark:bg-[#1e293b] dark:shadow-gray-900/30">
             <p class="text-gray-500 dark:text-gray-400">Žádné speciální tipy pro tento turnaj.</p>
         </div>
     {% else %}
+        {# Group rules by composite key: scoringType:valueType + optional sub-group #}
+        {% set groupLabels = {
+            'podium:team':             'Medaile',
+            'any_match:string':        'Nejlepší hráči',
+            'any_match:team':          'Nejlepší hráči',
+            'exact_match:team':              'Pořadí skupin',
+            'exact_match:team:a':            'Pořadí skupin — A',
+            'exact_match:team:b':            'Pořadí skupin — B',
+            'exact_match:team:c':            'Pořadí skupin — C',
+            'exact_match:team:d':            'Pořadí skupin — D',
+            'exact_match:team:sestupujici':  'Sestupující týmy',
+            'exact_match:string':      'Ostatní',
+            'exact_match:integer':     'Ostatní',
+            'closest:integer':         'Čísla',
+            'closest:string':          'Čísla',
+        } %}
+        {% set groupedRules = {} %}
+        {% for rule in rules %}
+            {% set base = rule.scoringType.value ~ ':' ~ rule.valueType.value %}
+            {% set key = base %}
+            {% if rule.scoringType.value == 'exact_match' and rule.valueType.value == 'team' %}
+                {% if 'Sestupující' in rule.name %}
+                    {% set key = base ~ ':sestupujici' %}
+                {% else %}
+                    {% for letter in ['a','b','c','d','e','f'] %}
+                        {% if ('Skupina ' ~ letter|upper) in rule.name and key == base %}
+                            {% set key = base ~ ':' ~ letter %}
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
+            {% endif %}
+            {% set groupedRules = groupedRules|merge({(key): (groupedRules[key] ?? [])|merge([rule])}) %}
+        {% endfor %}
+
+        {# Compute per-player totals for tfoot #}
+        {% set totalPointsPerPlayer = {} %}
+        {% for player in players %}
+            {% set total = 0 %}
+            {% for rule in rules %}
+                {% set pts = pointsByRuleAndUser[rule.id][player.id] ?? 0 %}
+                {% set total = total + pts %}
+            {% endfor %}
+            {% set totalPointsPerPlayer = totalPointsPerPlayer|merge({(player.id): total}) %}
+        {% endfor %}
+
+        {% set colCount = 1 + players|length + (tournament.status.value == 'finished' ? 1 : 0) %}
+
         <div class="overflow-hidden rounded-xl bg-white shadow dark:bg-[#1e293b] dark:shadow-gray-900/30">
             <div class="overflow-x-auto">
-                <table class="w-full text-sm">
+                <table class="w-full border-collapse text-sm">
                     <thead>
-                        <tr class="border-b border-gray-100 bg-gray-50 text-left text-xs uppercase tracking-wider text-gray-500 dark:border-gray-700 dark:bg-[#0f172a] dark:text-gray-400">
-                            <th class="sticky left-0 bg-gray-50 px-4 py-3 dark:bg-[#0f172a]">Pravidlo</th>
+                        <tr class="border-b-2 border-gray-200 bg-gray-50 text-left text-xs uppercase tracking-wider text-gray-500 dark:border-gray-700 dark:bg-[#0f172a] dark:text-gray-400">
+                            <th class="sticky left-0 w-44 bg-gray-50 px-4 py-3 dark:bg-[#0f172a]">Pravidlo</th>
                             {% for player in players %}
-                                <th class="px-3 py-3 text-center">{{ player.username }}</th>
+                                {% set isMineHeader = player.id == currentUserId %}
+                                <th class="px-4 py-3 text-center font-semibold {% if isMineHeader %}bg-sky-50 text-sky-700 dark:bg-sky-400/10 dark:text-sky-300{% endif %}">
+                                    {{ player.username }}
+                                    {% if isMineHeader %}<span class="ml-1 text-[10px] font-normal opacity-60">(ty)</span>{% endif %}
+                                </th>
                             {% endfor %}
                             {% if tournament.status.value == 'finished' %}
-                                <th class="px-3 py-3 text-center text-green-600 dark:text-green-400">Skutečnost</th>
+                                <th class="px-4 py-3 text-center text-green-600 dark:text-green-400">Skutečnost</th>
                             {% endif %}
                         </tr>
                     </thead>
                     <tbody>
-                        {% for rule in rules %}
-                            <tr class="border-b border-gray-100 last:border-0 dark:border-gray-700">
-                                <td class="sticky left-0 bg-white px-4 py-2.5 font-medium dark:bg-[#1e293b] dark:text-white">
-                                    {{ rule.name }}
-                                    <span class="ml-1 text-xs text-gray-400 dark:text-gray-500">({{ rule.points }} b.)</span>
+                        {% set rowIndex = 0 %}
+                        {% for groupKey, groupRules in groupedRules %}
+                            <tr>
+                                <td colspan="{{ colCount }}" class="{% if not loop.first %}border-t-2 border-gray-200 dark:border-gray-600{% endif %} bg-gray-100/80 px-4 py-1.5 text-[11px] font-semibold uppercase tracking-wider text-gray-500 dark:bg-[#0f172a] dark:text-gray-400">
+                                    {{ groupLabels[groupKey] ?? groupKey }}
+                                </td>
+                            </tr>
+                            {% set isSkupinaGroup = groupKey|slice(-2) in [':a', ':b', ':c', ':d', ':e', ':f'] %}
+                            {% for rule in groupRules %}
+                            {% set rowIndex = rowIndex + 1 %}
+                            {% set isEven = rowIndex is even %}
+                            <tr class="{% if isEven %}bg-gray-50/60 dark:bg-white/[0.03]{% endif %} transition-colors hover:bg-gray-100/60 dark:hover:bg-white/[0.06]">
+                                <td class="sticky left-0 w-44 max-w-[11rem] {% if isEven %}bg-gray-50/60 dark:bg-[#161f2e]{% else %}bg-white dark:bg-[#1e293b]{% endif %} border-b border-r border-gray-100 dark:border-gray-700 px-4 py-3" title="{{ rule.name }}">
+                                    <div class="truncate font-medium text-gray-900 dark:text-white">{{ isSkupinaGroup ? rule.name|split(' - ')|last : rule.name }}</div>
+                                    <div class="text-xs font-normal text-gray-400 dark:text-gray-500">({{ rule.points }} b.)</div>
                                 </td>
                                 {% for player in players %}
                                     {% set bet = betsByRuleAndUser[rule.id][player.id] ?? null %}
-                                    <td class="whitespace-nowrap px-3 py-2.5 text-center dark:text-gray-100">
+                                    {% set earnedPoints = pointsByRuleAndUser[rule.id][player.id] ?? null %}
+                                    {% set isFullScore = earnedPoints is not null and earnedPoints >= rule.points %}
+                                    {% set isMine = player.id == currentUserId %}
+                                    <td class="whitespace-nowrap px-4 py-3 text-center {% if isFullScore %}border border-amber-300 bg-amber-100 dark:border-amber-400/50 dark:bg-amber-400/10{% else %}border-b border-gray-100 dark:border-gray-700 {% if isMine %}bg-sky-50 dark:bg-sky-400/10{% endif %}{% endif %} {% if isMine %}font-medium{% endif %}">
                                         {% if bet %}
-                                            {% if bet.teamValue %}
-                                                {{ team_flag(bet.teamValue.code) }} {{ bet.teamValue.code }}
-                                            {% elseif bet.stringValue %}
-                                                {{ bet.stringValue }}
-                                            {% elseif bet.intValue is not null %}
-                                                {{ bet.intValue }}
+                                            <div class="{% if isFullScore %}font-semibold text-amber-800 dark:text-white{% elseif isMine %}text-gray-900 dark:text-white{% else %}text-gray-700 dark:text-gray-200{% endif %}">
+                                                {% if bet.teamValue %}
+                                                    <span class="inline-flex items-center gap-1">{{ team_flag(bet.teamValue.code) }} {{ bet.teamValue.code }}</span>
+                                                {% elseif bet.stringValue %}
+                                                    {{ bet.stringValue }}
+                                                {% elseif bet.intValue is not null %}
+                                                    {{ bet.intValue }}
+                                                {% endif %}
+                                            </div>
+                                            {% if earnedPoints is not null %}
+                                                <div class="mt-0.5 text-[11px] {% if isFullScore %}font-semibold text-amber-600 dark:text-amber-400{% else %}text-gray-400 dark:text-gray-400{% endif %}">
+                                                    +{{ earnedPoints|number_format(0) }} b.
+                                                </div>
                                             {% endif %}
                                         {% else %}
                                             <span class="text-gray-300 dark:text-gray-600">—</span>
@@ -63,9 +139,9 @@
                                     </td>
                                 {% endfor %}
                                 {% if tournament.status.value == 'finished' %}
-                                    <td class="whitespace-nowrap px-3 py-2.5 text-center font-semibold text-green-700 dark:text-green-400">
+                                    <td class="whitespace-nowrap px-4 py-3 text-center font-semibold text-green-700 dark:text-green-400">
                                         {% if rule.actualTeamValue %}
-                                            {{ team_flag(rule.actualTeamValue.code) }} {{ rule.actualTeamValue.code }}
+                                            <span class="inline-flex items-center gap-1">{{ team_flag(rule.actualTeamValue.code) }} {{ rule.actualTeamValue.code }}</span>
                                         {% elseif rule.actualStringValue %}
                                             {{ rule.actualStringValue }}
                                         {% elseif rule.actualIntValue is not null %}
@@ -76,8 +152,26 @@
                                     </td>
                                 {% endif %}
                             </tr>
+                            {% endfor %}
                         {% endfor %}
                     </tbody>
+                    <tfoot>
+                        <tr class="border-t-2 border-gray-200 bg-gray-50 dark:border-gray-600 dark:bg-[#0f172a]">
+                            <td class="sticky left-0 bg-gray-50 px-4 py-3 text-xs font-semibold uppercase tracking-wider text-gray-500 dark:bg-[#0f172a] dark:text-gray-400">
+                                Celkem
+                            </td>
+                            {% for player in players %}
+                                {% set total = totalPointsPerPlayer[player.id] ?? 0 %}
+                                {% set isMine = player.id == currentUserId %}
+                                <td class="px-4 py-3 text-center text-sm font-bold {% if isMine %}text-sky-700 dark:text-sky-300{% else %}text-gray-700 dark:text-gray-200{% endif %}">
+                                    {{ total|number_format(0) }} b.
+                                </td>
+                            {% endfor %}
+                            {% if tournament.status.value == 'finished' %}
+                                <td></td>
+                            {% endif %}
+                        </tr>
+                    </tfoot>
                 </table>
             </div>
         </div>

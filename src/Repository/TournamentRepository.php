@@ -18,6 +18,24 @@ class TournamentRepository extends ServiceEntityRepository
         parent::__construct($registry, Tournament::class);
     }
 
+    /** @return Tournament[] */
+    public function findTournamentsWithRules(Tournament $exclude): array
+    {
+        /** @var Tournament[] $result */
+        $result = $this->createQueryBuilder('t')
+            ->leftJoin(RuleSet::class, 'rs', 'WITH', 'rs.tournament = t')
+            ->leftJoin(SpecialBetRule::class, 'sbr', 'WITH', 'sbr.tournament = t')
+            ->where('t != :exclude')
+            ->andWhere('rs.id IS NOT NULL OR sbr.id IS NOT NULL')
+            ->setParameter('exclude', $exclude)
+            ->orderBy('t.year', 'DESC')
+            ->distinct()
+            ->getQuery()
+            ->getResult();
+
+        return $result;
+    }
+
     public function findLatestWithRules(Tournament $exclude): ?Tournament
     {
         /** @var Tournament|null $result */

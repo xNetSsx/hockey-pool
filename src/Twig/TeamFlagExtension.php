@@ -16,7 +16,7 @@ final class TeamFlagExtension extends AbstractExtension
         'LAT' => 'lv', 'USA' => 'us', 'GER' => 'de', 'DEN' => 'dk',
         'NOR' => 'no', 'KAZ' => 'kz', 'AUS' => 'au', 'GBR' => 'gb',
         'HUN' => 'hu', 'SLO' => 'si', 'POL' => 'pl',
-        'RUS' => 'ru', 'BEL' => 'by', 'ROK' => 'kr',
+        'RUS' => 'ru', 'BLR' => 'by', 'BEL' => 'be', 'ROK' => 'kr', 'CHN' => 'cn',
     ];
 
     public function __construct(

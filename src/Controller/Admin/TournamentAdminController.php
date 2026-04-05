@@ -47,11 +47,15 @@ class TournamentAdminController extends AbstractController
 
         $hasRuleSet = [];
         $hasSpecialRules = [];
+        $cloneSources = [];
 
         foreach ($all as $tournament) {
             $id = (int) $tournament->getId();
             $hasRuleSet[$id] = isset($hasRuleSetMap[$id]);
             $hasSpecialRules[$id] = isset($hasSpecialRulesMap[$id]);
+            if (!$hasRuleSet[$id] && !$hasSpecialRules[$id]) {
+                $cloneSources[$id] = $repo->findTournamentsWithRules($tournament);
+            }
         }
 
         return $this->render('admin/tournaments.html.twig', [
@@ -59,6 +63,7 @@ class TournamentAdminController extends AbstractController
             'archived' => $archived,
             'hasRuleSet' => $hasRuleSet,
             'hasSpecialRules' => $hasSpecialRules,
+            'cloneSources' => $cloneSources,
         ]);
     }
 
@@ -165,15 +170,17 @@ class TournamentAdminController extends AbstractController
         ]);
     }
 
-    #[Route('/tournaments/{id}/clone-from-last', name: 'admin_tournament_clone', requirements: ['id' => '\d+'])]
+    #[Route('/tournaments/{id}/clone-from', name: 'admin_tournament_clone', methods: ['POST'], requirements: ['id' => '\d+'])]
     public function tournamentClone(
         Tournament $tournament,
+        Request $request,
         TournamentRepository $tournamentRepo,
         TournamentManager $tournamentManager,
     ): Response {
-        $source = $tournamentRepo->findLatestWithRules($tournament);
+        $sourceId = (int) $request->request->get('sourceId', 0);
+        $source = $sourceId > 0 ? $tournamentRepo->find($sourceId) : null;
 
-        if (null === $source) {
+        if (!$source instanceof Tournament || $source === $tournament) {
             $this->addFlash('error', 'Žádný turnaj s pravidly k zkopírování.');
 
             return $this->redirectToRoute('admin_tournaments');

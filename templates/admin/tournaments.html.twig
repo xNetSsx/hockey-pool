@@ -10,12 +10,12 @@
 
     {% if active|length > 0 %}
         <h2 class="mb-2 mt-6 text-sm font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">Aktivní a nadcházející</h2>
-        {{ _self.tournament_table(active, hasRuleSet, hasSpecialRules) }}
+        {{ _self.tournament_table(active, hasRuleSet, hasSpecialRules, cloneSources) }}
     {% endif %}
 
     {% if archived|length > 0 %}
         <h2 class="mb-2 mt-6 text-sm font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">Archiv</h2>
-        {{ _self.tournament_table(archived, hasRuleSet, hasSpecialRules) }}
+        {{ _self.tournament_table(archived, hasRuleSet, hasSpecialRules, cloneSources) }}
     {% endif %}
 
     {% if active|length == 0 and archived|length == 0 %}
@@ -25,7 +25,7 @@
     {% endif %}
 {% endblock %}
 
-{% macro tournament_table(tournaments, hasRuleSet, hasSpecialRules) %}
+{% macro tournament_table(tournaments, hasRuleSet, hasSpecialRules, cloneSources) %}
     <div class="mb-6 overflow-hidden rounded-xl bg-white shadow dark:bg-[#1e293b] dark:shadow-gray-900/30">
         <table class="w-full text-sm">
             <tbody>
@@ -55,11 +55,17 @@
                         </td>
                         <td class="px-6 py-3 text-right">
                             <div class="flex items-center justify-end gap-2">
-                                {% if not hasRuleSet[t.id] and not hasSpecialRules[t.id] %}
-                                    <a href="{{ path('admin_tournament_clone', {id: t.id}) }}"
-                                       class="rounded bg-green-600 px-2 py-1 text-xs font-medium text-white hover:bg-green-700">
-                                        Kopírovat z posledního
-                                    </a>
+                                {% if not hasRuleSet[t.id] and not hasSpecialRules[t.id] and cloneSources[t.id] is defined and cloneSources[t.id]|length > 0 %}
+                                    <form method="post" action="{{ path('admin_tournament_clone', {id: t.id}) }}" class="flex items-center gap-1">
+                                        <select name="sourceId" class="rounded border border-gray-300 bg-white px-2 py-1 text-xs dark:border-gray-600 dark:bg-[#0f172a] dark:text-white">
+                                            {% for src in cloneSources[t.id] %}
+                                                <option value="{{ src.id }}">{{ src.name }}</option>
+                                            {% endfor %}
+                                        </select>
+                                        <button type="submit" class="rounded bg-green-600 px-2 py-1 text-xs font-medium text-white hover:bg-green-700">
+                                            Kopírovat
+                                        </button>
+                                    </form>
                                 {% endif %}
                                 <a href="{{ path('admin_tournament_content', {id: t.id, field: 'rules'}) }}" class="text-xs text-gray-500 hover:underline dark:text-gray-400 dark:hover:text-white">Pravidla</a>
                                 <a href="{{ path('admin_tournament_content', {id: t.id, field: 'manual'}) }}" class="text-xs text-gray-500 hover:underline dark:text-gray-400 dark:hover:text-white">Manuál</a>
