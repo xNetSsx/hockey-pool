@@ -5,14 +5,17 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         libpq-dev \
         libicu-dev \
         libzip-dev \
+        libgd-dev \
         unzip \
         git \
         postgresql-client \
+    && docker-php-ext-configure gd \
     && docker-php-ext-install \
         pdo_pgsql \
         intl \
         opcache \
         zip \
+        gd \
     && rm -rf /var/lib/apt/lists/*
 
 # Apache config

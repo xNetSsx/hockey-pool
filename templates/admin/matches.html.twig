@@ -6,6 +6,12 @@
     <div class="mb-4 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <h1 class="text-xl font-bold dark:text-white">Zápasy</h1>
         <div class="flex flex-wrap items-center gap-2">
+            {% if tournament %}
+                <a href="{{ path('admin_export_tournament', {id: tournament.id}) }}"
+                   class="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-700">
+                    ⬇ Export Excel
+                </a>
+            {% endif %}
             <a href="{{ path('admin_match_bulk') }}" class="rounded-lg bg-green-600 px-4 py-2 text-sm font-medium text-white hover:bg-green-700">+ Hromadně</a>
             <a href="{{ path('admin_match_new') }}" class="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 dark:bg-[#38bdf8] dark:text-[#0f172a] dark:hover:bg-[#7dd3fc]">+ Nový zápas</a>
         </div>

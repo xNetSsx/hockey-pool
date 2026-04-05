@@ -9,6 +9,11 @@ services:
     environment:
       # See https://xdebug.org/docs/all_settings#mode
       XDEBUG_MODE: "${XDEBUG_MODE:-off}"
+      APP_ENV: "dev"
+      APP_DEBUG: "1"
+      PORT: "8765"
+    ports:
+      - "8765:8765"
     extra_hosts:
       # Ensure that host.docker.internal is correctly defined on Linux
       - host.docker.internal:host-gateway
