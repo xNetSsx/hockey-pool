@@ -1,18 +1,18 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    <div class="mb-6 flex flex-wrap items-center gap-3 rounded-xl bg-[#0f172a] px-6 py-4">
-        <span class="text-sm font-semibold text-white">Admin:</span>
-        <a href="{{ path('admin_tournaments') }}" class="rounded px-3 py-1 text-sm text-gray-300 hover:bg-white/10 hover:text-white {{ app.request.attributes.get('_route') starts with 'admin_tournament' ? 'bg-white/10 text-white' : '' }}">Turnaje</a>
-        <a href="{{ path('admin_teams') }}" class="rounded px-3 py-1 text-sm text-gray-300 hover:bg-white/10 hover:text-white {{ app.request.attributes.get('_route') starts with 'admin_team' ? 'bg-white/10 text-white' : '' }}">Týmy</a>
-        <a href="{{ path('admin_users') }}" class="rounded px-3 py-1 text-sm text-gray-300 hover:bg-white/10 hover:text-white {{ app.request.attributes.get('_route') starts with 'admin_user' ? 'bg-white/10 text-white' : '' }}">Uživatelé</a>
-        <a href="{{ path('admin_matches') }}" class="rounded px-3 py-1 text-sm text-gray-300 hover:bg-white/10 hover:text-white {{ app.request.attributes.get('_route') starts with 'admin_match' ? 'bg-white/10 text-white' : '' }}">Zápasy</a>
-        <a href="{{ path('admin_rules') }}" class="rounded px-3 py-1 text-sm text-gray-300 hover:bg-white/10 hover:text-white {{ app.request.attributes.get('_route') starts with 'admin_rule' ? 'bg-white/10 text-white' : '' }}">Pravidla tipů</a>
-        <a href="{{ path('admin_special_results') }}" class="rounded px-3 py-1 text-sm text-gray-300 hover:bg-white/10 hover:text-white {{ app.request.attributes.get('_route') starts with 'admin_special' ? 'bg-white/10 text-white' : '' }}">Výsledky</a>
-        <a href="{{ path('admin_participants') }}" class="rounded px-3 py-1 text-sm text-gray-300 hover:bg-white/10 hover:text-white {{ app.request.attributes.get('_route') starts with 'admin_participant' ? 'bg-white/10 text-white' : '' }}">Účastníci</a>
+    <div class="mb-6 flex flex-wrap items-center gap-3 rounded-xl px-6 py-4" style="background:var(--bg-3)">
+        <span class="text-sm font-semibold" style="color:var(--fg)">Admin:</span>
+        <a href="{{ path('admin_tournaments') }}" class="rounded-full px-3 py-1 text-sm transition-colors" style="color:var(--fg-2);{% if app.request.attributes.get('_route') starts with 'admin_tournament' %}background:var(--bg-2);border:1px solid var(--line){% endif %}">Turnaje</a>
+        <a href="{{ path('admin_teams') }}" class="rounded-full px-3 py-1 text-sm transition-colors" style="color:var(--fg-2);{% if app.request.attributes.get('_route') starts with 'admin_team' %}background:var(--bg-2);border:1px solid var(--line){% endif %}">Týmy</a>
+        <a href="{{ path('admin_users') }}" class="rounded-full px-3 py-1 text-sm transition-colors" style="color:var(--fg-2);{% if app.request.attributes.get('_route') starts with 'admin_user' %}background:var(--bg-2);border:1px solid var(--line){% endif %}">Uživatelé</a>
+        <a href="{{ path('admin_matches') }}" class="rounded-full px-3 py-1 text-sm transition-colors" style="color:var(--fg-2);{% if app.request.attributes.get('_route') starts with 'admin_match' %}background:var(--bg-2);border:1px solid var(--line){% endif %}">Zápasy</a>
+        <a href="{{ path('admin_rules') }}" class="rounded-full px-3 py-1 text-sm transition-colors" style="color:var(--fg-2);{% if app.request.attributes.get('_route') starts with 'admin_rule' %}background:var(--bg-2);border:1px solid var(--line){% endif %}">Pravidla tipů</a>
+        <a href="{{ path('admin_special_results') }}" class="rounded-full px-3 py-1 text-sm transition-colors" style="color:var(--fg-2);{% if app.request.attributes.get('_route') starts with 'admin_special' %}background:var(--bg-2);border:1px solid var(--line){% endif %}">Výsledky</a>
+        <a href="{{ path('admin_participants') }}" class="rounded-full px-3 py-1 text-sm transition-colors" style="color:var(--fg-2);{% if app.request.attributes.get('_route') starts with 'admin_participant' %}background:var(--bg-2);border:1px solid var(--line){% endif %}">Účastníci</a>
         <form method="post" action="{{ path('admin_recalculate') }}" class="ml-auto">
             <input type="hidden" name="_token" value="{{ csrf_token('recalculate') }}">
-            <button type="submit" class="rounded bg-amber-600 px-3 py-1 text-sm font-medium text-white hover:bg-amber-700 dark:bg-amber-500 dark:hover:bg-amber-600" onclick="return confirm('Přepočítat všechny body?')">
+            <button type="submit" class="hp-btn hp-btn-sm rounded-full font-medium" style="background:var(--warn);color:var(--accent-ink)" onclick="return confirm('Přepočítat všechny body?')">
                 🔄 Přepočítat body
             </button>
         </form>

@@ -4,16 +4,12 @@ declare(strict_types=1);
 
 namespace App\Controller\User;
 
-use App\Entity\User;
-use App\Enum\TournamentStatus;
 use App\Repository\GameRepository;
 use App\Repository\PredictionRepository;
 use App\Repository\SpecialBetRepository;
-use App\Repository\TournamentParticipantRepository;
 use App\Repository\UserRepository;
 use App\Service\Builder\CareerStatsBuilder;
 use App\Service\Builder\LeaderboardBuilder;
-use App\Service\Builder\PlayerComparisonBuilder;
 use App\Service\Builder\PlayerStatsBuilder;
 use App\Service\Provider\ActiveTournamentProvider;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -82,68 +78,12 @@ class UserController extends AbstractController
     #[Route('/compare', name: 'player_compare')]
     public function compare(
         Request $request,
-        UserRepository $userRepository,
-        ActiveTournamentProvider $activeTournamentProvider,
-        TournamentParticipantRepository $participantRepository,
-        LeaderboardBuilder $leaderboardBuilder,
-        PlayerStatsBuilder $playerStatsBuilder,
-        PlayerComparisonBuilder $comparisonBuilder,
     ): Response {
+        /** @var list<string> $usernames */
         $usernames = $request->query->all('users');
 
-        if (count($usernames) < 2) {
-            $tournament = $activeTournamentProvider->getActiveTournament();
-            $players = [];
-            if (null !== $tournament && $tournament->getStatus() !== TournamentStatus::Upcoming) {
-                foreach ($participantRepository->findByTournament($tournament) as $participant) {
-                    $players[] = $participant->getUser();
-                }
-            } else {
-                $players = $userRepository->findBy([], ['username' => 'ASC']);
-            }
-            usort($players, static fn (User $a, User $b) => strcmp($a->getUsername(), $b->getUsername()));
-
-            return $this->render('user/compare_select.html.twig', [
-                'players' => $players,
-            ]);
-        }
-
-        $tournament = $activeTournamentProvider->getActiveTournament();
-
-        if (null === $tournament) {
-            throw new NotFoundHttpException('Žádný aktivní turnaj.');
-        }
-
-        /** @var list<User> $users */
-        $users = [];
-        foreach ($usernames as $username) {
-            $user = $userRepository->findOneBy(['username' => $username]);
-            if (null !== $user) {
-                $users[] = $user;
-            }
-        }
-
-        if (count($users) < 2) {
-            throw new NotFoundHttpException('Nedostatek hráčů k porovnání.');
-        }
-
-        $leaderboard = $leaderboardBuilder->build($tournament);
-        $leaderboardByUserId = [];
-        foreach ($leaderboard as $row) {
-            $leaderboardByUserId[$row['user']->getId()] = $row;
-        }
-
-        $userStats = [];
-        foreach ($users as $user) {
-            $userStats[$user->getId()] = $playerStatsBuilder->build($user, $tournament);
-        }
-
-        return $this->render('user/compare.html.twig', [
-            'tournament' => $tournament,
-            'users' => $users,
-            'leaderboardByUserId' => $leaderboardByUserId,
-            'comparison' => $comparisonBuilder->build($users, $tournament),
-            'userStats' => $userStats,
+        return $this->render('user/compare_select.html.twig', [
+            'preselected' => $usernames,
         ]);
     }
 }

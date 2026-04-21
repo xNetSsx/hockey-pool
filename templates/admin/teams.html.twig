@@ -4,28 +4,28 @@
 
 {% block admin_body %}
     <div class="mb-4 flex items-center justify-between">
-        <h1 class="text-xl font-bold dark:text-white">Týmy</h1>
-        <a href="{{ path('admin_team_new') }}" class="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 dark:bg-[#38bdf8] dark:text-[#0f172a] dark:hover:bg-[#7dd3fc]">+ Nový</a>
+        <h1 class="text-xl font-bold" style="color:var(--fg)">Týmy</h1>
+        <a href="{{ path('admin_team_new') }}" class="hp-btn hp-btn-primary hp-btn-sm">+ Nový</a>
     </div>
 
-    <div class="overflow-hidden rounded-xl bg-white shadow dark:bg-[#1e293b] dark:shadow-gray-900/30">
-        <table class="w-full text-sm">
+    <div class="hp-card">
+        <table class="hp-tbl">
             <thead>
-                <tr class="border-b bg-gray-50 text-left text-xs uppercase tracking-wider text-gray-500 dark:bg-[#0f172a]/50 dark:text-gray-400 dark:border-gray-700">
-                    <th class="px-6 py-3">Kód</th>
-                    <th class="px-6 py-3">Název</th>
-                    <th class="px-6 py-3">Vlajka</th>
-                    <th class="px-6 py-3"></th>
+                <tr>
+                    <th>Kód</th>
+                    <th>Název</th>
+                    <th>Vlajka</th>
+                    <th></th>
                 </tr>
             </thead>
             <tbody>
                 {% for team in teams %}
-                    <tr class="border-b border-gray-100 last:border-0 dark:border-gray-700 dark:hover:bg-white/5">
-                        <td class="px-6 py-3 font-mono font-medium dark:text-white">{{ team.code }}</td>
-                        <td class="px-6 py-3 dark:text-gray-100">{{ team.name }}</td>
-                        <td class="px-6 py-3">{{ team_flag(team.code) ?: '—' }}</td>
-                        <td class="px-6 py-3 text-right">
-                            <a href="{{ path('admin_team_edit', {id: team.id}) }}" class="text-blue-600 hover:underline dark:text-[#38bdf8]">Upravit</a>
+                    <tr>
+                        <td class="font-mono font-medium" style="color:var(--fg)">{{ team.code }}</td>
+                        <td style="color:var(--fg)">{{ team.name }}</td>
+                        <td>{{ team_flag(team.code) ?: '—' }}</td>
+                        <td class="text-right">
+                            <a href="{{ path('admin_team_edit', {id: team.id}) }}" class="text-xs hover:underline" style="color:var(--accent)">Upravit</a>
                         </td>
                     </tr>
                 {% endfor %}

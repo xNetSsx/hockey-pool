@@ -1,77 +1,117 @@
 {% extends 'base.html.twig' %}
+{% import '_macros.html.twig' as m %}
 
 {% block title %}Přihlášení — Hockey Pool{% endblock %}
 
 {% block body %}
-    <div class="flex min-h-[70vh] items-center justify-center">
-        <div class="w-full max-w-md px-4">
-            <div class="rounded-2xl bg-white p-8 shadow-lg dark:bg-[#1e293b]">
-                <div class="mb-6 text-center">
-                    <div class="mb-2 text-5xl">🏒</div>
-                    <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Hockey Pool</h1>
-                    <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Přihlas se a tipuj</p>
+    <div style="min-height:calc(100vh - 160px);display:grid;place-items:center;padding:40px 0">
+        <div style="display:grid;grid-template-columns:1.1fr 1fr;gap:40px;align-items:center;max-width:1000px;width:100%">
+
+            {# ── Left: Hero text ── #}
+            <div class="hidden md:block">
+                <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px">
+                    {{ m.brand_mark() }}
+                    <span style="font-weight:800;letter-spacing:-0.01em;font-size:22px;color:var(--fg)">Hockey Pool</span>
+                </div>
+                <h1 style="font-family:var(--font-display);font-size:72px;line-height:0.95;letter-spacing:-0.02em;font-weight:800;margin:8px 0 14px;color:var(--fg)">
+                    TIPUJ S PARTOU.<br>VYHRAJ SEZÓNU.
+                </h1>
+                <p style="font-size:16px;color:var(--fg-3);line-height:1.55;max-width:460px;margin-bottom:22px">
+                    Tipovací liga pro partu přátel. Mistrovství světa, olympiády, playoffs — hraj přes celou sezónu a uháněj Síní slávy.
+                </p>
+                <div style="display:flex;gap:24px;flex-wrap:wrap">
+                    <div>
+                        <div class="hp-stat-big-value">12</div>
+                        <div class="hp-stat-big-label">hráčů</div>
+                    </div>
+                    <div>
+                        <div class="hp-stat-big-value">6</div>
+                        <div class="hp-stat-big-label">turnajů v archivu</div>
+                    </div>
+                    <div>
+                        <div class="hp-stat-big-value">64</div>
+                        <div class="hp-stat-big-label">zápasů letos</div>
+                    </div>
+                </div>
+            </div>
+
+            {# ── Right: Login card ── #}
+            <div class="hp-card" style="padding:32px">
+                {# Mobile-only brand (hidden on desktop where hero shows it) #}
+                <div class="md:hidden" style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
+                    {{ m.brand_mark() }}
+                    <span style="font-weight:800;font-size:20px;color:var(--fg)">Hockey Pool</span>
                 </div>
 
+                <h2 style="font-size:22px;font-weight:800;margin:0 0 6px;color:var(--fg)">Přihlášení</h2>
+                <p style="font-size:13px;color:var(--fg-3);margin:0 0 22px">Přihlas se svým uživatelským jménem</p>
+
                 {% if error %}
-                    <div class="mb-4 rounded-md bg-red-50 p-3 text-sm text-red-800 dark:bg-red-900/30 dark:text-red-300">
+                    <div class="hp-alert hp-alert-error">
                         {{ error.messageKey|trans(error.messageData, 'security') }}
                     </div>
                 {% endif %}
 
                 <form method="post">
-                    <div class="mb-4">
-                        <label for="username" class="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
-                            Uživatelské jméno
-                        </label>
-                        <input
-                            type="text"
-                            id="username"
-                            name="_username"
-                            value="{{ last_username }}"
-                            required
-                            autofocus
-                            autocomplete="username"
-                            class="w-full rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-gray-900 placeholder-gray-400 focus:border-[#38bdf8] focus:outline-none focus:ring-2 focus:ring-[#38bdf8]/20 dark:border-gray-600 dark:bg-[#0f172a] dark:text-white dark:placeholder-gray-500"
-                            placeholder="např. Ondra"
-                        >
+                    <div style="display:flex;flex-direction:column;gap:14px">
+                        <div class="hp-field">
+                            <label for="username" class="hp-field-label">Uživatelské jméno</label>
+                            <input
+                                type="text"
+                                id="username"
+                                name="_username"
+                                value="{{ last_username }}"
+                                required
+                                autofocus
+                                autocomplete="username"
+                                class="hp-field-input"
+                                placeholder="např. Ondra"
+                            >
+                        </div>
+
+                        <div class="hp-field">
+                            <label for="password" class="hp-field-label">Heslo</label>
+                            <input
+                                type="password"
+                                id="password"
+                                name="_password"
+                                required
+                                autocomplete="current-password"
+                                class="hp-field-input"
+                            >
+                        </div>
+
+                        <div style="display:flex;align-items:center;gap:8px">
+                            <input
+                                type="checkbox"
+                                id="remember_me"
+                                name="_remember_me"
+                                style="accent-color:var(--accent);width:16px;height:16px"
+                            >
+                            <label for="remember_me" style="font-size:13px;color:var(--fg-3)">Zapamatovat si mě</label>
+                        </div>
+
+                        <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+
+                        <button type="submit" class="hp-btn hp-btn-primary" style="margin-top:6px;padding:12px 18px;width:100%">
+                            Přihlásit se
+                        </button>
+
+                        <div style="font-size:12px;color:var(--fg-3);text-align:center;margin-top:6px">
+                            Nemáš účet? Napiš správci.
+                        </div>
                     </div>
-
-                    <div class="mb-4">
-                        <label for="password" class="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
-                            Heslo
-                        </label>
-                        <input
-                            type="password"
-                            id="password"
-                            name="_password"
-                            required
-                            autocomplete="current-password"
-                            class="w-full rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-gray-900 placeholder-gray-400 focus:border-[#38bdf8] focus:outline-none focus:ring-2 focus:ring-[#38bdf8]/20 dark:border-gray-600 dark:bg-[#0f172a] dark:text-white dark:placeholder-gray-500"
-                        >
-                    </div>
-
-                    <div class="mb-6 flex items-center">
-                        <input
-                            type="checkbox"
-                            id="remember_me"
-                            name="_remember_me"
-                            class="h-4 w-4 rounded border-gray-300 text-[#38bdf8] focus:ring-[#38bdf8] dark:border-gray-600 dark:bg-[#0f172a]"
-                        >
-                        <label for="remember_me" class="ml-2 text-sm text-gray-600 dark:text-gray-400">
-                            Zapamatovat si mě
-                        </label>
-                    </div>
-
-                    <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
-
-                    <button
-                        type="submit"
-                        class="w-full rounded-lg bg-[#0f172a] px-4 py-2.5 font-semibold text-white shadow-sm hover:bg-[#1e293b] focus:outline-none focus:ring-2 focus:ring-[#38bdf8] focus:ring-offset-2 dark:bg-[#38bdf8] dark:text-[#0f172a] dark:hover:bg-[#7dd3fc]"
-                    >
-                        Přihlásit se
-                    </button>
                 </form>
             </div>
         </div>
     </div>
+
+    {# Stack to single column on mobile #}
+    <style>
+        @media (max-width: 767px) {
+            div[style*="grid-template-columns:1.1fr"] {
+                grid-template-columns: 1fr !important;
+            }
+        }
+    </style>
 {% endblock %}

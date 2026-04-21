@@ -15,6 +15,7 @@ use App\Repository\TournamentParticipantRepository;
 use App\Service\Builder\LeaderboardBuilder;
 use App\Service\Builder\PointsTimelineBuilder;
 use App\Service\Provider\ActiveTournamentProvider;
+use App\Service\Provider\PlayerStreakProvider;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -31,6 +32,7 @@ class DashboardController extends AbstractController
         PointsTimelineBuilder $timelineBuilder,
         RuleSetRepository $ruleSetRepository,
         TournamentParticipantRepository $participantRepository,
+        PlayerStreakProvider $streakProvider,
     ): Response {
         $tournament = $activeTournamentProvider->getActiveTournament();
 
@@ -97,6 +99,7 @@ class DashboardController extends AbstractController
             'paymentQrString' => $paymentQrString,
             'paymentAmount' => $paymentAmount,
             'leaderboardUpdatedAt' => $pointEntryRepository->findLastCalculatedAt($tournament),
+            'playerStreaks' => $streakProvider->getStreaks($tournament),
         ]);
     }
 

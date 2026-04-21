@@ -1,83 +1,97 @@
 {% import '_macros.html.twig' as m %}
 <!DOCTYPE html>
-<html lang="cs">
+<html lang="cs" data-variant="rink">
     <head>
         <meta charset="UTF-8">
-        <script>(function(){var t=localStorage.getItem('theme');var d=t==='dark'||(!t&&window.matchMedia('(prefers-color-scheme:dark)').matches);if(d)document.documentElement.classList.add('dark')})();</script>
+        <script>(function(){var t=localStorage.getItem('hp:theme')||localStorage.getItem('theme');var d=t==='dark'||(!t&&window.matchMedia('(prefers-color-scheme:dark)').matches);document.documentElement.dataset.theme=d?'dark':'light';if(d)document.documentElement.classList.add('dark')})();</script>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>{% block title %}Hockey Pool{% endblock %}</title>
         <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>🏒</text></svg>">
-        {% block stylesheets %}
-        {% endblock %}
+
+        {# Google Fonts #}
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Barlow+Condensed:wght@500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap">
+
+        {% block stylesheets %}{% endblock %}
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/driver.js@1/dist/driver.min.css">
 
         {% block javascripts %}
             {% block importmap %}{{ importmap('app') }}{% endblock %}
         {% endblock %}
     </head>
-    <body class="min-h-screen bg-gray-100 text-gray-900 dark:bg-[#0b1120] dark:text-gray-100">
-        <nav class="bg-white shadow dark:bg-[#0f172a] dark:shadow-gray-800" {{ stimulus_controller('nav') }}>
-            <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-                <div class="flex h-16 items-center justify-between">
-                    {# Logo + tournament badge #}
-                    <div class="flex items-center gap-3">
-                        <a href="{{ path('homepage') }}" class="text-xl font-bold text-gray-900 dark:text-white">
-                            Hockey Pool
+    <body class="hp-app">
+        {# ── Nav bar ── #}
+        <nav class="hp-nav" {{ stimulus_controller('nav') }}>
+            <div class="hp-container hp-nav-inner">
+                {# Brand + tournament #}
+                <div style="display:flex;align-items:center;gap:12px">
+                    <a href="{{ path('homepage') }}" class="hp-brand">
+                        {{ m.brand_mark() }}
+                        <span class="hp-brand-name">Hockey Pool</span>
+                    </a>
+                    {% if current_tournament %}
+                        <a href="{{ path('tournament_archive') }}" class="hp-brand-sub" title="Změnit turnaj">
+                            {{ current_tournament.name }}
                         </a>
-                        {% if current_tournament %}
-                            <a href="{{ path('tournament_archive') }}"
-                               class="inline-block rounded-full bg-[#0f172a] px-3 py-1 text-xs font-medium text-white hover:bg-[#1e293b] dark:bg-[#38bdf8] dark:text-[#0f172a] dark:hover:bg-[#7dd3fc]"
-                               title="Změnit turnaj">
-                                {{ current_tournament.name }}
-                            </a>
-                        {% endif %}
-                    </div>
+                    {% endif %}
+                </div>
 
-                    {# Theme toggle for logged-out users #}
-                    {% if not app.user %}
+                {# Theme toggle for logged-out users #}
+                {% if not app.user %}
+                    <button type="button" {{ stimulus_controller('theme') }} {{ stimulus_action('theme', 'toggle') }}
+                            class="hp-icon-btn" title="Přepnout vzhled" aria-label="Přepnout vzhled">
+                        {{ m.theme_icons() }}
+                    </button>
+                {% endif %}
+
+                {# Desktop nav #}
+                {% if app.user %}
+                    <div class="hidden items-center sm:flex">
+                        {% set _route = app.request.attributes.get('_route') %}
+                        <div class="hp-nav-links">
+                            <a href="{{ path('prediction_list') }}" class="{{ m.nav_link_class(_route starts with 'prediction_' or _route starts with 'match_' or _route == 'special_bet_overview') }}">Tipy</a>
+                            <a href="{{ path('player_compare') }}" class="{{ m.nav_link_class(_route starts with 'player_compare') }}">Porovnat</a>
+                            <a href="{{ path('tournament_archive') }}" class="{{ m.nav_link_class(_route starts with 'tournament_') }}">Turnaje</a>
+                            <a href="{{ path('hall_of_fame') }}" class="{{ m.nav_link_class(_route == 'hall_of_fame') }}">Síň slávy</a>
+                            {% block nav_links %}{% endblock %}
+                        </div>
+                    </div>
+                {% endif %}
+
+                {# Right side: user + actions #}
+                {% if app.user %}
+                    <div class="hidden sm:flex hp-nav-right">
+                        <a href="{{ path('player_profile', {username: app.user.username}) }}" class="hp-nav-user">
+                            {{ m.avatar(app.user.username, 'sm') }}
+                            {{ app.user.username }}
+                        </a>
+                        {% if is_granted('ROLE_ADMIN') %}
+                            <a href="{{ path('admin_tournaments') }}" class="hp-chip" style="color:var(--neg);border-color:color-mix(in oklab, var(--neg) 30%, transparent);font-size:11px;font-weight:600">Admin</a>
+                        {% endif %}
+                        <a href="{{ path('change_password') }}" class="hp-icon-btn" title="Změnit heslo" aria-label="Změnit heslo">
+                            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
+                            </svg>
+                        </a>
                         <button type="button" {{ stimulus_controller('theme') }} {{ stimulus_action('theme', 'toggle') }}
-                                class="rounded-lg p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-white/10 dark:hover:text-white" title="Přepnout vzhled" aria-label="Přepnout vzhled">
+                                class="hp-icon-btn" title="Přepnout vzhled" aria-label="Přepnout vzhled">
                             {{ m.theme_icons() }}
                         </button>
-                    {% endif %}
+                        <a href="{{ path('app_logout') }}" class="hp-icon-btn" title="Odhlásit" aria-label="Odhl��sit">
+                            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9" />
+                            </svg>
+                        </a>
+                    </div>
 
-                    {# Desktop nav #}
-                    {% if app.user %}
-                        <div class="hidden items-center gap-1 sm:flex">
-                            {% set _route = app.request.attributes.get('_route') %}
-                            <a href="{{ path('prediction_list') }}" class="rounded-lg px-3 py-2 text-sm font-medium {{ m.nav_link_class(_route starts with 'prediction_' or _route starts with 'match_' or _route == 'special_bet_overview') }}">Tipy</a>
-                            <a href="{{ path('player_compare') }}" class="rounded-lg px-3 py-2 text-sm font-medium {{ m.nav_link_class(_route starts with 'player_compare') }}">Porovnat</a>
-                            <a href="{{ path('tournament_archive') }}" class="rounded-lg px-3 py-2 text-sm font-medium {{ m.nav_link_class(_route starts with 'tournament_') }}">Turnaje</a>
-                            <a href="{{ path('hall_of_fame') }}" class="inline-flex items-center gap-1 rounded-lg px-3 py-2 text-sm font-medium {{ m.nav_link_class(_route == 'hall_of_fame') }}">
-                                <svg class="h-4 w-4 text-amber-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                                    <path fill-rule="evenodd" d="M5.166 2.621v.858c-1.035.148-2.059.33-3.071.543a.75.75 0 0 0-.584.859 6.753 6.753 0 0 0 6.138 5.6 6.73 6.73 0 0 0 2.743 1.346A6.707 6.707 0 0 1 9.279 15H8.54c-1.036 0-1.875.84-1.875 1.875V19.5h-.75a2.25 2.25 0 0 0-2.25 2.25c0 .414.336.75.75.75h15a.75.75 0 0 0 .75-.75 2.25 2.25 0 0 0-2.25-2.25h-.75v-2.625c0-1.036-.84-1.875-1.875-1.875h-.739a6.706 6.706 0 0 1-1.112-3.173 6.73 6.73 0 0 0 2.743-1.347 6.753 6.753 0 0 0 6.139-5.6.75.75 0 0 0-.585-.858 47.077 47.077 0 0 0-3.07-.543V2.62a.75.75 0 0 0-.658-.744 49.798 49.798 0 0 0-6.093-.377c-2.063 0-4.096.128-6.093.377a.75.75 0 0 0-.657.744Zm0 2.629c0 1.196.312 2.32.857 3.294A5.266 5.266 0 0 1 3.16 5.337a45.6 45.6 0 0 1 2.006-.343v.256Zm13.5 0v-.256c.674.1 1.343.214 2.006.343a5.265 5.265 0 0 1-2.863 3.207 6.72 6.72 0 0 0 .857-3.294Z" clip-rule="evenodd" />
-                                </svg>
-                                Síň slávy
-                            </a>
-                            {% block nav_links %}{% endblock %}
-                            <div class="ml-2 flex items-center gap-2 border-l border-gray-200 pl-3 dark:border-gray-700">
-                                <a href="{{ path('player_profile', {username: app.user.username}) }}" class="rounded-lg px-3 py-2 text-sm font-medium text-gray-900 hover:bg-gray-100 dark:text-white dark:hover:bg-white/10">{{ app.user.username }}</a>
-                                {% if is_granted('ROLE_ADMIN') %}
-                                    <a href="{{ path('admin_dashboard') }}" class="rounded bg-red-500/10 px-2.5 py-1 text-xs font-semibold text-red-600 hover:bg-red-500/20 dark:text-red-400">Admin</a>
-                                {% endif %}
-                                <a href="{{ path('change_password') }}" class="rounded-lg px-3 py-2 text-sm text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/10 dark:hover:text-gray-200">Heslo</a>
-                                <a href="{{ path('app_logout') }}" class="rounded-lg px-3 py-2 text-sm text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/10 dark:hover:text-gray-200">Odhlásit</a>
-                                <button type="button" {{ stimulus_controller('theme') }} {{ stimulus_action('theme', 'toggle') }}
-                                        class="rounded-lg p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-white/10 dark:hover:text-white" title="Přepnout vzhled" aria-label="Přepnout vzhled">
-                                    {{ m.theme_icons() }}
-                                </button>
-                            </div>
-                        </div>
-                    {% endif %}
-
-                    {# Mobile: theme toggle + hamburger #}
-                    {% if app.user %}
-                        <div class="flex items-center gap-1 sm:hidden">
-                            <button type="button" {{ stimulus_controller('theme') }} {{ stimulus_action('theme', 'toggle') }}
-                                    class="rounded-lg p-2 text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-white/10" title="Přepnout vzhled" aria-label="Přepnout vzhled">
-                                {{ m.theme_icons() }}
-                            </button>
-                            <button type="button" class="inline-flex items-center justify-center rounded-lg p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-white/10 dark:hover:text-white" {{ stimulus_action('nav', 'toggle') }} aria-label="Otevřít menu">
+                    {# Mobile: theme + hamburger #}
+                    <div class="flex items-center gap-1 sm:hidden">
+                        <button type="button" {{ stimulus_controller('theme') }} {{ stimulus_action('theme', 'toggle') }}
+                                class="hp-icon-btn" title="Přepnout vzhled" aria-label="Přepnout vzhled">
+                            {{ m.theme_icons() }}
+                        </button>
+                        <button type="button" class="hp-icon-btn" {{ stimulus_action('nav', 'toggle') }} aria-label="Otevřít menu">
                             <svg {{ stimulus_target('nav', 'openIcon') }} class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
                             </svg>
@@ -85,50 +99,47 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
                             </svg>
                         </button>
-                        </div>
-                    {% endif %}
-                </div>
+                    </div>
+                {% endif %}
             </div>
 
             {# Mobile menu #}
             {% if app.user %}
-                <div {{ stimulus_target('nav', 'menu') }} class="hidden border-t border-gray-200 dark:border-gray-700 sm:hidden">
-                    <div class="space-y-1 px-4 pb-4 pt-3">
-                        {% if current_tournament %}
-                            <span class="mb-2 inline-block rounded-full bg-[#0f172a] px-3 py-1 text-xs font-medium text-white dark:bg-[#38bdf8] dark:text-[#0f172a]">
-                                {{ current_tournament.name }}
-                            </span>
+                <div {{ stimulus_target('nav', 'menu') }} class="hidden sm:hidden hp-mobile-menu">
+                    {% if current_tournament %}
+                        <span class="hp-chip hp-chip-accent" style="margin-bottom:8px">{{ current_tournament.name }}</span>
+                    {% endif %}
+                    {% set _route = app.request.attributes.get('_route') %}
+                    <a href="{{ path('prediction_list') }}" class="{{ m.nav_link_class(_route starts with 'prediction_' or _route starts with 'match_' or _route == 'special_bet_overview', true) }}" {{ stimulus_action('nav', 'close') }}>Tipy</a>
+                    <a href="{{ path('player_compare') }}" class="{{ m.nav_link_class(_route starts with 'player_compare', true) }}" {{ stimulus_action('nav', 'close') }}>Porovnat</a>
+                    <a href="{{ path('tournament_archive') }}" class="{{ m.nav_link_class(_route starts with 'tournament_', true) }}" {{ stimulus_action('nav', 'close') }}>Turnaje</a>
+                    <a href="{{ path('hall_of_fame') }}" class="{{ m.nav_link_class(_route == 'hall_of_fame', true) }}" {{ stimulus_action('nav', 'close') }}>Síň slávy</a>
+                    <div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--line)">
+                        <a href="{{ path('player_profile', {username: app.user.username}) }}" class="hp-mobile-link" {{ stimulus_action('nav', 'close') }}>{{ app.user.username }}</a>
+                        <a href="{{ path('change_password') }}" class="hp-mobile-link" {{ stimulus_action('nav', 'close') }}>Změnit heslo</a>
+                        {% if is_granted('ROLE_ADMIN') %}
+                            <a href="{{ path('admin_tournaments') }}" class="hp-mobile-link" style="color:var(--neg)" {{ stimulus_action('nav', 'close') }}>Admin</a>
                         {% endif %}
-                        {% set _route = app.request.attributes.get('_route') %}
-                        <a href="{{ path('prediction_list') }}" class="block rounded-lg px-3 py-2 text-base font-medium {{ m.nav_link_class(_route starts with 'prediction_' or _route starts with 'match_' or _route == 'special_bet_overview', true) }}" {{ stimulus_action('nav', 'close') }}>Tipy</a>
-                        <a href="{{ path('player_compare') }}" class="block rounded-lg px-3 py-2 text-base font-medium {{ m.nav_link_class(_route starts with 'player_compare', true) }}" {{ stimulus_action('nav', 'close') }}>Porovnat</a>
-                        <a href="{{ path('tournament_archive') }}" class="block rounded-lg px-3 py-2 text-base font-medium {{ m.nav_link_class(_route starts with 'tournament_', true) }}" {{ stimulus_action('nav', 'close') }}>Turnaje</a>
-                        <a href="{{ path('hall_of_fame') }}" class="flex items-center gap-2 rounded-lg px-3 py-2 text-base font-medium {{ m.nav_link_class(_route == 'hall_of_fame', true) }}" {{ stimulus_action('nav', 'close') }}>
-                            <svg class="h-4 w-4 text-amber-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                                <path fill-rule="evenodd" d="M5.166 2.621v.858c-1.035.148-2.059.33-3.071.543a.75.75 0 0 0-.584.859 6.753 6.753 0 0 0 6.138 5.6 6.73 6.73 0 0 0 2.743 1.346A6.707 6.707 0 0 1 9.279 15H8.54c-1.036 0-1.875.84-1.875 1.875V19.5h-.75a2.25 2.25 0 0 0-2.25 2.25c0 .414.336.75.75.75h15a.75.75 0 0 0 .75-.75 2.25 2.25 0 0 0-2.25-2.25h-.75v-2.625c0-1.036-.84-1.875-1.875-1.875h-.739a6.706 6.706 0 0 1-1.112-3.173 6.73 6.73 0 0 0 2.743-1.347 6.753 6.753 0 0 0 6.139-5.6.75.75 0 0 0-.585-.858 47.077 47.077 0 0 0-3.07-.543V2.62a.75.75 0 0 0-.658-.744 49.798 49.798 0 0 0-6.093-.377c-2.063 0-4.096.128-6.093.377a.75.75 0 0 0-.657.744Zm0 2.629c0 1.196.312 2.32.857 3.294A5.266 5.266 0 0 1 3.16 5.337a45.6 45.6 0 0 1 2.006-.343v.256Zm13.5 0v-.256c.674.1 1.343.214 2.006.343a5.265 5.265 0 0 1-2.863 3.207 6.72 6.72 0 0 0 .857-3.294Z" clip-rule="evenodd" />
-                            </svg>
-                            Síň slávy
-                        </a>
-                        <div class="mt-3 border-t border-gray-200 pt-3 dark:border-gray-700">
-                            <a href="{{ path('player_profile', {username: app.user.username}) }}" class="block rounded-lg px-3 py-2 text-base font-medium text-gray-900 hover:bg-gray-100 dark:text-white dark:hover:bg-white/10">{{ app.user.username }}</a>
-                            <a href="{{ path('change_password') }}" class="block rounded-lg px-3 py-2 text-base text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-white/10">Změnit heslo</a>
-                            {% if is_granted('ROLE_ADMIN') %}
-                                <a href="{{ path('admin_dashboard') }}" class="block rounded-lg px-3 py-2 text-base font-medium text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-500/10">Admin</a>
-                            {% endif %}
-                            <a href="{{ path('app_logout') }}" class="block rounded-lg px-3 py-2 text-base text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-white/10">Odhlásit</a>
-                        </div>
+                        <a href="{{ path('app_logout') }}" class="hp-mobile-link" {{ stimulus_action('nav', 'close') }}>Odhlásit</a>
                     </div>
                 </div>
             {% endif %}
         </nav>
 
-        <main class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+        <main class="hp-container" style="padding-top:32px;padding-bottom:40px">
             {% for label, messages in app.flashes %}
                 {% for message in messages %}
                     <div role="{{ label == 'error' ? 'alert' : 'status' }}"
                          aria-live="{{ label == 'error' ? 'assertive' : 'polite' }}"
-                         class="mb-4 rounded-md p-4 {{ label == 'success' ? 'bg-green-50 text-green-800 dark:bg-green-900/30 dark:text-green-300' : (label == 'error' ? 'bg-red-50 text-red-800 dark:bg-red-900/30 dark:text-red-300' : 'bg-blue-50 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300') }}">
-                        {{ message }}
+                         class="hp-alert {{ label == 'success' ? 'hp-alert-success' : (label == 'error' ? 'hp-alert-error' : 'hp-alert-info') }}"
+                         data-controller="toast">
+                        <div style="display:flex;align-items:center;justify-content:space-between;gap:12px">
+                            <span>{{ message }}</span>
+                            <button type="button"
+                                    data-action="click->toast#dismiss"
+                                    style="background:none;border:none;color:inherit;font-size:18px;line-height:1;cursor:pointer;padding:0 2px;opacity:0.6;flex-shrink:0"
+                                    aria-label="Zavřít">&times;</button>
+                        </div>
                     </div>
                 {% endfor %}
             {% endfor %}
@@ -144,9 +155,10 @@
         <div data-controller="help" data-help-route-value="{{ _route }}">
             {# Floating help button #}
             <button data-action="click->help#toggle"
-                    class="fixed bottom-6 right-6 z-50 flex h-16 w-16 items-center justify-center rounded-full bg-[#0f172a] text-white shadow-xl transition hover:bg-[#1e293b] dark:bg-[#38bdf8] dark:text-[#0f172a] dark:hover:bg-[#7dd3fc]"
+                    class="fixed bottom-6 right-6 z-50 flex h-14 w-14 items-center justify-center rounded-full hp-btn-primary"
+                    style="box-shadow:0 10px 30px color-mix(in oklab, var(--accent) 40%, transparent)"
                     aria-label="Nápověda">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                     <circle cx="12" cy="12" r="10"/>
                     <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
                     <line x1="12" y1="17" x2="12.01" y2="17"/>
@@ -156,124 +168,105 @@
             {# Backdrop #}
             <div data-help-target="backdrop"
                  data-action="click->help#close"
-                 class="fixed inset-0 z-40 hidden bg-black/30 backdrop-blur-sm"></div>
+                 class="fixed inset-0 z-40 hidden" style="background:oklch(0 0 0 / 0.4);backdrop-filter:blur(4px)"></div>
 
             {# Slide-over panel #}
             <div data-help-target="panel"
-                 class="fixed bottom-0 right-0 top-0 z-50 w-80 translate-x-full overflow-y-auto bg-white shadow-2xl transition-transform duration-300 dark:bg-[#0f172a] sm:w-96">
+                 class="fixed bottom-0 right-0 top-0 z-50 w-80 translate-x-full overflow-y-auto transition-transform duration-300 sm:w-96"
+                 style="background:var(--bg-2);box-shadow:0 20px 60px oklch(0 0 0 / 0.4)">
 
                 {# Resize handle #}
                 <div data-action="mousedown->help#startResize touchstart->help#startResizeTouch"
                      class="group absolute bottom-0 left-0 top-0 z-10 w-2 cursor-col-resize select-none"
                      aria-hidden="true">
-                    <div class="absolute inset-y-0 left-0.5 w-px bg-gray-200 transition-colors group-hover:bg-[#38bdf8] dark:bg-gray-700 dark:group-hover:bg-[#38bdf8]"></div>
-                    <div class="absolute left-0 top-1/2 flex h-10 w-2 -translate-y-1/2 flex-col items-center justify-center gap-1">
-                        <span class="h-1 w-1 rounded-full bg-gray-300 transition-colors group-hover:bg-[#38bdf8] dark:bg-gray-600 dark:group-hover:bg-[#38bdf8]"></span>
-                        <span class="h-1 w-1 rounded-full bg-gray-300 transition-colors group-hover:bg-[#38bdf8] dark:bg-gray-600 dark:group-hover:bg-[#38bdf8]"></span>
-                        <span class="h-1 w-1 rounded-full bg-gray-300 transition-colors group-hover:bg-[#38bdf8] dark:bg-gray-600 dark:group-hover:bg-[#38bdf8]"></span>
-                    </div>
+                    <div style="position:absolute;inset:0;left:2px;width:1px;background:var(--line)"></div>
                 </div>
 
                 {# Header #}
-                <div class="flex items-center justify-between border-b border-gray-200 px-6 py-4 dark:border-gray-700">
-                    <h2 class="font-semibold text-gray-900 dark:text-white">Nápověda</h2>
-                    <button data-action="click->help#close"
-                            class="rounded p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600 dark:hover:bg-white/10 dark:hover:text-white">
+                <div style="display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line);padding:16px 20px">
+                    <h2 style="font-weight:700;color:var(--fg)">Nápověda</h2>
+                    <button data-action="click->help#close" class="hp-icon-btn">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M18 6L6 18M6 6l12 12"/></svg>
                     </button>
                 </div>
 
-                {# Interactive tours section #}
-                <div class="border-b border-gray-200 px-6 py-5 dark:border-gray-700">
-                    <p class="mb-3 text-xs font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500">Průvodci aplikací</p>
-                    <div class="space-y-2">
-
+                {# Interactive tours #}
+                <div style="border-bottom:1px solid var(--line);padding:20px">
+                    <p class="hp-label" style="margin-bottom:12px">Průvodci aplikací</p>
+                    <div style="display:flex;flex-direction:column;gap:8px">
                         {# Predictions tour #}
                         {% if _route == 'prediction_list' %}
-                            <button data-action="click->help#startTour"
-                                    class="flex w-full items-center gap-3 rounded-xl bg-[#0f172a] px-4 py-3.5 text-left hover:bg-[#1e293b] dark:bg-[#38bdf8] dark:hover:bg-[#7dd3fc]">
-                                <span class="text-2xl leading-none" aria-hidden="true">🎯</span>
-                                <div>
-                                    <div class="text-sm font-semibold text-white dark:text-[#0f172a]">Průvodce tipováním</div>
-                                    <div class="mt-0.5 text-xs text-white/70 dark:text-[#0f172a]/70">Jak zadávat tipy a co vše najdeš zde</div>
+                            <button data-action="click->help#startTour" class="hp-btn hp-btn-primary" style="justify-content:flex-start;gap:12px;padding:14px 16px">
+                                <span style="font-size:20px" aria-hidden="true">🎯</span>
+                                <div style="text-align:left">
+                                    <div style="font-size:13px;font-weight:600">Průvodce tipováním</div>
+                                    <div style="font-size:11px;opacity:0.7;font-weight:400">Jak zadávat tipy a co vše najdeš zde</div>
                                 </div>
-                                <svg xmlns="http://www.w3.org/2000/svg" class="ml-auto h-4 w-4 shrink-0 text-white/50 dark:text-[#0f172a]/50" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
                             </button>
                         {% else %}
-                            <a href="{{ path('prediction_list') }}?tour=1"
-                               class="flex items-center gap-3 rounded-xl border border-gray-200 px-4 py-3.5 hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-white/5">
-                                <span class="text-2xl leading-none" aria-hidden="true">🎯</span>
-                                <div>
-                                    <div class="text-sm font-medium text-gray-900 dark:text-white">Průvodce tipováním</div>
-                                    <div class="mt-0.5 text-xs text-gray-500 dark:text-gray-400">Jak zadávat tipy a orientovat se</div>
+                            <a href="{{ path('prediction_list') }}?tour=1" class="hp-btn hp-btn-ghost" style="justify-content:flex-start;gap:12px;padding:14px 16px">
+                                <span style="font-size:20px" aria-hidden="true">🎯</span>
+                                <div style="text-align:left">
+                                    <div style="font-size:13px;font-weight:600">Průvodce tipováním</div>
+                                    <div style="font-size:11px;color:var(--fg-3);font-weight:400">Jak zadávat tipy a orientovat se</div>
                                 </div>
-                                <svg xmlns="http://www.w3.org/2000/svg" class="ml-auto h-4 w-4 shrink-0 text-gray-300 dark:text-gray-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
                             </a>
                         {% endif %}
 
                         {# Leaderboard tour #}
                         {% if _route == 'homepage' %}
-                            <button data-action="click->help#startTour"
-                                    class="flex w-full items-center gap-3 rounded-xl bg-[#0f172a] px-4 py-3.5 text-left hover:bg-[#1e293b] dark:bg-[#38bdf8] dark:hover:bg-[#7dd3fc]">
-                                <span class="text-2xl leading-none" aria-hidden="true">🏆</span>
-                                <div>
-                                    <div class="text-sm font-semibold text-white dark:text-[#0f172a]">Průvodce žebříčkem</div>
-                                    <div class="mt-0.5 text-xs text-white/70 dark:text-[#0f172a]/70">Žebříček, graf a statistiky turnaje</div>
+                            <button data-action="click->help#startTour" class="hp-btn hp-btn-primary" style="justify-content:flex-start;gap:12px;padding:14px 16px">
+                                <span style="font-size:20px" aria-hidden="true">🏆</span>
+                                <div style="text-align:left">
+                                    <div style="font-size:13px;font-weight:600">Pr��vodce žebříčkem</div>
+                                    <div style="font-size:11px;opacity:0.7;font-weight:400">Žebříček, graf a statistiky turnaje</div>
                                 </div>
-                                <svg xmlns="http://www.w3.org/2000/svg" class="ml-auto h-4 w-4 shrink-0 text-white/50 dark:text-[#0f172a]/50" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
                             </button>
                         {% else %}
-                            <a href="{{ path('homepage') }}?tour=1"
-                               class="flex items-center gap-3 rounded-xl border border-gray-200 px-4 py-3.5 hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-white/5">
-                                <span class="text-2xl leading-none" aria-hidden="true">🏆</span>
-                                <div>
-                                    <div class="text-sm font-medium text-gray-900 dark:text-white">Průvodce žebříčkem</div>
-                                    <div class="mt-0.5 text-xs text-gray-500 dark:text-gray-400">Žebříček, graf bodů a statistiky</div>
+                            <a href="{{ path('homepage') }}?tour=1" class="hp-btn hp-btn-ghost" style="justify-content:flex-start;gap:12px;padding:14px 16px">
+                                <span style="font-size:20px" aria-hidden="true">🏆</span>
+                                <div style="text-align:left">
+                                    <div style="font-size:13px;font-weight:600">Průvodce žebříčkem</div>
+                                    <div style="font-size:11px;color:var(--fg-3);font-weight:400">Žebříček, graf bodů a statistiky</div>
                                 </div>
-                                <svg xmlns="http://www.w3.org/2000/svg" class="ml-auto h-4 w-4 shrink-0 text-gray-300 dark:text-gray-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
                             </a>
                         {% endif %}
 
                         {# Hall of Fame tour #}
                         {% if _route == 'hall_of_fame' %}
-                            <button data-action="click->help#startTour"
-                                    class="flex w-full items-center gap-3 rounded-xl bg-[#0f172a] px-4 py-3.5 text-left hover:bg-[#1e293b] dark:bg-[#38bdf8] dark:hover:bg-[#7dd3fc]">
-                                <span class="text-2xl leading-none" aria-hidden="true">🏅</span>
-                                <div>
-                                    <div class="text-sm font-semibold text-white dark:text-[#0f172a]">Průvodce Síní slávy</div>
-                                    <div class="mt-0.5 text-xs text-white/70 dark:text-[#0f172a]/70">Celkové pořadí a история turnajů</div>
+                            <button data-action="click->help#startTour" class="hp-btn hp-btn-primary" style="justify-content:flex-start;gap:12px;padding:14px 16px">
+                                <span style="font-size:20px" aria-hidden="true">🏅</span>
+                                <div style="text-align:left">
+                                    <div style="font-size:13px;font-weight:600">Průvodce Síní slávy</div>
+                                    <div style="font-size:11px;opacity:0.7;font-weight:400">Celkové pořadí a historie turnajů</div>
                                 </div>
-                                <svg xmlns="http://www.w3.org/2000/svg" class="ml-auto h-4 w-4 shrink-0 text-white/50 dark:text-[#0f172a]/50" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
                             </button>
                         {% else %}
-                            <a href="{{ path('hall_of_fame') }}?tour=1"
-                               class="flex items-center gap-3 rounded-xl border border-gray-200 px-4 py-3.5 hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-white/5">
-                                <span class="text-2xl leading-none" aria-hidden="true">🏅</span>
-                                <div>
-                                    <div class="text-sm font-medium text-gray-900 dark:text-white">Průvodce Síní slávy</div>
-                                    <div class="mt-0.5 text-xs text-gray-500 dark:text-gray-400">Celkové pořadí a historia turnajů</div>
+                            <a href="{{ path('hall_of_fame') }}?tour=1" class="hp-btn hp-btn-ghost" style="justify-content:flex-start;gap:12px;padding:14px 16px">
+                                <span style="font-size:20px" aria-hidden="true">🏅</span>
+                                <div style="text-align:left">
+                                    <div style="font-size:13px;font-weight:600">Průvodce Síní slávy</div>
+                                    <div style="font-size:11px;color:var(--fg-3);font-weight:400">Celkové pořadí a historie turnajů</div>
                                 </div>
-                                <svg xmlns="http://www.w3.org/2000/svg" class="ml-auto h-4 w-4 shrink-0 text-gray-300 dark:text-gray-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
                             </a>
                         {% endif %}
-
                     </div>
                 </div>
 
                 {# Rules accordion #}
-                <div class="border-b border-gray-200 dark:border-gray-700">
+                <div style="border-bottom:1px solid var(--line)">
                     <button data-action="click->help#toggleRules"
-                            class="flex w-full items-center justify-between px-6 py-4 text-left text-sm font-medium text-gray-900 hover:bg-gray-50 dark:text-white dark:hover:bg-white/5">
-                        <span>📋 Pravidla</span>
-                        <span data-help-target="rulesArrow" class="text-xs text-gray-400">▼</span>
+                            style="display:flex;align-items:center;justify-content:space-between;width:100%;padding:16px 20px;text-align:left;font-size:14px;font-weight:600;color:var(--fg);background:transparent;border:none;cursor:pointer">
+                        <span>Pravidla</span>
+                        <span data-help-target="rulesArrow" style="font-size:12px;color:var(--fg-4)">&#x25BC;</span>
                     </button>
-                    <div data-help-target="rulesContent" class="hidden px-6 pb-6">
+                    <div data-help-target="rulesContent" class="hidden" style="padding:0 20px 20px">
                         {% if current_tournament and current_tournament.rulesContent %}
-                            <div class="trix-content text-sm text-gray-700 dark:text-gray-300">
+                            <div class="trix-content" style="font-size:14px;color:var(--fg-2)">
                                 {{ current_tournament.rulesContent|raw }}
                             </div>
                         {% else %}
-                            <p class="text-sm text-gray-400">Pravidla zatím nebyla nastavena.</p>
+                            <p style="font-size:14px;color:var(--fg-4)">Pravidla zatím nebyla nastavena.</p>
                         {% endif %}
                     </div>
                 </div>
@@ -281,17 +274,17 @@
                 {# Manual accordion #}
                 <div>
                     <button data-action="click->help#toggleManual"
-                            class="flex w-full items-center justify-between px-6 py-4 text-left text-sm font-medium text-gray-900 hover:bg-gray-50 dark:text-white dark:hover:bg-white/5">
-                        <span>📖 Manuál</span>
-                        <span data-help-target="manualArrow" class="text-xs text-gray-400">▼</span>
+                            style="display:flex;align-items:center;justify-content:space-between;width:100%;padding:16px 20px;text-align:left;font-size:14px;font-weight:600;color:var(--fg);background:transparent;border:none;cursor:pointer">
+                        <span>Manuál</span>
+                        <span data-help-target="manualArrow" style="font-size:12px;color:var(--fg-4)">&#x25BC;</span>
                     </button>
-                    <div data-help-target="manualContent" class="hidden px-6 pb-6">
+                    <div data-help-target="manualContent" class="hidden" style="padding:0 20px 20px">
                         {% if current_tournament and current_tournament.manualContent %}
-                            <div class="trix-content text-sm text-gray-700 dark:text-gray-300">
+                            <div class="trix-content" style="font-size:14px;color:var(--fg-2)">
                                 {{ current_tournament.manualContent|raw }}
                             </div>
                         {% else %}
-                            <p class="text-sm text-gray-400">Manuál zatím nebyl nastaven.</p>
+                            <p style="font-size:14px;color:var(--fg-4)">Manuál zatím nebyl nastaven.</p>
                         {% endif %}
                     </div>
                 </div>

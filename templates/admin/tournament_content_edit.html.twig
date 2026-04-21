@@ -7,36 +7,35 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/trix@2/dist/trix.min.css">
     <style>
         trix-editor { min-height: 300px; }
-        .dark trix-toolbar .trix-button-group { border-color: #374151; }
-        .dark trix-toolbar .trix-button { background: #1e293b; color: #d1d5db; border-color: #374151; }
-        .dark trix-toolbar .trix-button.trix-active { background: #374151; }
-        .dark trix-editor { background: #0f172a; color: #e2e8f0; border-color: #374151; }
+        trix-toolbar .trix-button-group { border-color: var(--line); }
+        trix-toolbar .trix-button { background: var(--bg-2); color: var(--fg-2); border-color: var(--line); }
+        trix-toolbar .trix-button.trix-active { background: var(--bg-3); }
+        trix-editor { background: var(--bg); color: var(--fg); border-color: var(--line); }
     </style>
 {% endblock %}
 
 {% block admin_body %}
     <div class="mx-auto max-w-3xl">
         <div class="mb-4">
-            <a href="{{ path('admin_tournaments') }}" class="text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-white">&larr; Zpět na turnaje</a>
+            <a href="{{ path('admin_tournaments') }}" class="text-sm hover:underline" style="color:var(--fg-3)">&larr; Zpět na turnaje</a>
         </div>
 
-        <h1 class="mb-6 text-xl font-bold dark:text-white">{{ title }} — {{ tournament.name }}</h1>
+        <h1 class="mb-6 text-xl font-bold" style="color:var(--fg)">{{ title }} — {{ tournament.name }}</h1>
 
         <form method="post" action="{{ path('admin_tournament_content_save', {id: tournament.id, field: field}) }}">
             <input type="hidden" name="_token" value="{{ csrf_token('tournament_content') }}">
             <input id="content-input" type="hidden" name="content" value="{{ content }}">
 
-            <div class="mb-6 overflow-hidden rounded-xl bg-white shadow dark:bg-[#1e293b] dark:shadow-gray-900/30">
+            <div class="hp-card mb-6">
                 <trix-editor input="content-input" class="rounded-b-xl"></trix-editor>
             </div>
 
             <div class="flex items-center justify-between">
                 <a href="{{ field == 'rules' ? path('rules_page') : path('manual_page') }}"
-                   class="text-sm text-gray-500 hover:underline dark:text-gray-400">
+                   class="text-sm hover:underline" style="color:var(--fg-3)">
                     Zobrazit stránku
                 </a>
-                <button type="submit"
-                        class="rounded-lg bg-blue-600 px-6 py-2.5 font-semibold text-white hover:bg-blue-700 dark:bg-[#38bdf8] dark:text-[#0f172a] dark:hover:bg-[#7dd3fc]">
+                <button type="submit" class="hp-btn hp-btn-primary">
                     Uložit
                 </button>
             </div>

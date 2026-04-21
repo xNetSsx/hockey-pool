@@ -12,27 +12,27 @@
 {% block body %}
     <div class="mx-auto max-w-3xl">
         <div class="mb-6">
-            <h1 class="text-2xl font-bold text-gray-900 dark:text-white">{{ title }}</h1>
+            <h1 class="text-2xl font-bold" style="color:var(--fg)">{{ title }}</h1>
             {% if tournament %}
-                <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">{{ tournament.name }}</p>
+                <p class="mt-1 text-sm" style="color:var(--fg-3)">{{ tournament.name }}</p>
             {% endif %}
         </div>
 
-        <div class="overflow-hidden rounded-xl bg-white p-6 shadow dark:bg-[#1e293b] dark:shadow-gray-900/30 sm:p-8">
+        <div class="hp-card p-6 sm:p-8">
             {% if content %}
                 {# |raw is safe here: content is authored exclusively by admins via the Trix editor #}
-                <div class="trix-content prose max-w-none dark:prose-invert">
+                <div class="trix-content prose max-w-none">
                     {{ content|raw }}
                 </div>
             {% else %}
-                <p class="text-center text-gray-500 dark:text-gray-400">{{ emptyMessage }}</p>
+                <p class="text-center" style="color:var(--fg-3)">{{ emptyMessage }}</p>
             {% endif %}
         </div>
 
         {% if is_granted('ROLE_ADMIN') and tournament %}
             <div class="mt-4 text-center">
                 <a href="{{ path('admin_tournament_content', {id: tournament.id, field: field}) }}"
-                   class="text-sm text-blue-600 hover:underline dark:text-[#38bdf8]">
+                   class="text-sm hover:underline" style="color:var(--accent)">
                     Upravit obsah
                 </a>
             </div>

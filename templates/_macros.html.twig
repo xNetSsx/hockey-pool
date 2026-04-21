@@ -1,9 +1,6 @@
-{# Reusable Twig macros for base layout components #}
+{# Reusable Twig macros for Hockey Pool redesign #}
 
-{#
- # Renders the moon/sun SVG icon pair used by the theme toggle Stimulus controller.
- # The darkIcon is visible in light mode (clicking switches to dark), and vice versa.
- #}
+{# ── Theme toggle icons ── #}
 {% macro theme_icons() %}
     <svg {{ stimulus_target('theme', 'darkIcon') }} class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">
         <path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.718 9.718 0 0118 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 003 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 009.002-5.998z" />
@@ -13,11 +10,43 @@
     </svg>
 {% endmacro %}
 
-{#
- # Returns the CSS class string for a nav link.
- #   active  — boolean, whether this link matches the current route
- #   mobile  — boolean, use mobile-menu variant (slightly different inactive colour)
- #}
+{# ── Brand mark (hockey stick icon in gradient square) ── #}
+{% macro brand_mark() %}
+    <span class="hp-brand-mark">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <circle cx="12" cy="12" r="10" fill="currentColor" opacity="0.15"/>
+            <path d="M5 16 L12 16 L19 8" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="5" cy="16" r="1.8" fill="currentColor"/>
+        </svg>
+    </span>
+{% endmacro %}
+
+{# ── Rank chip (gold/silver/bronze for top 3) ── #}
+{% macro rank_chip(rank, xl = false) %}
+    {%- set cls = 'hp-rank' -%}
+    {%- if xl %}{% set cls = cls ~ ' hp-rank-xl' %}{% endif -%}
+    {%- if rank == 1 %}{% set cls = cls ~ ' hp-rank-1' -%}
+    {%- elseif rank == 2 %}{% set cls = cls ~ ' hp-rank-2' -%}
+    {%- elseif rank == 3 %}{% set cls = cls ~ ' hp-rank-3' -%}
+    {%- endif -%}
+    <span class="{{ cls }}">{{ rank }}</span>
+{% endmacro %}
+
+{# ── Avatar monogram ── #}
+{# hue: 0-360 value for the player color. If not provided, derives from name length. #}
+{% macro avatar(name, size = 'md', hue = null) %}
+    {%- if hue is null -%}
+        {%- set hue = ((name|length * 137) % 360) -%}
+    {%- endif -%}
+    {%- set initials = name|split(' ')|map(w => w|first|upper)|join('')|slice(0,2) -%}
+    {%- if initials|length < 1 -%}{%- set initials = '?' -%}{%- endif -%}
+    {%- set cls = 'hp-avatar' -%}
+    {%- if size == 'lg' %}{% set cls = cls ~ ' hp-avatar-lg' %}{% endif -%}
+    {%- if size == 'sm' %}{% set cls = cls ~ ' hp-avatar-sm' %}{% endif -%}
+    <span class="{{ cls }}" style="background: linear-gradient(135deg, oklch(0.65 0.17 {{ hue }}), oklch(0.50 0.18 {{ (hue + 40) % 360 }}))">{{ initials }}</span>
+{% endmacro %}
+
+{# ── Prediction badge classes (legacy Tailwind — used by prediction/list, user/profile, match/detail) ── #}
 {% macro prediction_badge_class(prediction, game) -%}
     {%- if not game.isFinished -%}
         bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-900/30 dark:text-blue-300 dark:border-blue-700
@@ -30,12 +59,24 @@
     {%- endif -%}
 {% endmacro %}
 
-{% macro nav_link_class(active, mobile = false) -%}
-    {%- if active -%}
-        bg-gray-100 text-gray-900 dark:bg-white/10 dark:text-white
-    {%- elseif mobile -%}
-        text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-white/10
+{# ── Prediction badge classes (new token-based — for redesigned templates) ── #}
+{% macro hp_prediction_badge_class(prediction, game) -%}
+    {%- if not game.isFinished -%}
+        hp-pred-badge hp-pred-good
+    {%- elseif prediction.isExactScore(game) -%}
+        hp-pred-badge hp-pred-exact
+    {%- elseif prediction.isCorrectWinner(game) -%}
+        hp-pred-badge hp-pred-good
     {%- else -%}
-        text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-white/10 dark:hover:text-white
+        hp-pred-badge hp-pred-miss
+    {%- endif -%}
+{% endmacro %}
+
+{# ── Nav link class (pill style) ── #}
+{% macro nav_link_class(active, mobile = false) -%}
+    {%- if mobile -%}
+        hp-mobile-link{{ active ? ' active' : '' }}
+    {%- else -%}
+        hp-nav-link{{ active ? ' active' : '' }}
     {%- endif -%}
 {% endmacro %}

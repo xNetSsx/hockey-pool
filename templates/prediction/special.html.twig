@@ -4,7 +4,7 @@
 
 {% block body %}
     <div class="mb-6">
-        <a href="{{ path('special_bet_overview') }}" class="inline-flex items-center gap-1 text-sm font-medium text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white">
+        <a href="{{ path('special_bet_overview') }}" class="inline-flex items-center gap-1 text-sm font-medium hover:underline" style="color:var(--fg-3)">
             <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18"/></svg>
             Zpět
         </a>
@@ -12,36 +12,34 @@
 
     <div class="mx-auto max-w-2xl">
         <div class="mb-6">
-            <h1 class="text-2xl font-bold text-gray-900 dark:text-white">⭐ Speciální tipy</h1>
-            <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">{{ tournament.name }}</p>
+            <h1 class="text-2xl font-bold" style="color:var(--fg)">Speciální tipy</h1>
+            <p class="mt-1 text-sm" style="color:var(--fg-3)">{{ tournament.name }}</p>
             {% if isLocked %}
-                <div class="mt-3 rounded-md bg-amber-50 p-3 text-sm text-amber-800 dark:bg-amber-900/30 dark:text-amber-300">
-                    🔒 Speciální tipy jsou uzamčeny — turnaj už začal.
+                <div class="hp-alert hp-alert-info mt-3">
+                    Speciální tipy jsou uzamčeny — turnaj už začal.
                 </div>
             {% endif %}
         </div>
 
-        {% set inputClass = 'w-full rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-gray-900 focus:border-[#38bdf8] focus:outline-none focus:ring-2 focus:ring-[#38bdf8]/20 disabled:bg-gray-100 disabled:text-gray-500 dark:bg-[#0f172a] dark:border-gray-600 dark:text-white dark:disabled:bg-gray-800 dark:disabled:text-gray-500' %}
-
         <form method="post" class="space-y-6">
             <input type="hidden" name="_token" value="{{ csrf_token('special_bets') }}">
 
-            <div class="overflow-hidden rounded-xl bg-white shadow dark:bg-[#1e293b] dark:shadow-gray-900/30">
-                <div class="border-b bg-[#0f172a] px-6 py-4">
-                    <h2 class="text-lg font-semibold text-white">Vyplň své tipy</h2>
+            <div class="hp-card">
+                <div class="hp-card-head" style="background:var(--bg-3)">
+                    <h2 class="hp-card-title">Vyplň své tipy</h2>
                 </div>
-                <div class="divide-y divide-gray-100 dark:divide-gray-700">
+                <div class="divide-y" style="border-color:var(--line-soft)">
                     {% for rule in rules %}
                         {% set bet = existingBets[rule.id] ?? null %}
                         <div class="px-6 py-4">
-                            <label for="rule_{{ rule.id }}" class="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
+                            <label for="rule_{{ rule.id }}" class="hp-field-label mb-1 block">
                                 {{ rule.name }}
-                                <span class="ml-1 text-xs text-gray-400 dark:text-gray-500">({{ rule.points }} b. — {{ rule.scoringType.label }})</span>
+                                <span class="ml-1" style="color:var(--fg-4)">({{ rule.points }} b. — {{ rule.scoringType.label }})</span>
                             </label>
 
                             {% if rule.valueType.value == 'team' %}
                                 <select name="rule_{{ rule.id }}" id="rule_{{ rule.id }}"
-                                        class="{{ inputClass }}" {{ isLocked ? 'disabled' : '' }}>
+                                        class="hp-field-input w-full" {{ isLocked ? 'disabled' : '' }}>
                                     <option value="">— Vyber tým —</option>
                                     {% for team in teams %}
                                         <option value="{{ team.id }}" {{ bet and bet.teamValue and bet.teamValue.id == team.id ? 'selected' : '' }}>
@@ -52,12 +50,12 @@
                             {% elseif rule.valueType.value == 'string' %}
                                 <input type="text" name="rule_{{ rule.id }}" id="rule_{{ rule.id }}"
                                        value="{{ bet ? bet.stringValue : '' }}"
-                                       class="{{ inputClass }}" {{ isLocked ? 'disabled' : '' }}
+                                       class="hp-field-input w-full" {{ isLocked ? 'disabled' : '' }}
                                        placeholder="např. Pastrňák">
                             {% elseif rule.valueType.value == 'integer' %}
                                 <input type="number" name="rule_{{ rule.id }}" id="rule_{{ rule.id }}"
                                        value="{{ bet ? bet.intValue : '' }}"
-                                       class="{{ inputClass }}" {{ isLocked ? 'disabled' : '' }}
+                                       class="hp-field-input w-full" {{ isLocked ? 'disabled' : '' }}
                                        min="0" placeholder="číslo">
                             {% endif %}
                         </div>
@@ -67,8 +65,7 @@
 
             {% if not isLocked %}
                 <div class="text-center">
-                    <button type="submit"
-                            class="rounded-lg bg-[#0f172a] px-8 py-2.5 font-semibold text-white shadow-sm hover:bg-[#1e293b] focus:outline-none focus:ring-2 focus:ring-[#38bdf8] focus:ring-offset-2 dark:bg-[#38bdf8] dark:text-[#0f172a] dark:hover:bg-[#7dd3fc]">
+                    <button type="submit" class="hp-btn hp-btn-primary">
                         Uložit speciální tipy
                     </button>
                 </div>

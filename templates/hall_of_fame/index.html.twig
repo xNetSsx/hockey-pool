@@ -1,101 +1,162 @@
 {% extends 'base.html.twig' %}
+{% import '_macros.html.twig' as m %}
 
 {% block title %}Síň slávy — Hockey Pool{% endblock %}
 
 {% block body %}
     {# Page header #}
-    <div class="mb-10">
-        <div class="flex items-center gap-4">
-            <div class="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-amber-400/15 dark:bg-amber-400/10">
-                <svg class="h-8 w-8 text-amber-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+    <div style="margin-bottom:40px">
+        <div style="display:flex;align-items:center;gap:16px">
+            <div style="display:grid;place-items:center;width:56px;height:56px;border-radius:16px;background:linear-gradient(135deg, color-mix(in oklab, var(--warn) 25%, var(--bg-2)), var(--bg-2));border:1px solid color-mix(in oklab, var(--warn) 20%, var(--line));flex-shrink:0">
+                <svg style="width:32px;height:32px;color:var(--warn)" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                     <path fill-rule="evenodd" d="M5.166 2.621v.858c-1.035.148-2.059.33-3.071.543a.75.75 0 0 0-.584.859 6.753 6.753 0 0 0 6.138 5.6 6.73 6.73 0 0 0 2.743 1.346A6.707 6.707 0 0 1 9.279 15H8.54c-1.036 0-1.875.84-1.875 1.875V19.5h-.75a2.25 2.25 0 0 0-2.25 2.25c0 .414.336.75.75.75h15a.75.75 0 0 0 .75-.75 2.25 2.25 0 0 0-2.25-2.25h-.75v-2.625c0-1.036-.84-1.875-1.875-1.875h-.739a6.706 6.706 0 0 1-1.112-3.173 6.73 6.73 0 0 0 2.743-1.347 6.753 6.753 0 0 0 6.139-5.6.75.75 0 0 0-.585-.858 47.077 47.077 0 0 0-3.07-.543V2.62a.75.75 0 0 0-.658-.744 49.798 49.798 0 0 0-6.093-.377c-2.063 0-4.096.128-6.093.377a.75.75 0 0 0-.657.744Zm0 2.629c0 1.196.312 2.32.857 3.294A5.266 5.266 0 0 1 3.16 5.337a45.6 45.6 0 0 1 2.006-.343v.256Zm13.5 0v-.256c.674.1 1.343.214 2.006.343a5.265 5.265 0 0 1-2.863 3.207 6.72 6.72 0 0 0 .857-3.294Z" clip-rule="evenodd" />
                 </svg>
             </div>
             <div>
-                <h1 class="text-3xl font-bold text-gray-900 dark:text-white">Síň slávy</h1>
-                <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Přehled výsledků všech odehraných turnajů.</p>
+                <h1 style="font-family:var(--font-display);font-size:32px;font-weight:800;letter-spacing:-0.02em;color:var(--fg);margin:0">Síň slávy</h1>
+                <p style="margin-top:4px;font-size:14px;color:var(--fg-3)">Přehled výsledků všech odehraných turnajů.</p>
             </div>
         </div>
     </div>
 
+    {# Podium — top 3 all-time players #}
+    {% if standings|length >= 3 %}
+        {% set podiumOrder = [standings[1], standings[0], standings[2]] %}
+        {% set heights    = ['220px', '260px', '200px'] %}
+        {% set medals     = ['🥈', '🥇', '🥉'] %}
+        {% set gradFroms  = ['oklch(0.88 0.02 250)', 'oklch(0.85 0.15 90)', 'oklch(0.70 0.14 50)'] %}
+        {% set gradTos    = ['oklch(0.72 0.02 250)', 'oklch(0.70 0.17 65)', 'oklch(0.55 0.15 40)'] %}
+        {% set ranks      = [2, 1, 3] %}
+
+        <div class="hof-podium-grid" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:20px;align-items:end">
+            {% for i in 0..2 %}
+                {% set p = podiumOrder[i] %}
+                {% set h = heights[i] %}
+                {% set medal = medals[i] %}
+                {% set gFrom = gradFroms[i] %}
+                {% set gTo = gradTos[i] %}
+                {% set r = ranks[i] %}
+
+                <div class="hp-card" style="position:relative;overflow:hidden;height:{{ h }}{{ r == 1 ? ';border:1px solid color-mix(in oklab, oklch(0.80 0.15 80) 60%, transparent)' : '' }}">
+                    {# Bottom gradient overlay #}
+                    <div style="position:absolute;inset:0;background:linear-gradient(to top, {{ gFrom }}, transparent 70%);opacity:0.12;pointer-events:none" aria-hidden="true"></div>
+
+                    {# Medal emoji top-right #}
+                    <div style="position:absolute;top:12px;right:14px;font-size:48px;line-height:1;opacity:0.25;pointer-events:none" aria-hidden="true">{{ medal }}</div>
+
+                    {# Content #}
+                    <div style="position:relative;display:flex;flex-direction:column;justify-content:flex-end;height:100%;padding:20px">
+                        {# Rank number with gradient text #}
+                        <div style="font-family:var(--font-display);font-size:64px;font-weight:800;line-height:1;letter-spacing:-0.03em;background:linear-gradient(180deg, {{ gFrom }}, {{ gTo }});-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent">
+                            #{{ r }}
+                        </div>
+
+                        {# Player name #}
+                        <a href="{{ path('player_profile', {username: p.user.username}) }}" style="margin-top:8px;font-size:22px;font-weight:800;color:var(--fg);text-decoration:none;display:inline-flex;align-items:center;gap:10px">
+                            {{ m.avatar(p.user.username) }}
+                            {{ p.user.username }}
+                        </a>
+
+                        {# Medal counts #}
+                        <div style="margin-top:6px;font-size:12px;color:var(--fg-3)">
+                            <span data-controller="countup" data-countup-value-value="{{ p.firstPlace }}" data-countup-decimals-value="0">{{ p.firstPlace }}</span>&times; &#x1F947; &middot; <span data-controller="countup" data-countup-value-value="{{ p.secondPlace }}" data-countup-decimals-value="0">{{ p.secondPlace }}</span>&times; &#x1F948; &middot; <span data-controller="countup" data-countup-value-value="{{ p.thirdPlace }}" data-countup-decimals-value="0">{{ p.thirdPlace }}</span>&times; &#x1F949;
+                        </div>
+
+                        {# Tournaments played #}
+                        <div style="margin-top:4px;font-family:var(--font-mono);font-size:14px;color:var(--fg-2)">
+                            <span data-controller="countup" data-countup-value-value="{{ p.tournamentsPlayed }}" data-countup-decimals-value="0">{{ p.tournamentsPlayed }}</span> {{ p.tournamentsPlayed == 1 ? 'turnaj' : (p.tournamentsPlayed >= 2 and p.tournamentsPlayed <= 4 ? 'turnaje' : 'turnajů') }}
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
     {# All-time standings #}
-    <div class="tour-hof-alltime mb-12">
-        <h2 class="mb-4 text-lg font-semibold text-gray-900 dark:text-white">Celkové pořadí</h2>
+    <div class="tour-hof-alltime" style="margin-bottom:48px">
+        <div class="hp-section-head">
+            <h2>Celkové pořadí</h2>
+        </div>
 
         {% if standings|length == 0 %}
-            <div class="rounded-xl bg-white p-8 text-center shadow dark:bg-[#1e293b]">
-                <p class="text-gray-500 dark:text-gray-400">Žádná data k zobrazení.</p>
+            <div class="hp-card" style="padding:32px;text-align:center">
+                <p style="color:var(--fg-3)">Žádná data k zobrazení.</p>
             </div>
         {% else %}
-            <div class="overflow-hidden rounded-xl bg-white shadow dark:bg-[#1e293b] dark:shadow-gray-900/30">
-                <div class="overflow-x-auto">
-                    <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                        <thead class="bg-[#0f172a]">
+            <div class="hp-card">
+                <div style="overflow-x:auto">
+                    <table class="hp-tbl">
+                        <thead>
                             <tr>
-                                <th scope="col" class="w-12 px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-400">#</th>
-                                <th scope="col" class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-400">Hráč</th>
-                                <th scope="col" class="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wider text-gray-400">Turnaje</th>
-                                <th scope="col" class="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wider text-amber-400">
-                                    <span title="1. místo">🥇</span>
+                                <th style="width:52px">#</th>
+                                <th>Hráč</th>
+                                <th class="hp-num">Turnaje</th>
+                                <th class="hp-num" style="color:var(--warn)">
+                                    <span title="1. místo">1.</span>
                                 </th>
-                                <th scope="col" class="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wider text-gray-400">
-                                    <span title="2. místo">🥈</span>
+                                <th class="hp-num">
+                                    <span title="2. místo">2.</span>
                                 </th>
-                                <th scope="col" class="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wider text-gray-400">
-                                    <span title="3. místo">🥉</span>
+                                <th class="hp-num">
+                                    <span title="3. místo">3.</span>
                                 </th>
-                                <th scope="col" class="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wider text-gray-400">Prům. pořadí</th>
-                                <th scope="col" class="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wider text-gray-400">Úspěšnost</th>
-                                <th scope="col" class="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wider text-gray-400">Přesná skóre</th>
-                                <th scope="col" class="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wider text-gray-400" title="Podíl přesně tipovaných zápasů">Přesná %</th>
+                                <th class="hp-num">Prům. pořadí</th>
+                                <th class="hp-num">Úspěšnost</th>
+                                <th class="hp-num">Přesná skóre</th>
+                                <th class="hp-num" title="Podíl přesně tipovaných zápasů">Přesná %</th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-gray-100 dark:divide-gray-700">
+                        <tbody>
                             {% for row in standings %}
-                                <tr class="transition
-                                    {% if row.rank == 1 %}bg-amber-50/50 hover:bg-amber-50 dark:bg-amber-900/10 dark:hover:bg-amber-900/20
-                                    {% elseif row.rank == 2 %}bg-gray-50/80 hover:bg-gray-100/80 dark:bg-gray-800/30 dark:hover:bg-gray-800/50
-                                    {% elseif row.rank == 3 %}bg-amber-50/30 hover:bg-amber-50/60 dark:bg-amber-900/5 dark:hover:bg-amber-900/10
-                                    {% else %}hover:bg-gray-50 dark:hover:bg-white/5{% endif %}">
-                                    <td class="px-4 py-3 text-sm font-bold tabular-nums">
-                                        {% if row.rank == 1 %}
-                                            <span class="text-lg" title="1. místo">🥇</span>
-                                        {% elseif row.rank == 2 %}
-                                            <span class="text-lg" title="2. místo">🥈</span>
-                                        {% elseif row.rank == 3 %}
-                                            <span class="text-lg" title="3. místo">🥉</span>
-                                        {% else %}
-                                            <span class="text-gray-500 dark:text-gray-400">{{ row.rank }}</span>
-                                        {% endif %}
+                                <tr style="{% if row.rank == 1 %}background:color-mix(in oklab, var(--warn) 8%, transparent){% elseif row.rank == 2 %}background:color-mix(in oklab, var(--fg-4) 5%, transparent){% elseif row.rank == 3 %}background:color-mix(in oklab, var(--warn) 4%, transparent){% endif %}">
+                                    <td>
+                                        {{ m.rank_chip(row.rank) }}
                                     </td>
-                                    <td class="px-4 py-3">
-                                        <a href="{{ path('player_profile', {username: row.user.username}) }}" class="font-semibold text-gray-900 hover:text-[#38bdf8] dark:text-white dark:hover:text-[#38bdf8] {{ row.rank == 1 ? 'text-base' : 'text-sm' }}">
+                                    <td>
+                                        <a href="{{ path('player_profile', {username: row.user.username}) }}" style="display:inline-flex;align-items:center;gap:10px;text-decoration:none;color:var(--fg);font-weight:600;font-size:{{ row.rank == 1 ? '15px' : '14px' }}">
+                                            {{ m.avatar(row.user.username) }}
                                             {{ row.user.username }}
                                         </a>
                                     </td>
-                                    <td class="px-4 py-3 text-center text-sm tabular-nums text-gray-600 dark:text-gray-300">{{ row.tournamentsPlayed }}</td>
-                                    <td class="px-4 py-3 text-center text-sm font-semibold tabular-nums {{ row.firstPlace > 0 ? 'text-amber-600 dark:text-amber-400' : 'text-gray-400 dark:text-gray-600' }}">{{ row.firstPlace }}</td>
-                                    <td class="px-4 py-3 text-center text-sm font-semibold tabular-nums {{ row.secondPlace > 0 ? 'text-gray-500 dark:text-gray-300' : 'text-gray-400 dark:text-gray-600' }}">{{ row.secondPlace }}</td>
-                                    <td class="px-4 py-3 text-center text-sm font-semibold tabular-nums {{ row.thirdPlace > 0 ? 'text-amber-700 dark:text-amber-600' : 'text-gray-400 dark:text-gray-600' }}">{{ row.thirdPlace }}</td>
-                                    <td class="px-4 py-3 text-center text-sm tabular-nums text-gray-600 dark:text-gray-300">
-                                        {% if row.averageRank is not null %}
-                                            {{ row.averageRank|number_format(2) }}
-                                        {% else %}
-                                            —
-                                        {% endif %}
+                                    <td class="hp-num">
+                                        <span style="font-family:var(--font-mono);color:var(--fg-2)">{{ row.tournamentsPlayed }}</span>
                                     </td>
-                                    <td class="px-4 py-3 text-center text-sm tabular-nums text-gray-600 dark:text-gray-300">
-                                        {% if row.careerAccuracy is not null %}{{ row.careerAccuracy }}%{% else %}—{% endif %}
+                                    <td class="hp-num">
+                                        <span style="font-weight:700;font-family:var(--font-mono);color:{{ row.firstPlace > 0 ? 'var(--warn)' : 'var(--fg-4)' }}">{{ row.firstPlace }}</span>
                                     </td>
-                                    <td class="px-4 py-3 text-center text-sm tabular-nums text-gray-600 dark:text-gray-300">
-                                        {% if row.careerExactScores > 0 %}
-                                            {{ row.careerExactScores }}×
-                                        {% else %}
-                                            <span class="text-gray-300 dark:text-gray-600">—</span>
-                                        {% endif %}
+                                    <td class="hp-num">
+                                        <span style="font-weight:700;font-family:var(--font-mono);color:{{ row.secondPlace > 0 ? 'var(--fg-2)' : 'var(--fg-4)' }}">{{ row.secondPlace }}</span>
                                     </td>
-                                    <td class="px-4 py-3 text-center text-sm tabular-nums text-gray-600 dark:text-gray-300">
-                                        {% if row.careerExactRate is not null %}{{ row.careerExactRate }}%{% else %}—{% endif %}
+                                    <td class="hp-num">
+                                        <span style="font-weight:700;font-family:var(--font-mono);color:{{ row.thirdPlace > 0 ? 'var(--fg-2)' : 'var(--fg-4)' }}">{{ row.thirdPlace }}</span>
+                                    </td>
+                                    <td class="hp-num">
+                                        <span style="font-family:var(--font-mono);color:var(--fg-2)">
+                                            {% if row.averageRank is not null %}
+                                                {{ row.averageRank|number_format(2) }}
+                                            {% else %}
+                                                —
+                                            {% endif %}
+                                        </span>
+                                    </td>
+                                    <td class="hp-num">
+                                        <span style="font-family:var(--font-mono);color:var(--fg-2)">
+                                            {% if row.careerAccuracy is not null %}{{ row.careerAccuracy }}%{% else %}—{% endif %}
+                                        </span>
+                                    </td>
+                                    <td class="hp-num">
+                                        <span style="font-family:var(--font-mono);color:var(--fg-2)">
+                                            {% if row.careerExactScores > 0 %}
+                                                {{ row.careerExactScores }}×
+                                            {% else %}
+                                                <span style="color:var(--fg-4)">—</span>
+                                            {% endif %}
+                                        </span>
+                                    </td>
+                                    <td class="hp-num">
+                                        <span style="font-family:var(--font-mono);color:var(--fg-2)">
+                                            {% if row.careerExactRate is not null %}{{ row.careerExactRate }}%{% else %}—{% endif %}
+                                        </span>
                                     </td>
                                 </tr>
                             {% endfor %}
@@ -108,44 +169,39 @@
 
     {# Tournament history / podiums #}
     <div class="tour-hof-history">
-        <h2 class="mb-4 text-lg font-semibold text-gray-900 dark:text-white">Historie turnajů</h2>
+        <div class="hp-section-head">
+            <h2>Historie turnajů</h2>
+        </div>
 
         {% if podiums|length == 0 %}
-            <div class="rounded-xl bg-white p-8 text-center shadow dark:bg-[#1e293b]">
-                <p class="text-gray-500 dark:text-gray-400">Žádné ukončené turnaje.</p>
+            <div class="hp-card" style="padding:32px;text-align:center">
+                <p style="color:var(--fg-3)">Žádné ukončené turnaje.</p>
             </div>
         {% else %}
-            <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            <div class="hp-hof-history-grid" style="display:grid;gap:16px;grid-template-columns:repeat(3, 1fr)">
                 {% for entry in podiums %}
-                    <div class="overflow-hidden rounded-xl bg-white shadow dark:bg-[#1e293b] dark:shadow-gray-900/30">
-                        <div class="bg-gradient-to-r from-[#0f172a] to-[#1e3a5f] px-6 py-4">
-                            <div class="flex items-start justify-between gap-3">
-                                <h3 class="text-base font-bold leading-snug text-white">{{ entry.tournament.name }}</h3>
-                                <span class="shrink-0 rounded-full bg-white/10 px-2.5 py-0.5 text-xs font-semibold text-gray-300 ring-1 ring-white/20">
+                    <div class="hp-card">
+                        <div style="padding:16px 20px;background:linear-gradient(135deg, color-mix(in oklab, var(--accent) 20%, var(--bg-3)), var(--bg-3));border-bottom:1px solid var(--line)">
+                            <div style="display:flex;align-items:start;justify-content:space-between;gap:12px">
+                                <h3 style="font-weight:700;font-size:15px;line-height:1.3;color:var(--fg);margin:0">{{ entry.tournament.name }}</h3>
+                                <span class="hp-chip" style="flex-shrink:0">
                                     {{ entry.tournament.year }}
                                 </span>
                             </div>
                         </div>
-                        <div class="divide-y divide-gray-100 dark:divide-gray-700">
+                        <div>
                             {% if entry.podium|length == 0 %}
-                                <p class="px-6 py-4 text-sm text-gray-400 dark:text-gray-500">Žádná data.</p>
+                                <p style="padding:16px 20px;font-size:14px;color:var(--fg-4)">Žádná data.</p>
                             {% else %}
                                 {% for finisher in entry.podium %}
-                                    <div class="flex items-center justify-between py-3 pl-4 pr-6
-                                        {% if finisher.rank == 1 %}border-l-4 border-amber-400
-                                        {% elseif finisher.rank == 2 %}border-l-4 border-gray-400
-                                        {% else %}border-l-4 border-amber-700 dark:border-amber-600{% endif %}">
-                                        <div class="flex items-center gap-3">
-                                            <span class="text-lg leading-none"
-                                                  title="{{ finisher.rank }}. místo">{% if finisher.rank == 1 %}🥇{% elseif finisher.rank == 2 %}🥈{% else %}🥉{% endif %}</span>
-                                            <a href="{{ path('player_profile', {username: finisher.user.username}) }}" class="text-sm font-semibold text-gray-900 hover:text-[#38bdf8] dark:text-white dark:hover:text-[#38bdf8]">
+                                    <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 20px;{{ not loop.last ? 'border-bottom:1px solid var(--line-soft)' : '' }}">
+                                        <div style="display:flex;align-items:center;gap:10px">
+                                            {{ m.rank_chip(finisher.rank) }}
+                                            <a href="{{ path('player_profile', {username: finisher.user.username}) }}" style="font-size:14px;font-weight:600;color:var(--fg);text-decoration:none">
                                                 {{ finisher.user.username }}
                                             </a>
                                         </div>
-                                        <span class="text-sm font-semibold tabular-nums
-                                            {% if finisher.rank == 1 %}text-amber-600 dark:text-amber-400
-                                            {% elseif finisher.rank == 2 %}text-gray-500 dark:text-gray-300
-                                            {% else %}text-amber-700 dark:text-amber-600{% endif %}">
+                                        <span class="hp-pts hp-pts-mono" style="font-size:14px;color:{% if finisher.rank == 1 %}var(--warn){% elseif finisher.rank == 2 %}var(--fg-2){% else %}var(--fg-3){% endif %}">
                                             {{ finisher.points|number_format(2) }} b
                                         </span>
                                     </div>
@@ -157,4 +213,18 @@
             </div>
         {% endif %}
     </div>
+
+    {# Responsive grid #}
+    <style>
+        @media (max-width: 767px) {
+            .hof-podium-grid { grid-template-columns: 1fr !important; }
+            .hof-podium-grid > div { height: auto !important; min-height: 150px; }
+        }
+        @media (max-width: 1023px) {
+            .hp-hof-history-grid { grid-template-columns: repeat(2, 1fr) !important; }
+        }
+        @media (max-width: 639px) {
+            .hp-hof-history-grid { grid-template-columns: 1fr !important; }
+        }
+    </style>
 {% endblock %}

@@ -25,19 +25,28 @@ export default class extends Controller {
 
         checkboxes.forEach(cb => {
             const label = cb.closest('label')
-            const badge = label?.querySelector('[data-badge]')
 
             if (cb.checked) {
                 checked++
-                label?.classList.add('border-green-500', 'bg-green-50', 'dark:bg-green-900/20')
-                label?.classList.remove('border-gray-200', 'dark:border-gray-700')
+                if (label) {
+                    label.style.background = 'color-mix(in oklab, var(--accent) 18%, var(--bg-2))'
+                    label.style.borderColor = 'var(--accent)'
+                    label.style.color = 'var(--fg)'
+                }
             } else {
-                label?.classList.remove('border-green-500', 'bg-green-50', 'dark:bg-green-900/20')
-                label?.classList.add('border-gray-200', 'dark:border-gray-700')
+                if (label) {
+                    label.style.background = 'var(--bg-2)'
+                    label.style.borderColor = 'var(--line)'
+                    label.style.color = 'var(--fg-2)'
+                }
             }
         })
 
         this.counterTarget.textContent = `Vybráno: ${checked}`
-        this.submitTarget.disabled = checked < 2
+
+        const btn = this.submitTarget
+        btn.disabled = checked < 2
+        btn.style.opacity = checked < 2 ? '0.4' : '1'
+        btn.style.cursor = checked < 2 ? 'not-allowed' : 'pointer'
     }
 }

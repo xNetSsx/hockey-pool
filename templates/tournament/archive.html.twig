@@ -4,32 +4,34 @@
 
 {% macro tournament_card(tournament, current_tournament, showSelect) %}
     {% set isSelected = current_tournament and current_tournament.id == tournament.id %}
-    <div class="overflow-hidden rounded-xl bg-white shadow {{ isSelected ? 'ring-2 ring-[#38bdf8]' : '' }} dark:bg-[#1e293b] dark:shadow-gray-900/30">
-        <div class="bg-[#0f172a] px-6 py-4">
-            <h3 class="text-lg font-bold text-white">{{ tournament.name }}</h3>
-            <p class="text-sm text-gray-400">{{ tournament.year }}</p>
+    <div class="hp-card {{ isSelected ? 'ring-2' : '' }}" {% if isSelected %}style="--tw-ring-color:var(--accent)"{% endif %}>
+        <div class="hp-card-head" style="background:var(--bg-3)">
+            <div>
+                <h3 class="hp-card-title">{{ tournament.name }}</h3>
+                <p class="hp-card-sub">{{ tournament.year }}</p>
+            </div>
         </div>
         <div class="flex items-center justify-between px-6 py-4">
             <div>
                 {% if tournament.status.value == 'in_progress' %}
-                    <span class="rounded bg-green-100 px-2 py-0.5 text-xs font-medium text-green-800 dark:bg-green-900/30 dark:text-green-300">Probíhá</span>
+                    <span class="hp-chip" style="background:color-mix(in oklab, var(--pos) 18%, transparent);color:var(--pos);border-color:color-mix(in oklab, var(--pos) 30%, transparent)">Probíhá</span>
                 {% elseif tournament.status.value == 'finished' %}
-                    <span class="rounded bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-600 dark:bg-gray-700 dark:text-gray-300">Ukončen</span>
+                    <span class="hp-chip">Ukončen</span>
                 {% else %}
-                    <span class="rounded bg-blue-100 px-2 py-0.5 text-xs font-medium text-blue-800 dark:bg-blue-900/30 dark:text-blue-300">Nadcházející</span>
+                    <span class="hp-chip hp-chip-accent">Nadcházející</span>
                 {% endif %}
                 {% if isSelected %}
-                    <span class="ml-1 text-xs text-[#38bdf8]">aktivní</span>
+                    <span class="ml-1 text-xs" style="color:var(--accent)">aktivní</span>
                 {% endif %}
             </div>
             <div class="flex gap-2">
                 <a href="{{ path('tournament_dashboard', {slug: tournament.slug}) }}"
-                   class="rounded bg-gray-200 px-3 py-1 text-xs font-medium text-gray-700 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600">
+                   class="hp-btn hp-btn-ghost hp-btn-sm">
                     Zobrazit
                 </a>
                 {% if showSelect and not isSelected %}
                     <a href="{{ path('tournament_select', {slug: tournament.slug}) }}"
-                       class="rounded bg-[#0f172a] px-3 py-1 text-xs font-medium text-white hover:bg-[#1e293b] dark:bg-[#38bdf8] dark:text-[#0f172a] dark:hover:bg-[#7dd3fc]">
+                       class="hp-btn hp-btn-primary hp-btn-sm">
                         Vybrat
                     </a>
                 {% endif %}
@@ -39,16 +41,16 @@
 {% endmacro %}
 
 {% block body %}
-    <h1 class="mb-6 text-2xl font-bold text-gray-900 dark:text-white">🏒 Turnaje</h1>
+    <h1 class="mb-6 text-2xl font-bold" style="color:var(--fg)">Turnaje</h1>
 
     {% if current|length == 0 and archived|length == 0 %}
-        <div class="rounded-xl bg-white p-8 text-center shadow dark:bg-[#1e293b]">
-            <p class="text-gray-500 dark:text-gray-400">Žádné turnaje.</p>
+        <div class="hp-card p-8 text-center">
+            <p style="color:var(--fg-3)">Žádné turnaje.</p>
         </div>
     {% endif %}
 
     {% if current|length > 0 %}
-        <h2 class="mb-4 text-lg font-semibold text-gray-900 dark:text-white">Aktuální</h2>
+        <h2 class="mb-4 text-lg font-semibold" style="color:var(--fg)">Aktuální</h2>
         <div class="mb-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {% for tournament in current %}
                 {{ _self.tournament_card(tournament, current_tournament, true) }}
@@ -57,7 +59,7 @@
     {% endif %}
 
     {% if archived|length > 0 %}
-        <h2 class="mb-4 text-lg font-semibold text-gray-700 dark:text-gray-300">Archiv</h2>
+        <h2 class="mb-4 text-lg font-semibold" style="color:var(--fg-2)">Archiv</h2>
         <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {% for tournament in archived %}
                 {{ _self.tournament_card(tournament, current_tournament, false) }}

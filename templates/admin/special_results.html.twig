@@ -2,18 +2,16 @@
 
 {% block title %}Výsledky speciálních tipů — Admin{% endblock %}
 
-{% set inputClass = 'w-full rounded-lg border border-gray-300 px-4 py-2.5 text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 dark:bg-[#0f172a] dark:border-gray-600 dark:text-white' %}
-
 {% block admin_body %}
     <div class="mx-auto max-w-2xl">
-        <h1 class="mb-4 text-xl font-bold dark:text-white">Zadat výsledky — {{ tournament.name }}</h1>
+        <h1 class="mb-4 text-xl font-bold" style="color:var(--fg)">Zadat výsledky — {{ tournament.name }}</h1>
 
         {% if tournaments|length > 1 %}
             <div class="mb-6 flex flex-wrap items-center gap-2">
-                <span class="text-sm text-gray-500 dark:text-gray-400">Turnaj:</span>
+                <span class="text-sm" style="color:var(--fg-3)">Turnaj:</span>
                 {% for t in tournaments %}
                     <a href="{{ path('admin_special_results', {id: t.id}) }}"
-                       class="rounded-full px-3 py-1 text-sm {{ tournament.id == t.id ? 'bg-[#0f172a] text-white' : 'bg-gray-200 text-gray-600 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600' }}">
+                       class="rounded-full px-3 py-1 text-sm transition-colors" style="{{ tournament.id == t.id ? 'background:var(--bg-3);color:var(--fg);border:1px solid var(--line)' : 'background:var(--bg-2);color:var(--fg-3);border:1px solid var(--line-soft)' }}">
                         {{ t.name }}
                     </a>
                 {% endfor %}
@@ -21,27 +19,27 @@
         {% endif %}
 
         {% if rules|length == 0 %}
-            <div class="rounded-xl bg-white p-8 text-center shadow dark:bg-[#1e293b] dark:shadow-gray-900/30">
-                <p class="text-gray-500 dark:text-gray-400">Žádná pravidla. Nejprve <a href="{{ path('admin_rules') }}" class="text-blue-600 hover:underline dark:text-[#38bdf8]">vytvoř pravidla</a>.</p>
+            <div class="hp-card p-8 text-center">
+                <p style="color:var(--fg-3)">Žádná pravidla. Nejprve <a href="{{ path('admin_rules') }}" class="hover:underline" style="color:var(--accent)">vytvoř pravidla</a>.</p>
             </div>
         {% else %}
             <form method="post" action="{{ path('admin_special_results_save', {id: tournament.id}) }}" class="space-y-6">
                 <input type="hidden" name="_token" value="{{ csrf_token('special_results') }}">
 
-                <div class="overflow-hidden rounded-xl bg-white shadow dark:bg-[#1e293b] dark:shadow-gray-900/30">
-                    <div class="border-b bg-[#0f172a] px-6 py-3 dark:border-gray-700">
-                        <h2 class="font-semibold text-white">Skutečné výsledky</h2>
+                <div class="hp-card">
+                    <div class="hp-card-head">
+                        <h2 class="hp-card-title">Skutečné výsledky</h2>
                     </div>
-                    <div class="divide-y divide-gray-100 dark:divide-gray-700">
+                    <div>
                         {% for rule in rules %}
-                            <div class="px-6 py-4">
-                                <label for="rule_{{ rule.id }}" class="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
+                            <div class="px-6 py-4" style="{{ not loop.last ? 'border-bottom:1px solid var(--line-soft)' : '' }}">
+                                <label for="rule_{{ rule.id }}" class="hp-field-label mb-1 block">
                                     {{ rule.name }}
-                                    <span class="text-xs text-gray-400 dark:text-gray-500">({{ rule.valueType.label }}, {{ rule.points }} b.)</span>
+                                    <span style="color:var(--fg-4)">({{ rule.valueType.label }}, {{ rule.points }} b.)</span>
                                 </label>
 
                                 {% if rule.valueType.value == 'team' %}
-                                    <select name="rule_{{ rule.id }}" id="rule_{{ rule.id }}" class="{{ inputClass }}">
+                                    <select name="rule_{{ rule.id }}" id="rule_{{ rule.id }}" class="hp-field-input w-full">
                                         <option value="">— Vyber tým —</option>
                                         {% for team in teams %}
                                             <option value="{{ team.id }}" {{ rule.actualTeamValue and rule.actualTeamValue.id == team.id ? 'selected' : '' }}>
@@ -52,11 +50,11 @@
                                 {% elseif rule.valueType.value == 'string' %}
                                     <input type="text" name="rule_{{ rule.id }}" id="rule_{{ rule.id }}"
                                            value="{{ rule.actualStringValue }}"
-                                           class="{{ inputClass }}">
+                                           class="hp-field-input w-full">
                                 {% elseif rule.valueType.value == 'integer' %}
                                     <input type="number" name="rule_{{ rule.id }}" id="rule_{{ rule.id }}"
                                            value="{{ rule.actualIntValue is not null ? rule.actualIntValue : '' }}"
-                                           class="{{ inputClass }}" min="0">
+                                           class="hp-field-input w-full" min="0">
                                 {% endif %}
                             </div>
                         {% endfor %}
@@ -64,7 +62,7 @@
                 </div>
 
                 <div class="text-center">
-                    <button type="submit" class="rounded-lg bg-blue-600 px-8 py-2.5 font-semibold text-white hover:bg-blue-700 dark:bg-[#38bdf8] dark:text-[#0f172a] dark:hover:bg-[#7dd3fc]">
+                    <button type="submit" class="hp-btn hp-btn-primary">
                         Uložit a přepočítat speciální tipy
                     </button>
                 </div>

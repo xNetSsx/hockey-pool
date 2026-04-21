@@ -158,6 +158,26 @@ recalculate:
 	@echo "${GREEN}>>> recalculating points for all tournaments${EOL}"
 	@$(PHP_CONT) bin/console app:recalculate-points --all --no-debug
 
+### Tailwind
+## Build Tailwind CSS
+tailwind:
+	@echo "${GREEN}>>> Building Tailwind CSS${EOL}"
+	@$(SYMFONY) tailwind:build
+
+## Build Tailwind CSS in watch mode
+tailwind-watch:
+	@echo "${GREEN}>>> Watching Tailwind CSS${EOL}"
+	@$(SYMFONY) tailwind:build --watch
+
+## Build Tailwind CSS for production (minified)
+tailwind-prod:
+	@echo "${GREEN}>>> Building Tailwind CSS (production)${EOL}"
+	@$(SYMFONY) tailwind:build --minify
+
+assets-prod-compile: tailwind-prod
+assets-prod-compile-rm:
+	@echo "${GREEN}>>> Cleaning compiled assets${EOL}"
+
 ### TESTS
 ### Unit
 paratest: unit-tests e2e

@@ -13,56 +13,59 @@
 {% endif %}
 
 {% block body %}
-    <div class="mb-6">
-        <a href="{{ path('prediction_list') }}" class="text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">← Zpět na tipy</a>
+    <div style="margin-bottom:24px">
+        <a href="{{ path('prediction_list') }}" style="font-size:14px;color:var(--fg-3);text-decoration:none">&larr; Zpět na tipy</a>
     </div>
 
-    <div class="mx-auto max-w-lg">
-        <div class="overflow-hidden rounded-xl bg-white shadow dark:bg-[#1e293b] dark:shadow-gray-900/30">
-            <div class="bg-[#0f172a] px-6 py-4">
-                <h1 class="text-lg font-semibold text-white">
-                    {{ isNew ? 'Nový tip' : 'Upravit tip' }}
-                </h1>
-                <p class="mt-1 text-xs text-gray-400">
-                    {{ game.playedAt|date('d.m.Y H:i') }}
-                </p>
+    <div style="max-width:520px;margin:0 auto">
+        <div class="hp-card" {{ stimulus_controller('confetti') }}>
+            <div class="hp-card-head">
+                <div>
+                    <div class="hp-card-title">{{ isNew ? 'Nový tip' : 'Upravit tip' }}</div>
+                    <div class="hp-card-sub">{{ game.playedAt|date('d.m.Y H:i') }}</div>
+                </div>
+                <span class="hp-chip hp-chip-accent">{{ game.homeTeam.code }} vs {{ game.awayTeam.code }}</span>
             </div>
 
-            <div class="p-6">
+            <div style="padding:24px">
                 {# Match display #}
-                <div class="mb-6 flex items-center justify-center gap-6 text-center">
+                <div style="display:flex;align-items:center;justify-content:center;gap:24px;margin-bottom:24px;text-align:center">
                     <div>
                         <div>{{ team_flag(game.homeTeam.code, 'inline-block h-8 w-12 rounded-sm') }}</div>
-                        <div class="mt-1 text-sm font-bold dark:text-gray-100">{{ game.homeTeam.code }}</div>
-                        <div class="text-xs text-gray-400 dark:text-gray-500">{{ game.homeTeam.name }}</div>
+                        <div style="margin-top:6px;font-family:var(--font-display);font-size:18px;font-weight:700;color:var(--fg)">{{ game.homeTeam.code }}</div>
+                        <div style="font-size:12px;color:var(--fg-4)">{{ game.homeTeam.name }}</div>
                     </div>
-                    <div class="text-xl font-bold text-gray-300 dark:text-gray-500">vs</div>
+                    <div style="font-family:var(--font-display);font-size:48px;font-weight:700;color:var(--fg-4)">vs</div>
                     <div>
                         <div>{{ team_flag(game.awayTeam.code, 'inline-block h-8 w-12 rounded-sm') }}</div>
-                        <div class="mt-1 text-sm font-bold dark:text-gray-100">{{ game.awayTeam.code }}</div>
-                        <div class="text-xs text-gray-400 dark:text-gray-500">{{ game.awayTeam.name }}</div>
+                        <div style="margin-top:6px;font-family:var(--font-display);font-size:18px;font-weight:700;color:var(--fg)">{{ game.awayTeam.code }}</div>
+                        <div style="font-size:12px;color:var(--fg-4)">{{ game.awayTeam.name }}</div>
                     </div>
                 </div>
 
-                {{ form_start(form, {attr: {class: 'space-y-4', id: 'prediction-form'}}) }}
-                    <div class="flex items-end justify-center gap-4">
-                        <div class="text-center">
-                            {{ form_label(form.homeScore, null, {label_attr: {class: 'block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300'}}) }}
-                            {{ form_widget(form.homeScore, {attr: {class: 'w-20 rounded-lg border border-gray-300 px-3 py-2.5 text-center text-lg font-bold focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 dark:bg-[#0f172a] dark:border-gray-600 dark:text-white', id: 'home-score'}}) }}
+                {{ form_start(form, {attr: {class: 'space-y-4', id: 'prediction-form', 'data-action': 'submit->confetti#fire'}}) }}
+                    <div style="display:flex;align-items:end;justify-content:center;gap:16px">
+                        <div style="text-align:center">
+                            {{ form_label(form.homeScore, null, {label_attr: {class: 'hp-field-label', style: 'display:block;margin-bottom:6px'}}) }}
+                            {{ form_widget(form.homeScore, {attr: {class: 'hp-field-input', style: 'width:80px;text-align:center;font-size:24px;font-weight:700;font-family:var(--font-display)', id: 'home-score'}}) }}
                             {{ form_errors(form.homeScore) }}
                         </div>
-                        <div class="pb-3 text-xl font-bold text-gray-400 dark:text-gray-500">:</div>
-                        <div class="text-center">
-                            {{ form_label(form.awayScore, null, {label_attr: {class: 'block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300'}}) }}
-                            {{ form_widget(form.awayScore, {attr: {class: 'w-20 rounded-lg border border-gray-300 px-3 py-2.5 text-center text-lg font-bold focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 dark:bg-[#0f172a] dark:border-gray-600 dark:text-white', id: 'away-score'}}) }}
+                        <div style="padding-bottom:12px;font-family:var(--font-display);font-size:36px;font-weight:700;color:var(--fg-4)">:</div>
+                        <div style="text-align:center">
+                            {{ form_label(form.awayScore, null, {label_attr: {class: 'hp-field-label', style: 'display:block;margin-bottom:6px'}}) }}
+                            {{ form_widget(form.awayScore, {attr: {class: 'hp-field-input', style: 'width:80px;text-align:center;font-size:24px;font-weight:700;font-family:var(--font-display)', id: 'away-score'}}) }}
                             {{ form_errors(form.awayScore) }}
                         </div>
                     </div>
 
                     {{ form_errors(form) }}
 
-                    <div class="pt-4 text-center">
-                        {{ form_widget(form.save, {attr: {class: 'rounded-lg bg-blue-600 px-6 py-2.5 font-semibold text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:bg-[#38bdf8] dark:text-[#0f172a] dark:hover:bg-[#7dd3fc]', id: 'submit-btn'}}) }}
+                    <div style="background:var(--bg-3);padding:12px;border-radius:10px;font-size:12px;color:var(--fg-3);margin-top:16px">
+                        <strong style="color:var(--fg-2)">Bodování:</strong> přesný tip +3 · správný vítěz +1 · špatně 0
+                    </div>
+
+                    <div style="padding-top:16px;text-align:center">
+                        {{ form_widget(form.save, {attr: {class: 'hp-btn hp-btn-primary', style: 'width:100%;padding:12px 24px', id: 'submit-btn'}}) }}
                     </div>
                 {{ form_end(form) }}
             </div>
@@ -74,20 +77,20 @@
 {% block modals %}
     {% if czechSide %}
         <dialog id="treason-modal-1" aria-labelledby="treason-modal-1-title">
-            <div style="position:fixed;top:0;left:0;right:0;bottom:0;z-index:9999;background:rgba(0,0,0,0.85);display:flex;align-items:center;justify-content:center;padding:0 1rem">
-                <div class="w-full max-w-sm rounded-2xl border-2 border-red-500 bg-white p-8 text-center shadow-2xl dark:bg-[#1e293b]" style="animation:shake 0.5s ease-in-out">
-                    <div class="mb-3 text-7xl">🇨🇿</div>
-                    <h2 id="treason-modal-1-title" class="mb-1 text-3xl font-black uppercase tracking-wide text-red-600">Vlastizrada!</h2>
-                    <p class="mb-2 text-xs font-semibold uppercase tracking-widest text-red-400">Detekován tip proti vlasti</p>
-                    <p class="mb-6 text-sm text-gray-600 dark:text-gray-300">
+            <div style="position:fixed;top:0;left:0;right:0;bottom:0;z-index:9999;background:oklch(0 0 0 / 0.85);display:flex;align-items:center;justify-content:center;padding:0 1rem">
+                <div class="hp-card" style="max-width:400px;width:100%;padding:32px;text-align:center;border-color:var(--neg);animation:shake 0.5s ease-in-out">
+                    <div style="margin-bottom:12px;font-size:64px">🇨🇿</div>
+                    <h2 id="treason-modal-1-title" style="font-family:var(--font-display);font-size:28px;font-weight:900;text-transform:uppercase;letter-spacing:0.04em;color:var(--neg);margin-bottom:4px">Vlastizrada!</h2>
+                    <p style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.1em;color:var(--neg);margin-bottom:16px">Detekován tip proti vlasti</p>
+                    <p style="font-size:14px;color:var(--fg-3);margin-bottom:24px">
                         Vážně tipuješ prohru České republiky?<br>
-                        <span class="font-semibold">Tohle je tvoje šance to napravit.</span>
+                        <strong style="color:var(--fg-2)">Tohle je tvoje šance to napravit.</strong>
                     </p>
-                    <div class="flex flex-col gap-2 sm:flex-row sm:gap-3">
-                        <button autofocus onclick="document.getElementById('treason-modal-1').close()" class="order-1 rounded-lg bg-blue-600 px-4 py-3 text-sm font-bold text-white hover:bg-blue-700 dark:bg-[#38bdf8] dark:text-[#0f172a] sm:flex-1">
+                    <div style="display:flex;flex-direction:column;gap:8px">
+                        <button autofocus onclick="document.getElementById('treason-modal-1').close()" class="hp-btn hp-btn-primary" style="width:100%">
                             🇨🇿 Sláva! Opravím to
                         </button>
-                        <button onclick="showSecondWarning()" class="order-2 rounded-lg bg-gray-200 px-4 py-3 text-sm font-medium text-gray-500 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-400 sm:flex-1">
+                        <button onclick="showSecondWarning()" class="hp-btn hp-btn-ghost" style="width:100%">
                             Stojím si za tím...
                         </button>
                     </div>
@@ -96,24 +99,24 @@
         </dialog>
 
         <dialog id="treason-modal-2" aria-labelledby="treason-modal-2-title">
-            <div style="position:fixed;top:0;left:0;right:0;bottom:0;z-index:9999;background:rgba(127,0,0,0.9);display:flex;align-items:center;justify-content:center;padding:0 1rem">
-                <div class="w-full max-w-sm rounded-2xl border-2 border-red-700 bg-white p-8 text-center shadow-2xl dark:bg-[#1e293b]" style="animation:shake 0.3s ease-in-out 3">
-                    <div class="mb-3 text-7xl">⛔</div>
-                    <h2 id="treason-modal-2-title" class="mb-2 text-2xl font-black uppercase text-red-700">Poslední varování!</h2>
-                    <div class="mb-4 rounded-lg bg-red-50 p-3 dark:bg-red-900/30">
-                        <p class="text-sm text-red-800 dark:text-red-300">
+            <div style="position:fixed;top:0;left:0;right:0;bottom:0;z-index:9999;background:oklch(0.15 0.08 25 / 0.9);display:flex;align-items:center;justify-content:center;padding:0 1rem">
+                <div class="hp-card" style="max-width:400px;width:100%;padding:32px;text-align:center;border-color:var(--neg);animation:shake 0.3s ease-in-out 3">
+                    <div style="margin-bottom:12px;font-size:64px">⛔</div>
+                    <h2 id="treason-modal-2-title" style="font-family:var(--font-display);font-size:24px;font-weight:900;text-transform:uppercase;color:var(--neg);margin-bottom:16px">Poslední varování!</h2>
+                    <div style="background:color-mix(in oklab, var(--neg) 15%, var(--bg-2));padding:12px;border-radius:var(--radius);margin-bottom:16px">
+                        <p style="font-size:14px;color:var(--neg)">
                             Tímto se oficiálně prohlašuješ za
                         </p>
-                        <p class="mt-1 text-xl font-black text-red-600">VLASTIZRÁDCE</p>
+                        <p style="margin-top:4px;font-family:var(--font-display);font-size:22px;font-weight:900;color:var(--neg)">VLASTIZRÁDCE</p>
                     </div>
-                    <p class="mb-6 text-xs text-gray-500 dark:text-gray-400">
+                    <p style="font-size:12px;color:var(--fg-4);margin-bottom:24px">
                         Tvůj hanebný tip bude zaznamenán.<br>Ostatní se to dozví. Není cesta zpět.
                     </p>
-                    <div class="flex flex-col gap-2 sm:flex-row sm:gap-3">
-                        <button autofocus onclick="cancelTreason()" class="order-1 rounded-lg bg-green-600 px-4 py-3 text-sm font-bold text-white hover:bg-green-700 sm:flex-1">
+                    <div style="display:flex;flex-direction:column;gap:8px">
+                        <button autofocus onclick="cancelTreason()" class="hp-btn" style="width:100%;background:var(--pos);color:var(--accent-ink)">
                             🇨🇿 Měním tip! Sláva Čechům!
                         </button>
-                        <button onclick="confirmTreason()" class="order-2 rounded-lg bg-red-900 px-4 py-3 text-xs font-medium text-red-300 hover:bg-red-950 sm:flex-1">
+                        <button onclick="confirmTreason()" class="hp-btn" style="width:100%;background:color-mix(in oklab, var(--neg) 30%, var(--bg-3));color:var(--neg);font-size:12px">
                             Potvrzuji zradu...
                         </button>
                     </div>

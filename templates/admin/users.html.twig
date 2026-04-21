@@ -4,32 +4,32 @@
 
 {% block admin_body %}
     <div class="mb-4 flex items-center justify-between">
-        <h1 class="text-xl font-bold dark:text-white">Uživatelé</h1>
-        <a href="{{ path('admin_user_new') }}" class="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 dark:bg-[#38bdf8] dark:text-[#0f172a] dark:hover:bg-[#7dd3fc]">+ Nový</a>
+        <h1 class="text-xl font-bold" style="color:var(--fg)">Uživatelé</h1>
+        <a href="{{ path('admin_user_new') }}" class="hp-btn hp-btn-primary hp-btn-sm">+ Nový</a>
     </div>
 
-    <div class="overflow-hidden rounded-xl bg-white shadow dark:bg-[#1e293b] dark:shadow-gray-900/30">
-        <table class="w-full text-sm">
+    <div class="hp-card">
+        <table class="hp-tbl">
             <thead>
-                <tr class="border-b bg-gray-50 text-left text-xs uppercase tracking-wider text-gray-500 dark:bg-[#0f172a]/50 dark:text-gray-400 dark:border-gray-700">
-                    <th class="px-6 py-3">Jméno</th>
-                    <th class="px-6 py-3">Email</th>
-                    <th class="px-6 py-3">Admin</th>
-                    <th class="px-6 py-3"></th>
+                <tr>
+                    <th>Jméno</th>
+                    <th>Email</th>
+                    <th>Admin</th>
+                    <th></th>
                 </tr>
             </thead>
             <tbody>
                 {% for u in users %}
-                    <tr class="border-b border-gray-100 last:border-0 dark:border-gray-700 dark:hover:bg-white/5">
-                        <td class="px-6 py-3 font-medium dark:text-white">{{ u.username }}</td>
-                        <td class="px-6 py-3 text-gray-500 dark:text-gray-400">{{ u.email ?? '—' }}</td>
-                        <td class="px-6 py-3">
+                    <tr>
+                        <td class="font-medium" style="color:var(--fg)">{{ u.username }}</td>
+                        <td style="color:var(--fg-3)">{{ u.email ?? '—' }}</td>
+                        <td>
                             {% if 'ROLE_ADMIN' in u.roles %}
-                                <span class="rounded bg-red-100 px-2 py-0.5 text-xs font-medium text-red-700 dark:bg-red-900/30 dark:text-red-300">Admin</span>
+                                <span class="hp-chip" style="background:color-mix(in oklab,var(--neg) 15%,transparent);color:var(--neg);border-color:color-mix(in oklab,var(--neg) 30%,transparent)">Admin</span>
                             {% endif %}
                         </td>
-                        <td class="px-6 py-3 text-right">
-                            <a href="{{ path('admin_user_edit', {id: u.id}) }}" class="text-blue-600 hover:underline dark:text-[#38bdf8]">Upravit</a>
+                        <td class="text-right">
+                            <a href="{{ path('admin_user_edit', {id: u.id}) }}" class="text-xs hover:underline" style="color:var(--accent)">Upravit</a>
                         </td>
                     </tr>
                 {% endfor %}

@@ -22,7 +22,7 @@ class AdminController extends AbstractController
     #[Route('', name: 'admin_dashboard')]
     public function dashboard(): Response
     {
-        return $this->render('admin/dashboard.html.twig');
+        return $this->redirectToRoute('admin_tournaments');
     }
 
     #[Route('/teams', name: 'admin_teams')]

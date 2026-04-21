@@ -4,49 +4,49 @@
 
 {% block admin_body %}
     <div class="mb-4 flex items-center justify-between">
-        <h1 class="text-xl font-bold dark:text-white">Pravidla speciálních tipů{{ tournament ? ' — ' ~ tournament.name : '' }}</h1>
-        <a href="{{ path('admin_rule_new') }}" class="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 dark:bg-[#38bdf8] dark:text-[#0f172a] dark:hover:bg-[#7dd3fc]">+ Nové pravidlo</a>
+        <h1 class="text-xl font-bold" style="color:var(--fg)">Pravidla speciálních tipů{{ tournament ? ' — ' ~ tournament.name : '' }}</h1>
+        <a href="{{ path('admin_rule_new') }}" class="hp-btn hp-btn-primary hp-btn-sm">+ Nové pravidlo</a>
     </div>
 
     {% if rules|length == 0 %}
-        <div class="rounded-xl bg-white p-8 text-center shadow dark:bg-[#1e293b] dark:shadow-gray-900/30">
-            <p class="text-gray-500 dark:text-gray-400">Žádná pravidla. Přidej první pravidlo speciálního tipu.</p>
+        <div class="hp-card p-8 text-center">
+            <p style="color:var(--fg-3)">Žádná pravidla. Přidej první pravidlo speciálního tipu.</p>
         </div>
     {% else %}
-        <div class="overflow-hidden rounded-xl bg-white shadow dark:bg-[#1e293b] dark:shadow-gray-900/30">
-            <table class="w-full text-sm">
+        <div class="hp-card">
+            <table class="hp-tbl">
                 <thead>
-                    <tr class="border-b bg-gray-50 text-left text-xs uppercase tracking-wider text-gray-500 dark:bg-[#0f172a]/50 dark:text-gray-400 dark:border-gray-700">
-                        <th class="px-6 py-3">#</th>
-                        <th class="px-6 py-3">Název</th>
-                        <th class="px-6 py-3">Typ</th>
-                        <th class="px-6 py-3">Bodování</th>
-                        <th class="px-6 py-3">Body</th>
-                        <th class="px-6 py-3">Výsledek</th>
-                        <th class="px-6 py-3"></th>
+                    <tr>
+                        <th>#</th>
+                        <th>Název</th>
+                        <th>Typ</th>
+                        <th>Bodování</th>
+                        <th>Body</th>
+                        <th>Výsledek</th>
+                        <th></th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for rule in rules %}
-                        <tr class="border-b border-gray-100 last:border-0 dark:border-gray-700 dark:hover:bg-white/5">
-                            <td class="px-6 py-3 text-gray-400 dark:text-gray-500">{{ rule.sortOrder }}</td>
-                            <td class="px-6 py-3 font-medium dark:text-white">{{ rule.name }}</td>
-                            <td class="px-6 py-3 text-gray-500 dark:text-gray-400">{{ rule.valueType.label }}</td>
-                            <td class="px-6 py-3 text-gray-500 text-xs dark:text-gray-400">{{ rule.scoringType.label }}</td>
-                            <td class="px-6 py-3 font-semibold dark:text-white">{{ rule.points }}</td>
-                            <td class="px-6 py-3">
+                        <tr>
+                            <td style="color:var(--fg-4)">{{ rule.sortOrder }}</td>
+                            <td class="font-medium" style="color:var(--fg)">{{ rule.name }}</td>
+                            <td style="color:var(--fg-3)">{{ rule.valueType.label }}</td>
+                            <td class="text-xs" style="color:var(--fg-3)">{{ rule.scoringType.label }}</td>
+                            <td class="font-semibold" style="color:var(--fg)">{{ rule.points }}</td>
+                            <td>
                                 {% if rule.hasActualValue %}
-                                    <span class="rounded bg-green-100 px-2 py-0.5 text-xs text-green-800 dark:bg-green-900/30 dark:text-green-300">
+                                    <span class="hp-chip" style="background:color-mix(in oklab,var(--pos) 15%,transparent);color:var(--pos);border-color:color-mix(in oklab,var(--pos) 30%,transparent)">
                                         {% if rule.actualTeamValue %}{{ team_flag(rule.actualTeamValue.code) }} {{ rule.actualTeamValue.code }}{% endif %}
                                         {% if rule.actualStringValue %}{{ rule.actualStringValue }}{% endif %}
                                         {% if rule.actualIntValue is not null %}{{ rule.actualIntValue }}{% endif %}
                                     </span>
                                 {% else %}
-                                    <span class="text-xs text-gray-300 dark:text-gray-600">—</span>
+                                    <span class="text-xs" style="color:var(--fg-4)">—</span>
                                 {% endif %}
                             </td>
-                            <td class="px-6 py-3 text-right">
-                                <a href="{{ path('admin_rule_edit', {id: rule.id}) }}" class="text-blue-600 hover:underline text-xs dark:text-[#38bdf8]">Upravit</a>
+                            <td class="text-right">
+                                <a href="{{ path('admin_rule_edit', {id: rule.id}) }}" class="text-xs hover:underline" style="color:var(--accent)">Upravit</a>
                             </td>
                         </tr>
                     {% endfor %}

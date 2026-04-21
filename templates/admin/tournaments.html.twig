@@ -4,74 +4,74 @@
 
 {% block admin_body %}
     <div class="mb-4 flex items-center justify-between">
-        <h1 class="text-xl font-bold dark:text-white">Turnaje</h1>
-        <a href="{{ path('admin_tournament_new') }}" class="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 dark:bg-[#38bdf8] dark:text-[#0f172a] dark:hover:bg-[#7dd3fc]">+ Nový turnaj</a>
+        <h1 class="text-xl font-bold" style="color:var(--fg)">Turnaje</h1>
+        <a href="{{ path('admin_tournament_new') }}" class="hp-btn hp-btn-primary hp-btn-sm">+ Nový turnaj</a>
     </div>
 
     {% if active|length > 0 %}
-        <h2 class="mb-2 mt-6 text-sm font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">Aktivní a nadcházející</h2>
+        <h2 class="hp-label mb-2 mt-6">Aktivní a nadcházející</h2>
         {{ _self.tournament_table(active, hasRuleSet, hasSpecialRules, cloneSources) }}
     {% endif %}
 
     {% if archived|length > 0 %}
-        <h2 class="mb-2 mt-6 text-sm font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">Archiv</h2>
+        <h2 class="hp-label mb-2 mt-6">Archiv</h2>
         {{ _self.tournament_table(archived, hasRuleSet, hasSpecialRules, cloneSources) }}
     {% endif %}
 
     {% if active|length == 0 and archived|length == 0 %}
-        <div class="rounded-xl bg-white p-8 text-center shadow dark:bg-[#1e293b] dark:shadow-gray-900/30">
-            <p class="text-gray-500 dark:text-gray-400">Žádné turnaje.</p>
+        <div class="hp-card p-8 text-center">
+            <p style="color:var(--fg-3)">Žádné turnaje.</p>
         </div>
     {% endif %}
 {% endblock %}
 
 {% macro tournament_table(tournaments, hasRuleSet, hasSpecialRules, cloneSources) %}
-    <div class="mb-6 overflow-hidden rounded-xl bg-white shadow dark:bg-[#1e293b] dark:shadow-gray-900/30">
-        <table class="w-full text-sm">
+    <div class="hp-card mb-6">
+        <table class="hp-tbl">
             <tbody>
                 {% for t in tournaments %}
-                    <tr class="border-b border-gray-100 last:border-0 dark:border-gray-700 dark:hover:bg-white/5">
-                        <td class="px-6 py-3 font-medium dark:text-white">{{ t.name }}</td>
-                        <td class="px-6 py-3 text-gray-500 dark:text-gray-400">{{ t.year }}</td>
-                        <td class="px-6 py-3">
+                    <tr>
+                        <td class="font-medium" style="color:var(--fg)">{{ t.name }}</td>
+                        <td style="color:var(--fg-3)">{{ t.year }}</td>
+                        <td>
                             {% if t.status.value == 'in_progress' %}
-                                <span class="rounded bg-green-100 px-2 py-0.5 text-xs font-medium text-green-800 dark:bg-green-900/30 dark:text-green-300">Probíhá</span>
+                                <span class="hp-chip" style="background:color-mix(in oklab,var(--pos) 15%,transparent);color:var(--pos);border-color:color-mix(in oklab,var(--pos) 30%,transparent)">Probíhá</span>
                             {% elseif t.status.value == 'finished' %}
-                                <span class="rounded bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-600 dark:bg-gray-700 dark:text-gray-300">Ukončen</span>
+                                <span class="hp-chip">Ukončen</span>
                             {% else %}
-                                <span class="rounded bg-blue-100 px-2 py-0.5 text-xs font-medium text-blue-800 dark:bg-blue-900/30 dark:text-blue-300">Nadcházející</span>
+                                <span class="hp-chip hp-chip-accent">Nadcházející</span>
                             {% endif %}
                         </td>
-                        <td class="px-6 py-3">
+                        <td>
                             {% if hasRuleSet[t.id] %}
-                                <span class="text-xs text-green-600 dark:text-green-400">✓ Bodování</span>
+                                <span class="text-xs" style="color:var(--pos)">✓ Bodování</span>
                             {% endif %}
                             {% if hasSpecialRules[t.id] %}
-                                <span class="ml-1 text-xs text-green-600 dark:text-green-400">✓ Pravidla</span>
+                                <span class="ml-1 text-xs" style="color:var(--pos)">✓ Pravidla</span>
                             {% endif %}
                             {% if not hasRuleSet[t.id] and not hasSpecialRules[t.id] %}
-                                <span class="text-xs text-amber-600 dark:text-amber-400">⚠ Bez nastavení</span>
+                                <span class="text-xs" style="color:var(--warn)">⚠ Bez nastavení</span>
                             {% endif %}
                         </td>
-                        <td class="px-6 py-3 text-right">
+                        <td class="text-right">
                             <div class="flex items-center justify-end gap-2">
                                 {% if not hasRuleSet[t.id] and not hasSpecialRules[t.id] and cloneSources[t.id] is defined and cloneSources[t.id]|length > 0 %}
                                     <form method="post" action="{{ path('admin_tournament_clone', {id: t.id}) }}" class="flex items-center gap-1">
-                                        <select name="sourceId" class="rounded border border-gray-300 bg-white px-2 py-1 text-xs dark:border-gray-600 dark:bg-[#0f172a] dark:text-white">
+                                        <select name="sourceId" class="hp-field-input px-2 py-1 text-xs">
                                             {% for src in cloneSources[t.id] %}
                                                 <option value="{{ src.id }}">{{ src.name }}</option>
                                             {% endfor %}
                                         </select>
-                                        <button type="submit" class="rounded bg-green-600 px-2 py-1 text-xs font-medium text-white hover:bg-green-700">
+                                        <button type="submit" class="hp-btn hp-btn-sm" style="background:var(--pos);color:var(--accent-ink)">
                                             Kopírovat
                                         </button>
                                     </form>
                                 {% endif %}
-                                <a href="{{ path('admin_tournament_content', {id: t.id, field: 'rules'}) }}" class="text-xs text-gray-500 hover:underline dark:text-gray-400 dark:hover:text-white">Pravidla</a>
-                                <a href="{{ path('admin_tournament_content', {id: t.id, field: 'manual'}) }}" class="text-xs text-gray-500 hover:underline dark:text-gray-400 dark:hover:text-white">Manuál</a>
-                                <a href="{{ path('admin_tournament_ruleset', {id: t.id}) }}" class="text-xs text-gray-500 hover:underline dark:text-gray-400 dark:hover:text-white">Bodování</a>
-                                <a href="{{ path('admin_tournament_payment', {id: t.id}) }}" class="text-xs text-gray-500 hover:underline dark:text-gray-400 dark:hover:text-white">Platba</a>
-                                <a href="{{ path('admin_tournament_edit', {id: t.id}) }}" class="text-xs text-blue-600 hover:underline dark:text-[#38bdf8]">Upravit</a>
+                                <a href="{{ path('admin_tournament_content', {id: t.id, field: 'rules'}) }}" class="text-xs hover:underline" style="color:var(--fg-3)">Pravidla</a>
+                                <a href="{{ path('admin_tournament_content', {id: t.id, field: 'manual'}) }}" class="text-xs hover:underline" style="color:var(--fg-3)">Manuál</a>
+                                <a href="{{ path('admin_tournament_ruleset', {id: t.id}) }}" class="text-xs hover:underline" style="color:var(--fg-3)">Bodování</a>
+                                <a href="{{ path('admin_tournament_payment', {id: t.id}) }}" class="text-xs hover:underline" style="color:var(--fg-3)">Platba</a>
+                                <a href="{{ path('admin_tournament_edit', {id: t.id}) }}" class="text-xs hover:underline" style="color:var(--accent)">Upravit</a>
                             </div>
                         </td>
                     </tr>

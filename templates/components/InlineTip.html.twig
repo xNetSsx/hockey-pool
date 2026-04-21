@@ -1,0 +1,112 @@
+<div{{ attributes }}>
+    {% if saved and not editing %}
+        {# Saved confirmation #}
+        <div class="flex items-center gap-2">
+            <span class="hp-pred-badge hp-pred-good">
+                {{ homeScore }}:{{ awayScore }}
+            </span>
+            <span style="font-size:12px;font-weight:600;color:var(--pos)">
+                &#10003; Uloženo
+            </span>
+        </div>
+    {% elseif editing %}
+        {# Inline editing mode #}
+        <div class="flex flex-col items-center gap-2">
+            {% if errorMessage %}
+                <div style="font-size:11px;font-weight:600;color:var(--neg);margin-bottom:2px">
+                    {{ errorMessage }}
+                </div>
+            {% endif %}
+            <div class="flex items-center gap-3">
+                {# Home score bumper #}
+                <div class="flex flex-col items-center gap-1">
+                    <button
+                        type="button"
+                        class="hp-btn hp-btn-ghost hp-btn-sm"
+                        style="padding:2px 8px;font-size:16px;line-height:1"
+                        data-action="live#action"
+                        data-live-action-param="bump"
+                        data-live-side-param="home"
+                        data-live-delta-param="1"
+                    >&#9650;</button>
+                    <span style="font-family:var(--font-display);font-size:48px;font-weight:800;color:var(--accent);line-height:1;user-select:none">
+                        {{ homeScore }}
+                    </span>
+                    <button
+                        type="button"
+                        class="hp-btn hp-btn-ghost hp-btn-sm"
+                        style="padding:2px 8px;font-size:16px;line-height:1"
+                        data-action="live#action"
+                        data-live-action-param="bump"
+                        data-live-side-param="home"
+                        data-live-delta-param="-1"
+                    >&#9660;</button>
+                </div>
+
+                {# Colon separator #}
+                <span style="font-family:var(--font-display);font-size:36px;color:var(--fg-4);user-select:none;padding-bottom:4px">:</span>
+
+                {# Away score bumper #}
+                <div class="flex flex-col items-center gap-1">
+                    <button
+                        type="button"
+                        class="hp-btn hp-btn-ghost hp-btn-sm"
+                        style="padding:2px 8px;font-size:16px;line-height:1"
+                        data-action="live#action"
+                        data-live-action-param="bump"
+                        data-live-side-param="away"
+                        data-live-delta-param="1"
+                    >&#9650;</button>
+                    <span style="font-family:var(--font-display);font-size:48px;font-weight:800;color:var(--accent);line-height:1;user-select:none">
+                        {{ awayScore }}
+                    </span>
+                    <button
+                        type="button"
+                        class="hp-btn hp-btn-ghost hp-btn-sm"
+                        style="padding:2px 8px;font-size:16px;line-height:1"
+                        data-action="live#action"
+                        data-live-action-param="bump"
+                        data-live-side-param="away"
+                        data-live-delta-param="-1"
+                    >&#9660;</button>
+                </div>
+            </div>
+
+            {# Action buttons #}
+            <div class="flex items-center gap-2">
+                <button
+                    type="button"
+                    class="hp-btn hp-btn-primary hp-btn-sm"
+                    style="padding:4px 12px;font-size:12px"
+                    data-action="live#action"
+                    data-live-action-param="save"
+                >Uložit</button>
+                <button
+                    type="button"
+                    class="hp-btn hp-btn-ghost hp-btn-sm"
+                    style="padding:4px 12px;font-size:12px"
+                    data-action="live#action"
+                    data-live-action-param="cancel"
+                >Zrušit</button>
+            </div>
+        </div>
+    {% else %}
+        {# Default display state #}
+        <div class="flex items-center gap-2">
+            {% if hasPrediction %}
+                <span class="hp-pred-badge hp-pred-good">
+                    {{ homeScore }}:{{ awayScore }}
+                </span>
+            {% else %}
+                <span class="countdown-timer flex items-center gap-1 text-[11px] tabular-nums" data-deadline="{{ deadline }}"></span>
+            {% endif %}
+            <button
+                type="button"
+                class="hp-btn hp-btn-primary hp-btn-sm"
+                style="padding:4px 10px;font-size:12px"
+                data-action="live#action"
+                data-live-action-param="open"
+            >{{ hasPrediction ? 'Změnit' : 'Tipovat' }}</button>
+        </div>
+    {% endif %}
+</div>

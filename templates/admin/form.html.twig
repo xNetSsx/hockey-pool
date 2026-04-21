@@ -2,31 +2,29 @@
 
 {% block title %}{{ title }} — Admin{% endblock %}
 
-{% set inputClass = 'w-full rounded-lg border border-gray-300 px-4 py-2.5 text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 dark:bg-[#0f172a] dark:border-gray-600 dark:text-white' %}
-
 {% block admin_body %}
     <div class="mx-auto max-w-lg">
         <div class="mb-4">
-            <a href="{{ path(back) }}" class="text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-white">← Zpět</a>
+            <a href="{{ path(back) }}" class="text-sm hover:underline" style="color:var(--fg-3)">← Zpět</a>
         </div>
 
-        <div class="overflow-hidden rounded-xl bg-white shadow dark:bg-[#1e293b] dark:shadow-gray-900/30">
-            <div class="border-b border-gray-200 bg-[#0f172a] px-6 py-4 dark:border-gray-700">
-                <h1 class="text-lg font-semibold text-white">{{ title }}</h1>
+        <div class="hp-card">
+            <div class="hp-card-head">
+                <h1 class="hp-card-title text-lg">{{ title }}</h1>
             </div>
             <div class="p-6">
                 {{ form_start(form, {attr: {class: 'space-y-4', novalidate: 'novalidate'}}) }}
                     {% for field in form %}
                         {% if field.vars.name not in ['_token', 'save'] and 'button' not in field.vars.block_prefixes %}
                             <div>
-                                {{ form_label(field, null, {label_attr: {class: 'block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300'}}) }}
-                                {{ form_widget(field, {attr: field.vars.attr|merge({class: (field.vars.attr.class ?? '') ~ ' ' ~ inputClass})}) }}
+                                {{ form_label(field, null, {label_attr: {class: 'hp-field-label mb-1 block'}}) }}
+                                {{ form_widget(field, {attr: field.vars.attr|merge({class: (field.vars.attr.class ?? '') ~ ' hp-field-input w-full'})}) }}
                                 {{ form_errors(field) }}
                             </div>
                         {% endif %}
                     {% endfor %}
                     <div class="pt-4">
-                        <button type="submit" class="w-full rounded-lg bg-blue-600 px-4 py-2.5 font-semibold text-white hover:bg-blue-700 dark:bg-[#38bdf8] dark:text-[#0f172a] dark:hover:bg-[#7dd3fc]">
+                        <button type="submit" class="hp-btn hp-btn-primary w-full">
                             Uložit
                         </button>
                     </div>

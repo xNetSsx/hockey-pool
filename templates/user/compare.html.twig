@@ -1,75 +1,71 @@
 {% extends 'base.html.twig' %}
+{% import '_macros.html.twig' as m %}
 
 {% block title %}Porovnání: {{ users|map(u => u.username)|join(' vs ') }} — Hockey Pool{% endblock %}
 
-{% set playerColors = [
-    '#3b82f6', '#f43f5e', '#10b981', '#8b5cf6',
-    '#f59e0b', '#06b6d4', '#ec4899', '#14b8a6',
-    '#f97316', '#6366f1', '#84cc16', '#d946ef',
-    '#0ea5e9', '#b91c1c', '#15803d', '#7e22ce',
-] %}
-
 {% block body %}
-    <div class="mb-6">
-        <a href="{{ path('player_compare') }}" class="text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">← Změnit výběr</a>
+    {# Section header #}
+    <div class="hp-section-head" style="margin-bottom:24px">
+        <div>
+            <div style="display:flex;gap:10px;margin-bottom:6px">
+                <span class="hp-chip hp-chip-accent">Porovnání</span>
+            </div>
+            <h2>{{ users|map(u => u.username)|join(' vs ') }}</h2>
+        </div>
+        <a href="{{ path('player_compare') }}" class="hp-btn hp-btn-ghost hp-btn-sm">&larr; Změnit výběr</a>
     </div>
 
-    <h1 class="mb-6 text-2xl font-bold text-gray-900 dark:text-white">⚔️ {{ users|map(u => u.username)|join(' vs ') }}</h1>
-
-    {# Stats comparison cards #}
-    <div class="mb-8 grid grid-cols-2 gap-4 lg:grid-cols-4">
+    {# Summary cards — horizontal scroll when many players #}
+    <div style="display:flex;gap:16px;margin-bottom:24px;overflow-x:auto;padding-bottom:8px">
         {% for user in users %}
             {% set stats = userStats[user.id] %}
             {% set lb = leaderboardByUserId[user.id] ?? null %}
-            <div class="rounded-xl bg-white p-5 shadow dark:bg-[#1e293b] dark:shadow-gray-900/30">
-                <div class="mb-3 text-center">
-                    <h2 class="text-lg font-bold" style="color: {{ playerColors[loop.index0 % playerColors|length] }}">{{ user.username }}</h2>
-                    <div class="mt-1 text-2xl font-black dark:text-gray-100">{{ lb ? lb.totalPoints|number_format(2) : '0.00' }}</div>
-                    <div class="text-xs text-gray-400 dark:text-gray-500">{{ lb ? lb.rank ~ '. místo' : '—' }}</div>
-                </div>
-                <div class="space-y-1.5 text-xs">
-                    <div class="flex justify-between">
-                        <span class="text-gray-500 dark:text-gray-400">Úspěšnost</span>
-                        <span class="font-semibold dark:text-gray-100">{{ stats.accuracy }}%</span>
-                    </div>
-                    <div class="flex justify-between">
-                        <span class="text-gray-500 dark:text-gray-400">Správný vítěz</span>
-                        <span class="font-semibold text-green-700 dark:text-green-400">{{ stats.correctWinners }}×</span>
-                    </div>
-                    <div class="flex justify-between">
-                        <span class="text-gray-500 dark:text-gray-400">Přesné skóre</span>
-                        <span class="font-semibold text-amber-700 dark:text-amber-400">{{ stats.exactScores }}×</span>
-                    </div>
-                    <div class="flex justify-between">
-                        <span class="text-gray-500 dark:text-gray-400">Špatně</span>
-                        <span class="font-semibold text-red-700 dark:text-red-400">{{ stats.wrongPredictions }}×</span>
-                    </div>
-                    {% if stats.bestMatchDay %}
-                        <div class="flex justify-between">
-                            <span class="text-gray-500 dark:text-gray-400">Nejlepší den</span>
-                            <span class="font-semibold dark:text-gray-100">{{ stats.bestMatchDay.points|number_format(2) }}b</span>
+            <div class="hp-card" style="padding:20px;min-width:260px;flex:1 0 260px">
+                <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
+                    {{ m.avatar(user.username, 'lg') }}
+                    <div style="min-width:0">
+                        <div style="font-weight:700;font-size:18px;color:var(--fg);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ user.username }}</div>
+                        <div style="font-size:12px;color:var(--fg-3)">
+                            {{ lb ? lb.totalPoints|number_format(2) ~ ' b. · ' ~ lb.rank ~ '. místo' : '—' }}
                         </div>
-                    {% endif %}
+                    </div>
+                </div>
+                <div style="display:grid;grid-template-columns:repeat(3, 1fr);gap:8px">
+                    <div style="padding:10px 6px;border-radius:10px;background:var(--bg-3);text-align:center">
+                        <div class="hp-label" style="font-size:9px">Úspěšnost</div>
+                        <div style="font-family:var(--font-display);font-size:24px;font-weight:800;color:var(--accent)">{{ stats.accuracy }}%</div>
+                    </div>
+                    <div style="padding:10px 6px;border-radius:10px;background:var(--bg-3);text-align:center">
+                        <div class="hp-label" style="font-size:9px">Přesné</div>
+                        <div style="font-family:var(--font-display);font-size:24px;font-weight:800;color:var(--fg)">{{ stats.exactScores }}</div>
+                    </div>
+                    <div style="padding:10px 6px;border-radius:10px;background:var(--bg-3);text-align:center">
+                        <div class="hp-label" style="font-size:9px">Vítěz</div>
+                        <div style="font-family:var(--font-display);font-size:24px;font-weight:800;color:var(--fg)">{{ stats.correctWinners }}</div>
+                    </div>
                 </div>
             </div>
         {% endfor %}
     </div>
 
-    {# Match-by-match comparison #}
-    <div class="overflow-hidden rounded-xl bg-white shadow dark:bg-[#1e293b] dark:shadow-gray-900/30">
-        <div class="border-b border-gray-200 bg-[#0f172a] px-6 py-4 dark:border-gray-700">
-            <h2 class="text-lg font-semibold text-white">Zápas po zápase</h2>
+    {# Match-by-match comparison table #}
+    <div class="hp-card">
+        <div class="hp-card-head">
+            <span class="hp-card-title">Tipy po zápasech</span>
+            <span class="hp-card-sub">{{ users|length }} hráčů · {{ comparison.games|filter(g => g.isFinished)|length }} zápasů</span>
         </div>
-        <div class="overflow-x-auto">
-            <table class="w-full text-sm">
+        <div style="overflow-x:auto">
+            <table class="hp-tbl" style="min-width:{{ 320 + users|length * 120 }}px">
                 <thead>
-                    <tr class="border-b border-gray-200 bg-gray-50 text-xs uppercase tracking-wider text-gray-500 dark:border-gray-700 dark:bg-[#0f172a] dark:text-gray-400">
-                        <th class="px-4 py-3 text-left">Zápas</th>
-                        <th class="px-3 py-3 text-center">Výsledek</th>
+                    <tr>
+                        <th style="position:sticky;left:0;background:var(--bg-3);z-index:2;min-width:160px">Zápas</th>
+                        <th class="hp-num" style="min-width:80px">Skóre</th>
                         {% for user in users %}
-                            {% set colColor = playerColors[loop.index0 % playerColors|length] %}
-                            <th class="px-3 py-3 text-center" style="color: {{ colColor }}; border-left: 2px solid {{ colColor }}33">
-                                {{ user.username }}
+                            <th style="text-align:center;min-width:110px">
+                                <div style="display:flex;align-items:center;gap:6px;justify-content:center">
+                                    {{ m.avatar(user.username, 'sm') }}
+                                    <span style="white-space:nowrap">{{ user.username }}</span>
+                                </div>
                             </th>
                         {% endfor %}
                     </tr>
@@ -77,48 +73,48 @@
                 <tbody>
                     {% for game in comparison.games %}
                         {% if game.isFinished %}
-                            {# Find who scored most this match #}
                             {% set maxPoints = 0 %}
                             {% for user in users %}
                                 {% set pts = comparison.matchPoints[user.id][game.id] ?? 0 %}
                                 {% if pts > maxPoints %}{% set maxPoints = pts %}{% endif %}
                             {% endfor %}
 
-                            <tr class="border-b border-gray-100 last:border-0 even:bg-gray-50 dark:border-gray-700 dark:text-gray-100 dark:even:bg-slate-800/40">
-                                <td class="whitespace-nowrap px-4 py-2.5">
-                                    <span class="text-xs">
-                                        {{ team_flag(game.homeTeam.code) }} {{ game.homeTeam.code }}
-                                        <span class="text-gray-400 dark:text-gray-500">vs</span>
-                                        {{ team_flag(game.awayTeam.code) }} {{ game.awayTeam.code }}
-                                    </span>
+                            <tr>
+                                <td style="position:sticky;left:0;background:var(--bg-2);z-index:1;white-space:nowrap">
+                                    <div style="display:flex;align-items:center;gap:6px;font-size:13px">
+                                        {{ team_flag(game.homeTeam.code) }}
+                                        <span style="font-weight:600">{{ game.homeTeam.code }}</span>
+                                        <span style="color:var(--fg-4);font-size:10px">vs</span>
+                                        <span style="font-weight:600">{{ game.awayTeam.code }}</span>
+                                        {{ team_flag(game.awayTeam.code) }}
+                                    </div>
                                 </td>
-                                <td class="px-3 py-2.5 text-center">
-                                    <span class="inline-block rounded bg-gray-100 px-1.5 py-0.5 text-xs font-bold tabular-nums dark:bg-gray-700">{{ game.homeScore }}:{{ game.awayScore }}</span>
+                                <td class="hp-num">
+                                    <span class="hp-score" style="font-size:14px;padding:2px 8px">
+                                        {{ game.homeScore }}<span style="opacity:0.45">:</span>{{ game.awayScore }}
+                                    </span>
                                 </td>
                                 {% for user in users %}
                                     {% set prediction = comparison.predictions[user.id][game.id] ?? null %}
                                     {% set pts = comparison.matchPoints[user.id][game.id] ?? 0 %}
-                                    {% set running = comparison.runningTotals[user.id][game.id] ?? 0 %}
                                     {% set isBest = pts > 0 and pts == maxPoints %}
-                                    {% set color = playerColors[loop.index0 % playerColors|length] %}
                                     {% set isExact = prediction and prediction.homeScore == game.homeScore and prediction.awayScore == game.awayScore %}
-                                    <td class="px-3 py-2.5 text-center" style="border-left: 2px solid {{ color }}33{% if isBest %}; background-color: {{ color }}22{% endif %}">
+                                    <td style="text-align:center;{% if isBest %}background:color-mix(in oklab, var(--pos) 8%, transparent){% endif %}">
                                         {% if prediction %}
-                                            {% if isExact %}
-                                                {# Exact score: amber/gold pill #}
-                                                <span class="inline-block rounded bg-amber-100 px-1.5 py-0.5 tabular-nums text-xs font-semibold text-amber-800 dark:bg-amber-900/30 dark:text-amber-200">{{ prediction.homeScore }}:{{ prediction.awayScore }}</span>
-                                                <span class="ml-1 text-xs font-semibold text-amber-800 dark:text-amber-200">+{{ pts|number_format(2) }}</span>
-                                            {% elseif pts > 0 %}
-                                                {# Correct winner only: green tinted #}
-                                                <span class="tabular-nums text-xs font-medium text-green-700 dark:text-green-400">{{ prediction.homeScore }}:{{ prediction.awayScore }}</span>
-                                                <span class="ml-1 text-xs font-semibold text-green-700 dark:text-green-400">+{{ pts|number_format(2) }}</span>
-                                            {% else %}
-                                                {# Wrong prediction: red/muted #}
-                                                <span class="tabular-nums text-xs text-red-400 dark:text-red-500">{{ prediction.homeScore }}:{{ prediction.awayScore }}</span>
-                                            {% endif %}
-                                            <div class="mt-0.5 text-[10px] tabular-nums text-gray-400 dark:text-gray-500">Σ {{ running|number_format(2) }}</div>
+                                            <div style="display:flex;flex-direction:column;align-items:center;gap:3px">
+                                                {% if isExact %}
+                                                    <span class="hp-pred-badge hp-pred-exact">{{ prediction.homeScore }}:{{ prediction.awayScore }}</span>
+                                                {% elseif pts > 0 %}
+                                                    <span class="hp-pred-badge hp-pred-good">{{ prediction.homeScore }}:{{ prediction.awayScore }}</span>
+                                                {% else %}
+                                                    <span class="hp-pred-badge hp-pred-miss">{{ prediction.homeScore }}:{{ prediction.awayScore }}</span>
+                                                {% endif %}
+                                                <span style="font-size:11px;font-family:var(--font-mono);font-weight:700;color:{{ pts > 0 ? 'var(--pos)' : 'var(--fg-4)' }}">
+                                                    {{ pts > 0 ? '+' ~ pts|number_format(2) : '0' }}{% if isBest %} 👑{% endif %}
+                                                </span>
+                                            </div>
                                         {% else %}
-                                            <span class="text-xs text-gray-300 dark:text-gray-600">—</span>
+                                            <span style="font-size:12px;color:var(--fg-4)">—</span>
                                         {% endif %}
                                     </td>
                                 {% endfor %}
