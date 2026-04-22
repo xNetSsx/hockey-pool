@@ -19,6 +19,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsCsrfTokenValid;
 
 #[Route('/admin')]
 class TournamentAdminController extends AbstractController
@@ -168,6 +169,17 @@ class TournamentAdminController extends AbstractController
             'title' => 'Platba: ' . $tournament->getName(),
             'back' => 'admin_tournaments',
         ]);
+    }
+
+    #[Route('/tournaments/{id}/delete', name: 'admin_tournament_delete', methods: ['POST'], requirements: ['id' => '\d+'])]
+    #[IsCsrfTokenValid('tournament_delete')]
+    public function tournamentDelete(Tournament $tournament, TournamentManager $manager): Response
+    {
+        $name = $tournament->getName();
+        $manager->delete($tournament);
+        $this->addFlash('success', sprintf('Turnaj "%s" byl smazán.', $name));
+
+        return $this->redirectToRoute('admin_tournaments');
     }
 
     #[Route('/tournaments/{id}/clone-from', name: 'admin_tournament_clone', methods: ['POST'], requirements: ['id' => '\d+'])]

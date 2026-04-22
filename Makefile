@@ -158,6 +158,11 @@ recalculate:
 	@echo "${GREEN}>>> recalculating points for all tournaments${EOL}"
 	@$(PHP_CONT) bin/console app:recalculate-points --all --no-debug
 
+## Fetch match results from TheSportsDB
+fetch-results:
+	@echo "${GREEN}>>> fetching results from TheSportsDB${EOL}"
+	@$(PHP_CONT) bin/console app:fetch-results --active --no-debug
+
 ### Tailwind
 ## Build Tailwind CSS
 tailwind:

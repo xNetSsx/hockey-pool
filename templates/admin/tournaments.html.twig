@@ -72,6 +72,10 @@
                                 <a href="{{ path('admin_tournament_ruleset', {id: t.id}) }}" class="text-xs hover:underline" style="color:var(--fg-3)">Bodování</a>
                                 <a href="{{ path('admin_tournament_payment', {id: t.id}) }}" class="text-xs hover:underline" style="color:var(--fg-3)">Platba</a>
                                 <a href="{{ path('admin_tournament_edit', {id: t.id}) }}" class="text-xs hover:underline" style="color:var(--accent)">Upravit</a>
+                                <form method="post" action="{{ path('admin_tournament_delete', {id: t.id}) }}" data-turbo-confirm="Opravdu smazat turnaj „{{ t.name }}"? Smaže se i všechny zápasy, tipy, sázky a body.">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('tournament_delete') }}">
+                                    <button type="submit" class="text-xs hover:underline" style="color:var(--neg)">Smazat</button>
+                                </form>
                             </div>
                         </td>
                     </tr>

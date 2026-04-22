@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Service\Provider;
 
+use App\Entity\Prediction;
 use App\Entity\Tournament;
 use App\Repository\GameRepository;
 use App\Repository\PredictionRepository;
@@ -12,13 +13,13 @@ use App\Repository\PredictionRepository;
  * Computes hot/cold streaks for players based on their recent predictions.
  *
  * Hot streak: 3+ consecutive finished games where the player scored points (correct winner or exact).
- * Cold hand:  3+ consecutive finished games where the player scored 0 points.
+ * Cold hand: 3+ consecutive finished games where the player scored 0 points.
  */
-final class PlayerStreakProvider
+final readonly class PlayerStreakProvider
 {
     public function __construct(
-        private readonly GameRepository $gameRepository,
-        private readonly PredictionRepository $predictionRepository,
+        private GameRepository $gameRepository,
+        private PredictionRepository $predictionRepository,
     ) {
     }
 
@@ -33,11 +34,10 @@ final class PlayerStreakProvider
             return [];
         }
 
-        // Get all predictions indexed by gameId => list<Prediction>, re-index by gameId => userId
         $rawByGame = $this->predictionRepository->findByGamesIndexedByGameId($finishedGames);
 
 
-        /** @var array<int, array<int, \App\Entity\Prediction>> $predictionsByGame */
+        /** @var array<int, array<int, Prediction>> $predictionsByGame */
         $predictionsByGame = [];
         foreach ($rawByGame as $gameId => $predictions) {
             foreach ($predictions as $prediction) {
@@ -48,7 +48,6 @@ final class PlayerStreakProvider
             }
         }
 
-        // Collect all user IDs from predictions
         /** @var array<int, true> $userIds */
         $userIds = [];
         foreach ($predictionsByGame as $predictions) {
@@ -57,7 +56,6 @@ final class PlayerStreakProvider
             }
         }
 
-        // For each user, walk the last N finished games in reverse to find streak
         $reversedGames = array_reverse($finishedGames);
         $result = [];
 

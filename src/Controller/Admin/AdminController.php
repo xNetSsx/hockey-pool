@@ -10,6 +10,7 @@ use App\Repository\TeamRepository;
 use App\Service\Manager\TeamManager;
 use App\Service\Provider\ActiveTournamentProvider;
 use App\Service\Resolver\TournamentResolver;
+use App\Service\ResultFetcherService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -90,6 +91,44 @@ class AdminController extends AbstractController
 
         $tournamentResolver->recalculateAll($tournament);
         $this->addFlash('success', sprintf('Všechny body přepočteny pro "%s".', $tournament->getName()));
+
+        return $this->redirectToRoute('admin_dashboard');
+    }
+
+    #[Route('/fetch-results', name: 'admin_fetch_results', methods: ['POST'])]
+    #[IsCsrfTokenValid('fetch_results')]
+    public function fetchResults(
+        ActiveTournamentProvider $activeTournamentProvider,
+        ResultFetcherService $resultFetcherService,
+    ): Response {
+        $tournament = $activeTournamentProvider->getActiveTournament();
+
+        if (null === $tournament) {
+            $this->addFlash('error', 'Žádný aktivní turnaj.');
+
+            return $this->redirectToRoute('admin_dashboard');
+        }
+
+        $result = $resultFetcherService->fetchAndUpdate($tournament);
+
+        if ($result['updated'] > 0) {
+            $this->addFlash('success', sprintf(
+                'Aktualizováno %d zápasů z %d (body přepočteny) pro "%s".',
+                $result['updated'],
+                $result['checked'],
+                $tournament->getName(),
+            ));
+        } else {
+            $this->addFlash('info', sprintf(
+                'Žádné nové výsledky (%d neodehraných zápasů zkontrolováno) pro "%s".',
+                $result['checked'],
+                $tournament->getName(),
+            ));
+        }
+
+        foreach ($result['errors'] as $error) {
+            $this->addFlash('error', $error);
+        }
 
         return $this->redirectToRoute('admin_dashboard');
     }

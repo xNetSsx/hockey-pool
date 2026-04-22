@@ -10,12 +10,20 @@
         <a href="{{ path('admin_rules') }}" class="rounded-full px-3 py-1 text-sm transition-colors" style="color:var(--fg-2);{% if app.request.attributes.get('_route') starts with 'admin_rule' %}background:var(--bg-2);border:1px solid var(--line){% endif %}">Pravidla tipů</a>
         <a href="{{ path('admin_special_results') }}" class="rounded-full px-3 py-1 text-sm transition-colors" style="color:var(--fg-2);{% if app.request.attributes.get('_route') starts with 'admin_special' %}background:var(--bg-2);border:1px solid var(--line){% endif %}">Výsledky</a>
         <a href="{{ path('admin_participants') }}" class="rounded-full px-3 py-1 text-sm transition-colors" style="color:var(--fg-2);{% if app.request.attributes.get('_route') starts with 'admin_participant' %}background:var(--bg-2);border:1px solid var(--line){% endif %}">Účastníci</a>
-        <form method="post" action="{{ path('admin_recalculate') }}" class="ml-auto">
-            <input type="hidden" name="_token" value="{{ csrf_token('recalculate') }}">
-            <button type="submit" class="hp-btn hp-btn-sm rounded-full font-medium" style="background:var(--warn);color:var(--accent-ink)" onclick="return confirm('Přepočítat všechny body?')">
-                🔄 Přepočítat body
-            </button>
-        </form>
+        <div class="ml-auto flex items-center gap-2">
+            <form method="post" action="{{ path('admin_fetch_results') }}">
+                <input type="hidden" name="_token" value="{{ csrf_token('fetch_results') }}">
+                <button type="submit" class="hp-btn hp-btn-sm rounded-full font-medium" style="background:var(--accent);color:var(--accent-ink)">
+                    📡 Aktualizovat výsledky
+                </button>
+            </form>
+            <form method="post" action="{{ path('admin_recalculate') }}">
+                <input type="hidden" name="_token" value="{{ csrf_token('recalculate') }}">
+                <button type="submit" class="hp-btn hp-btn-sm rounded-full font-medium" style="background:var(--warn);color:var(--accent-ink)" onclick="return confirm('Přepočítat všechny body?')">
+                    🔄 Přepočítat body
+                </button>
+            </form>
+        </div>
     </div>
 
     {% block admin_body %}{% endblock %}

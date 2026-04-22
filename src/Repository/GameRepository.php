@@ -72,6 +72,27 @@ class GameRepository extends ServiceEntityRepository
     /**
      * @return list<Game>
      */
+    public function findUnfinishedByTournament(Tournament $tournament): array
+    {
+        /** @var list<Game> $result */
+        $result = $this->createQueryBuilder('g')
+            ->leftJoin('g.homeTeam', 'ht')
+            ->addSelect('ht')
+            ->leftJoin('g.awayTeam', 'at')
+            ->addSelect('at')
+            ->where('g.tournament = :tournament')
+            ->andWhere('g.isFinished = false')
+            ->setParameter('tournament', $tournament)
+            ->orderBy('g.playedAt', 'ASC')
+            ->getQuery()
+            ->getResult();
+
+        return $result;
+    }
+
+    /**
+     * @return list<Game>
+     */
     public function findFinishedByTournament(Tournament $tournament): array
     {
         /** @var list<Game> $result */

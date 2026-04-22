@@ -26,6 +26,12 @@ final readonly class TournamentManager
         $this->em->flush();
     }
 
+    public function delete(Tournament $tournament): void
+    {
+        $this->em->remove($tournament);
+        $this->em->flush();
+    }
+
     /**
      * @return array{ruleSetCloned: bool, rulesCloned: int}
      */
