@@ -3,6 +3,10 @@ framework:
     secret: '%env(APP_SECRET)%'
     #csrf_protection: true
 
+    # Trust Railway's reverse proxy so Symfony sees the real protocol (HTTPS)
+    trusted_proxies: '%env(TRUSTED_PROXIES)%'
+    trusted_headers: ['x-forwarded-for', 'x-forwarded-port', 'x-forwarded-proto', 'x-forwarded-host']
+
     # Note that the session will be started ONLY if you read or write from it.
     session: true
 

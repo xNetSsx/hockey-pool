@@ -28,7 +28,7 @@ RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-av
     && echo "ServerName localhost" >> /etc/apache2/apache2.conf
 
 # Pass Railway env vars through Apache to PHP (mod_php doesn't inherit them by default)
-RUN echo "PassEnv APP_ENV APP_SECRET DATABASE_URL" > /etc/apache2/conf-enabled/passenv.conf
+RUN echo "PassEnv APP_ENV APP_SECRET DATABASE_URL TRUSTED_PROXIES" > /etc/apache2/conf-enabled/passenv.conf
 
 # PHP production config
 RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
