@@ -112,6 +112,8 @@ export default class extends Controller {
 
     connect() {
         this._restoreWidth()
+        this._beforeCache = () => this.close()
+        document.addEventListener('turbo:before-cache', this._beforeCache)
         const url = new URL(window.location.href)
         if (url.searchParams.has('tour')) {
             url.searchParams.delete('tour')
@@ -219,5 +221,6 @@ export default class extends Controller {
 
     disconnect() {
         document.body.classList.remove('overflow-hidden')
+        document.removeEventListener('turbo:before-cache', this._beforeCache)
     }
 }

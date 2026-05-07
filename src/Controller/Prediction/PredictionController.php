@@ -57,7 +57,11 @@ class PredictionController extends AbstractController
         PredictionRepository $predictionRepository,
         PredictionManager $predictionManager,
     ): Response {
-        $this->denyAccessUnlessGranted(PredictionVoter::CREATE, $game);
+        if (!$this->isGranted(PredictionVoter::CREATE, $game)) {
+            $this->addFlash('error', 'Nejsi účastníkem turnaje nebo nemáš zaplaceno.');
+
+            return $this->redirectToRoute('prediction_list');
+        }
 
         /** @var User $user */
         $user = $this->getUser();
@@ -151,7 +155,11 @@ class PredictionController extends AbstractController
             return $this->redirectToRoute('prediction_special');
         }
 
-        $this->denyAccessUnlessGranted(SpecialBetVoter::SUBMIT, $tournament);
+        if (!$this->isGranted(SpecialBetVoter::SUBMIT, $tournament)) {
+            $this->addFlash('error', 'Nejsi účastníkem turnaje nebo nemáš zaplaceno.');
+
+            return $this->redirectToRoute('prediction_special');
+        }
 
         /** @var User $user */
         $user = $this->getUser();
