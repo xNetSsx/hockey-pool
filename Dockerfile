@@ -41,6 +41,7 @@ WORKDIR /app
 
 # Set prod env for build and runtime
 ENV APP_ENV=prod
+ARG COMPOSER_ALLOW_SUPERUSER=1
 
 # Install dependencies (layer cache)
 COPY composer.json composer.lock symfony.lock ./
