@@ -50,7 +50,8 @@ RUN composer install --no-dev --optimize-autoloader --no-scripts --no-interactio
 COPY . .
 
 # Build assets at build time (no DB connection needed, .env provides dummy DATABASE_URL)
-RUN composer run-script post-install-cmd \
+RUN php bin/console assets:install public \
+    && php bin/console importmap:install \
     && php bin/console tailwind:build \
     && php bin/console asset-map:compile
 
