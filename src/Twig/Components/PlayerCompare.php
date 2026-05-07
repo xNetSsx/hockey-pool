@@ -120,4 +120,19 @@ final class PlayerCompare
             $this->selected[] = $username;
         }
     }
+
+    #[LiveAction]
+    public function selectAll(): void
+    {
+        $all = array_map(
+            static fn (User $u) => $u->getUsername(),
+            $this->getPlayers(),
+        );
+
+        if (count($this->selected) === count($all)) {
+            $this->selected = [];
+        } else {
+            $this->selected = $all;
+        }
+    }
 }

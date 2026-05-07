@@ -45,8 +45,12 @@
                                     <span class="text-xs" style="color:var(--fg-4)">—</span>
                                 {% endif %}
                             </td>
-                            <td class="text-right">
+                            <td class="text-right" style="display:flex;gap:12px;justify-content:flex-end;align-items:center">
                                 <a href="{{ path('admin_rule_edit', {id: rule.id}) }}" class="text-xs hover:underline" style="color:var(--accent)">Upravit</a>
+                                <form method="post" action="{{ path('admin_rule_delete', {id: rule.id}) }}" data-turbo-confirm="Opravdu smazat pravidlo „{{ rule.name }}"? Smažou se i všechny tipy hráčů na toto pravidlo.">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('rule_delete') }}">
+                                    <button type="submit" class="text-xs hover:underline" style="color:var(--neg)">Smazat</button>
+                                </form>
                             </td>
                         </tr>
                     {% endfor %}

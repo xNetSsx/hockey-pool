@@ -23,6 +23,12 @@ final readonly class SpecialBetRuleManager
         $this->em->flush();
     }
 
+    public function delete(SpecialBetRule $rule): void
+    {
+        $this->em->remove($rule);
+        $this->em->flush();
+    }
+
     /**
      * @param list<SpecialBetRule> $rules
      * @param array<int|string, string> $rawValues keyed by rule ID

@@ -77,6 +77,17 @@ class SpecialBetAdminController extends AbstractController
         ]);
     }
 
+    #[Route('/rules/{id}/delete', name: 'admin_rule_delete', requirements: ['id' => '\d+'], methods: ['POST'])]
+    #[IsCsrfTokenValid('rule_delete')]
+    public function ruleDelete(SpecialBetRule $rule, SpecialBetRuleManager $manager): Response
+    {
+        $name = $rule->getName();
+        $manager->delete($rule);
+        $this->addFlash('success', sprintf('Pravidlo "%s" bylo smazáno.', $name));
+
+        return $this->redirectToRoute('admin_rules');
+    }
+
     #[Route('/special-results/{id?}', name: 'admin_special_results', requirements: ['id' => '\d+'], methods: ['GET'])]
     public function specialResults(
         ActiveTournamentProvider $activeTournamentProvider,

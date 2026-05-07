@@ -12,7 +12,18 @@
     </div>
 
     {# Player picker pills #}
-    <div style="display:flex;flex-wrap:wrap;gap:10px;margin-bottom:24px">
+    <div style="display:flex;flex-wrap:wrap;gap:10px;margin-bottom:24px;align-items:center">
+        {% set allCount = this.players|length %}
+        {% set allSelected = this.selected|length == allCount %}
+        <button
+            type="button"
+            data-action="live#action"
+            data-live-action-param="selectAll"
+            style="display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border-radius:999px;font-size:13px;font-weight:600;cursor:pointer;transition:all 0.15s;border:1px solid {{ allSelected ? 'var(--accent)' : 'var(--line)' }};background:{{ allSelected ? 'color-mix(in oklab, var(--accent) 18%, var(--bg-2))' : 'var(--bg-2)' }};color:{{ allSelected ? 'var(--fg)' : 'var(--fg-2)' }}"
+        >
+            {{ allSelected ? 'Zrušit výběr' : 'Vybrat vše' }}
+        </button>
+        <span style="width:1px;height:24px;background:var(--line);flex-shrink:0"></span>
         {% for player in this.players %}
             {% set isOn = player.username in this.selected %}
             <button
@@ -30,7 +41,11 @@
 
     {% if this.hasComparison %}
         {% set data = this.comparisonData %}
-        {% if data %}
+        {% if not data %}
+            <div class="hp-card" style="padding:40px;text-align:center">
+                <p style="color:var(--fg-3);font-size:15px">Žádný aktivní turnaj — porovnání není k dispozici</p>
+            </div>
+        {% else %}
             {% set users = data.users %}
             {% set leaderboardByUserId = data.leaderboardByUserId %}
             {% set comparison = data.comparison %}

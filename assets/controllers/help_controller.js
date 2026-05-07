@@ -36,7 +36,7 @@ const TOURS = {
                 element: '.tour-game-row',
                 popover: {
                     title: '🏒 Jeden zápas',
-                    description: 'Vidíš čas, vlajky a kódy týmů, skóre (po odehrání) a svůj tip. Barevný odznak po zápase: zelená = přesné skóre, žlutá = správný vítěz, červená = špatně.',
+                    description: 'Vidíš čas, vlajky a kódy týmů, skóre (po odehrání) a svůj tip. Barevný odznak po zápase: zelená = přesné skóre, modrá = správný vítěz, červená = špatně.',
                     side: 'bottom',
                     align: 'start',
                 },
@@ -147,7 +147,9 @@ export default class extends Controller {
     }
 
     startTour() {
-        this.close()
+        if (this.element.isConnected) {
+            this.close()
+        }
         const tour = TOURS[this.routeValue]
         if (!tour?.steps?.length) return
 
